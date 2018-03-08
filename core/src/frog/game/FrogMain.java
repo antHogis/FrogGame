@@ -16,6 +16,7 @@ public class FrogMain extends ApplicationAdapter {
 		img = new Texture("badlogic.jpg");
 	}
 
+	//Piia on hyvä Scrummaster :)
 	@Override
 	public void render () {
 		Gdx.gl.glClearColor(1, 0, 0, 1);
