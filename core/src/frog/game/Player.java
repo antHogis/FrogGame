@@ -14,10 +14,10 @@ class Player extends GameObject {
     float moveSpeed;
 
     public Player() {
-        texture = new Texture("badlogic.jpg");
+        texture = new Texture("paahahmoluonnos.png");
         rectangle = new Rectangle(0f, 0f,
-                texture.getWidth() / 150f,
-                texture.getHeight() / 150f);
+                texture.getWidth() / 450f,
+                texture.getHeight() / 450f);
         setMoveSpeed(4f);
     }
 
