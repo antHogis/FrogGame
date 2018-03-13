@@ -1,36 +1,45 @@
 package frog.game;
 
-import com.badlogic.gdx.Game;
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class FrogMain extends Game {
-	private SpriteBatch batch;
-	private OrthographicCamera camera;
-
+public class FrogMain extends ApplicationAdapter {
+	SpriteBatch batch;
+	Texture img;
+	Player frog;
+    private OrthographicCamera camera;
+	
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 1280f, 720f);
-		setScreen(new MainMenu(this));
+		frog = new Player();
+		img = new Texture("badlogic.jpg");
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, 8f, 4f);
 	}
 
+	//Piia on hyvä Scrummaster :)
 	@Override
 	public void render () {
-		super.render();
+        batch.setProjectionMatrix(camera.combined);
+
+		Gdx.gl.glClearColor(0, 1, 1, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		batch.begin();
+		batch.draw(frog.getTexture(), frog.getX(), frog.getY(),
+				frog.getWidth(),
+				frog.getHeight());
+		frog.moveTemporary();
+		batch.end();
 	}
 	
 	@Override
 	public void dispose () {
 		batch.dispose();
+		img.dispose();
 	}
-
-    public SpriteBatch getBatch() {
-        return batch;
-    }
-
-    public OrthographicCamera getCamera() {
-        return camera;
-    }
 }
