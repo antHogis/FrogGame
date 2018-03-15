@@ -1,6 +1,8 @@
 package frog.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
 
 /**
  * Created by Anton on 13.3.2018.
@@ -11,7 +13,6 @@ public class MainMenu implements Screen {
 
     public MainMenu(FrogMain host) {
         this.host = host;
-        host.setScreen(new Level01(this.host));
     }
 
     @Override
@@ -21,6 +22,13 @@ public class MainMenu implements Screen {
 
     @Override
     public void render(float delta) {
+        Gdx.gl.glClearColor(0, 1, 1, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        if (Gdx.input.isTouched()) {
+            Gdx.app.log("TAG", "Setting Screen");
+            host.setScreen(new Level01(this.host));
+        }
 
     }
 
