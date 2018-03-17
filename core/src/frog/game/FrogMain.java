@@ -12,7 +12,7 @@ public class FrogMain extends Game {
 	public void create () {
 		batch = new SpriteBatch();
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 16f, 9f);
+        camera.setToOrtho(false, 16f, 10f);
         setScreen(new MainMenu(this));
 	}
 

@@ -1,6 +1,8 @@
 package frog.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -14,12 +16,13 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
  */
 
 public class Level01 implements Screen {
-    FrogMain host;
-    SpriteBatch batch;
-    OrthographicCamera camera;
-    Player frog;
-    TiledMap tiledMap;
-    TiledMapRenderer tiledMapRenderer;
+    private FrogMain host;
+    private SpriteBatch batch;
+    private OrthographicCamera camera;
+    private Player frog;
+
+    private TiledMap tiledMap;
+    private TiledMapRenderer tiledMapRenderer;
 
     public Level01(FrogMain host) {
         this.host = host;
@@ -38,9 +41,12 @@ public class Level01 implements Screen {
 
     @Override
     public void render(float delta) {
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         batch.setProjectionMatrix(camera.combined);
 
-        frog.moveTemporary();
+        frog.movementAndroid(Gdx.graphics.getDeltaTime());
 
         batch.begin();
         frog.draw(batch);
