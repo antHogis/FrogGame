@@ -14,7 +14,7 @@ class Player extends GameObject {
     float moveSpeed;
 
     public Player() {
-        texture = new Texture("paahahmoluonnos.png");
+        texture = new Texture("gfx/paahahmoluonnos.png");
         rectangle = new Rectangle(4f, 4f,
                 texture.getWidth() / 200f,
                 texture.getHeight() / 200f);

@@ -1,7 +1,13 @@
 package frog.game;
 
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 /**
  * Created by Anton on 13.3.2018.
@@ -9,12 +15,20 @@ import com.badlogic.gdx.graphics.Texture;
 
 public class Level01 implements Screen {
     FrogMain host;
+    SpriteBatch batch;
+    OrthographicCamera camera;
     Player frog;
-    Texture background;
+    TiledMap tiledMap;
+    TiledMapRenderer tiledMapRenderer;
+
     public Level01(FrogMain host) {
         this.host = host;
+        batch = host.getBatch();
+        camera = host.getCamera();
+
         frog = new Player();
-        background = new Texture("vesigraffat-v81.jpg");
+        tiledMap = new TmxMapLoader().load("lvl/testMap.tmx");
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
     }
 
     @Override
@@ -24,17 +38,13 @@ public class Level01 implements Screen {
 
     @Override
     public void render(float delta) {
-        host.getBatch().setProjectionMatrix(host.getCamera().combined);
+        batch.setProjectionMatrix(camera.combined);
 
         frog.moveTemporary();
 
-        host.getBatch().begin();
-        host.getBatch().draw(background, 0, 0,
-                background.getWidth() / 50f, background.getHeight() / 50f);
-        host.getBatch().draw(frog.getTexture(), frog.getX() , frog.getY(),
-                frog.getWidth() / 1f, frog.getHeight() /1f);
-
-        host.getBatch().end();
+        batch.begin();
+        frog.draw(batch);
+        batch.end();
     }
 
     @Override

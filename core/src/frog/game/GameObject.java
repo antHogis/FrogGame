@@ -1,6 +1,7 @@
 package frog.game;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 
 /**
@@ -13,6 +14,10 @@ abstract class GameObject {
 
     public Texture getTexture() {
         return this.texture;
+    }
+
+    public void draw(SpriteBatch batch) {
+        batch.draw(this.texture, this.rectangle.x, this.rectangle.y, this.rectangle.width, this.rectangle.height);
     }
 
     public float getX() {
