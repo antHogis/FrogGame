@@ -41,4 +41,12 @@ abstract class GameObject {
     public float getHeight() {
         return this.rectangle.height;
     }
+
+    public void setWidth(float width) {
+        this.rectangle.width = width;
+    }
+
+    public void setHeight(float height) {
+        this.rectangle.height = height;
+    }
 }

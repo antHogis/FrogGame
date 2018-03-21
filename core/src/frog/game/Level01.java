@@ -18,18 +18,36 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 public class Level01 implements Screen {
     private FrogMain host;
     private SpriteBatch batch;
-    private OrthographicCamera camera;
     private Player frog;
 
     private TiledMap tiledMap;
     private TiledMapRenderer tiledMapRenderer;
 
+    private final int TILE_WIDTH = 32;
+    private final int TILE_HEIGHT = 32;
+    private final int TILE_AMOUNT_WIDTH = 50;
+    private final int TILE_AMOUNT_HEIGHT = 30;
+
+    private OrthographicCamera camera;
+    private final int WINDOW_WIDTH = 640;
+    private final int WINDOW_HEIGHT = 400;
+    private final int WORLD_WIDTH_PIXELS = TILE_AMOUNT_WIDTH * TILE_WIDTH;
+    private final int WORLD_HEIGHT_PIXELS = TILE_AMOUNT_HEIGHT * TILE_HEIGHT;
+
     public Level01(FrogMain host) {
         this.host = host;
         batch = host.getBatch();
         camera = host.getCamera();
+        camera.setToOrtho(false,
+                WINDOW_WIDTH,
+                WINDOW_HEIGHT);
 
         frog = new Player();
+        frog.setWidth(64);
+        frog.setHeight(64);
+        frog.setX(32);
+        frog.setY(32);
+
         tiledMap = new TmxMapLoader().load("lvl/testMap.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
     }
@@ -44,9 +62,15 @@ public class Level01 implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        camera.update();
+        tiledMapRenderer.setView(camera);
         batch.setProjectionMatrix(camera.combined);
 
         frog.movementAndroid(Gdx.graphics.getDeltaTime());
+
+        moveCamera();
+
+        tiledMapRenderer.render();
 
         batch.begin();
         frog.draw(batch);
@@ -78,4 +102,27 @@ public class Level01 implements Screen {
         host.dispose();
 
     }
+
+    private void moveCamera () {
+        camera.position.set(frog.getX(),
+                frog.getY(),
+                0);
+
+        if(camera.position.x < WINDOW_WIDTH / 2){
+            camera.position.x = WINDOW_WIDTH / 2;
+        }
+
+        if(camera.position.y > WORLD_HEIGHT_PIXELS - WINDOW_HEIGHT / 2) {
+            camera.position.y = WORLD_HEIGHT_PIXELS - WINDOW_HEIGHT / 2;
+        }
+
+        if(camera.position.y < WINDOW_HEIGHT / 2) {
+            camera.position.y = WINDOW_HEIGHT / 2;
+        }
+
+        if(camera.position.x > WORLD_WIDTH_PIXELS - WINDOW_WIDTH / 2f) {
+            camera.position.x = WORLD_WIDTH_PIXELS - WINDOW_WIDTH / 2f;
+        }
+    }
+
 }

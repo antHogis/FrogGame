@@ -28,7 +28,7 @@ class Player extends GameObject {
     private float THRESHOLD_MIN_Y_FORWARD;
     private float THRESHOLD_MIN_Y_BACK;
 
-    private final float ACCELEROMETER_MULTIPLIER = 1.5f;
+    private final float ACCELEROMETER_MULTIPLIER = 50f;
 
     public Player() {
         texture = new Texture("gfx/paahahmoluonnos.png");
