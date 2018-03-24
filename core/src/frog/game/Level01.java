@@ -20,6 +20,8 @@ public class Level01 implements Screen {
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private Player frog;
+    private Checkpoint check01;
+    private EnemyFish fish;
 
     private TiledMap tiledMap;
     private TiledMapRenderer tiledMapRenderer;
@@ -30,6 +32,8 @@ public class Level01 implements Screen {
         camera = host.getCamera();
 
         frog = new Player();
+        fish = new EnemyFish(0.03f, 5f, true);
+        check01 = new Checkpoint(4.5f, 4.5f);
         tiledMap = new TmxMapLoader().load("lvl/testMap.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
     }
@@ -47,9 +51,17 @@ public class Level01 implements Screen {
         batch.setProjectionMatrix(camera.combined);
 
         frog.movementAndroid(Gdx.graphics.getDeltaTime());
+        frog.moveTemporary();
+        fish.moveLeftRight();
+        fish.checkCollision(frog);
 
         batch.begin();
         frog.draw(batch);
+        fish.draw(batch);
+        if (!check01.getIsCleared()) {
+            check01.checkCollision(frog);
+            check01.draw(batch);
+        }
         batch.end();
     }
 

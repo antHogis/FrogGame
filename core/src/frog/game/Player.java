@@ -12,6 +12,8 @@ import com.badlogic.gdx.math.Rectangle;
 
 class Player extends GameObject {
     float moveSpeed;
+    private float lastCheckpointX;
+    private float lastCheckpointY;
 
     private float NEUTRAL_POINT_X;
     private float NEUTRAL_POINT_Y;
@@ -51,9 +53,25 @@ class Player extends GameObject {
 
     }
 
-    /*
+
     public void setMoveSpeed(float speed) {
         this.moveSpeed = speed;
+    }
+
+    public void setLastCheckpointX(float x) {
+        this.lastCheckpointX = x;
+    }
+
+    public void setLastCheckpointY(float y) {
+        this.lastCheckpointY = y;
+    }
+
+    public float getLastCheckpointX() {
+        return this.lastCheckpointX;
+    }
+
+    public float getLastCheckpointY() {
+        return this.lastCheckpointY;
     }
 
     //Väliaikainen liikkuminen testiä varten
@@ -73,7 +91,7 @@ class Player extends GameObject {
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             this.setY(this.getY() - this.moveSpeed * Gdx.graphics.getDeltaTime());
         }
-    }*/
+    }
 
     //Huom Lauri! Taitaa vielä olla aika paska! Pitää miettiä vähän vielä
     public void movementAndroid (float delta) {
@@ -89,5 +107,11 @@ class Player extends GameObject {
                 && Gdx.input.getAccelerometerZ() > THRESHOLD_MAX_Y_BACK))
             rectangle.setY(rectangle.getY() + delta * ACCELEROMETER_MULTIPLIER * Gdx.input.getAccelerometerZ());
 
+    }
+
+    public void returnToLastCheckpoint() {
+        this.rectangle.x = (getLastCheckpointX());
+        this.rectangle.y = (getLastCheckpointY());
+        Gdx.app.log("TAG", "Returned to Checkpoint!");
     }
 }
