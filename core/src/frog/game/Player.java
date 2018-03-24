@@ -18,7 +18,7 @@ class Player extends GameObject {
     private TiledMapTileLayer walls;
     boolean upleft, upright, downleft, downright;
     private int TILE_DIMENSION = 32;
-    float moveSpeed;
+    private float moveSpeed;
     private float lastCheckpointX;
     private float lastCheckpointY;
 
@@ -52,6 +52,7 @@ class Player extends GameObject {
         rectangle = new Rectangle(4f, 4f,
                 texture.getWidth() / 300f,
                 texture.getHeight() / 300f);
+        moveSpeed = 256f;
 
         NEUTRAL_POINT_X = Gdx.input.getAccelerometerY();
         NEUTRAL_POINT_Y = Gdx.input.getAccelerometerZ();
@@ -72,7 +73,7 @@ class Player extends GameObject {
 
     }
 
-    /*
+
     public void setLastCheckpointX(float x) {
         this.lastCheckpointX = x;
     }

@@ -24,6 +24,9 @@ public class Level01 implements Screen {
     private Player frog;
     private Checkpoint check01;
     private EnemyFish fish;
+    private EnemyFish fish2;
+    private EnemyFish fish3;
+    private TimeCoin coin1;
 
     private TiledMap tiledMap;
     private TiledMapRenderer tiledMapRenderer;
@@ -55,6 +58,28 @@ public class Level01 implements Screen {
         frog.setHeight(96);
         frog.setX(32);
         frog.setY(32);
+        frog.setLastCheckpointX(32);
+        frog.setLastCheckpointY(32);
+        fish = new EnemyFish(2f, 128f, true );
+        fish.setWidth(84);
+        fish.setHeight(76);
+        fish.setX(280);
+        fish.setY(128);
+        fish2 = new EnemyFish(3f, 200f, true );
+        fish2.setWidth(84);
+        fish2.setHeight(76);
+        fish2.setX(1080);
+        fish2.setY(256);
+        fish3 = new EnemyFish(4f, 164f, true );
+        fish3.setWidth(84);
+        fish3.setHeight(76);
+        fish3.setX(720);
+        fish3.setY(64);
+        coin1 = new TimeCoin();
+        coin1.setWidth(84);
+        coin1.setHeight(76);
+        coin1.setX(256);
+        coin1.setY(256);
 
     }
 
@@ -74,12 +99,23 @@ public class Level01 implements Screen {
 
 
         frog.movementAndroid(Gdx.graphics.getDeltaTime());
+        fish.moveLeftRight();
+        fish.checkCollision(frog);
+        fish2.moveLeftRight();
+        fish2.checkCollision(frog);
+        fish3.moveLeftRight();
+        fish3.checkCollision(frog);
+        frog.moveTemporary();
 
         moveCamera();
 
         tiledMapRenderer.render();
 
         batch.begin();
+        fish.draw(batch);
+        fish2.draw(batch);
+        fish3.draw(batch);
+        coin1.draw(batch);
         frog.draw(batch);
         batch.end();
 
