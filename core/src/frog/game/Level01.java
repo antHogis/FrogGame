@@ -4,10 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
@@ -42,14 +42,15 @@ public class Level01 implements Screen {
                 WINDOW_WIDTH,
                 WINDOW_HEIGHT);
 
-        frog = new Player();
-        frog.setWidth(64);
-        frog.setHeight(64);
+        tiledMap = new TmxMapLoader().load("lvl/testMap.tmx");
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+
+        frog = new Player((TiledMapTileLayer) tiledMap.getLayers().get("walls-texture"));
+        frog.setWidth(96);
+        frog.setHeight(96);
         frog.setX(32);
         frog.setY(32);
 
-        tiledMap = new TmxMapLoader().load("lvl/testMap.tmx");
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
     }
 
     @Override
@@ -65,6 +66,7 @@ public class Level01 implements Screen {
         camera.update();
         tiledMapRenderer.setView(camera);
         batch.setProjectionMatrix(camera.combined);
+
 
         frog.movementAndroid(Gdx.graphics.getDeltaTime());
 
@@ -124,5 +126,4 @@ public class Level01 implements Screen {
             camera.position.x = WORLD_WIDTH_PIXELS - WINDOW_WIDTH / 2f;
         }
     }
-
 }
