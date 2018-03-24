@@ -1,7 +1,9 @@
 package frog.game;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
 /**
@@ -49,4 +51,26 @@ abstract class GameObject {
     public void setHeight(float height) {
         this.rectangle.height = height;
     }
+
+
+    private TextureRegion[] convert2Dto1D (TextureRegion[][] twoDim) {
+        TextureRegion [] oneDim = new TextureRegion[twoDim.length * twoDim[0].length];
+        int index = 0;
+
+        for (int i = 0; i < twoDim.length; i++) {
+            for (int j = 0; j < twoDim[i].length; j++) {
+                oneDim[index++] = twoDim[i][j];
+            }
+        }
+
+        return oneDim;
+    }
+
+    private void flip(Animation<TextureRegion> animation) {
+        TextureRegion[] regions = animation.getKeyFrames();
+        for(TextureRegion r : regions) {
+            r.flip(true, false);
+        }
+    }
+
 }

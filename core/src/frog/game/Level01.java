@@ -5,11 +5,14 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 
 /**
  * Created by Anton on 13.3.2018.
@@ -77,6 +80,8 @@ public class Level01 implements Screen {
         batch.begin();
         frog.draw(batch);
         batch.end();
+
+        endLevel();
     }
 
     @Override
@@ -124,6 +129,16 @@ public class Level01 implements Screen {
 
         if(camera.position.x > WORLD_WIDTH_PIXELS - WINDOW_WIDTH / 2f) {
             camera.position.x = WORLD_WIDTH_PIXELS - WINDOW_WIDTH / 2f;
+        }
+    }
+
+    private void endLevel () {
+        Array<RectangleMapObject> endZones = tiledMap.getLayers().get("endzone-rectangle").getObjects().getByType(RectangleMapObject.class);
+        for (RectangleMapObject endZone : endZones) {
+            Rectangle endZoneRectangle = endZone.getRectangle();
+            if (frog.rectangle.overlaps(endZoneRectangle)) {
+                host.setScreen(new MainMenu(host));
+            }
         }
     }
 }
