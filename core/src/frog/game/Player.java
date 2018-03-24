@@ -3,6 +3,8 @@ package frog.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 
@@ -20,6 +22,15 @@ class Player extends GameObject {
     private float lastCheckpointX;
     private float lastCheckpointY;
 
+    private TextureRegion [][] imageSheet2D;
+    private TextureRegion [] imageSheet1D;
+    private final int IMAGE_COLS = 1;
+    private final int IMAGE_ROWS = 1;
+    private boolean facedRight;
+    private Animation<TextureRegion> animation;
+    private TextureRegion currentFrame;
+    private float stateTime;
+
     private float NEUTRAL_POINT_X;
     private float NEUTRAL_POINT_Y;
 
@@ -32,8 +43,9 @@ class Player extends GameObject {
     private float THRESHOLD_MIN_Y_FORWARD;
     private float THRESHOLD_MIN_Y_BACK;
 
-    private final float MOVE_SPEED = 50f;
-    private final float BACKWARDS_MULTIPLIER = 4f;
+    private final float SPEED_X = 25f;
+    private final float SPEED_FORWARD = SPEED_X * 0.25f;
+    private final float SPEED_BACK = SPEED_X * 5f;
 
     public Player(TiledMapTileLayer walls) {
         texture = new Texture("gfx/paahahmoluonnos.png");
@@ -50,15 +62,11 @@ class Player extends GameObject {
         THRESHOLD_MIN_X_LEFT = NEUTRAL_POINT_X - THRESHOLD_VALUE_X;
         Gdx.app.log("TAG", "Thresh right:" + THRESHOLD_MIN_X_RIGHT );
         Gdx.app.log("TAG", "Thresh left:" + THRESHOLD_MIN_X_LEFT );
-        //THRESHOLD_MAX_X_RIGHT = NEUTRAL_POINT_X + 10f;
-        //THRESHOLD_MAX_X_LEFT =  NEUTRAL_POINT_X - 10f;
 
         THRESHOLD_MIN_Y_FORWARD = NEUTRAL_POINT_Y + THRESHOLD_VALUE_Y_FORWARD;
         THRESHOLD_MIN_Y_BACK = NEUTRAL_POINT_Y;
         Gdx.app.log("TAG", "Thresh forw:" + THRESHOLD_MIN_Y_FORWARD );
         Gdx.app.log("TAG", "Thresh back:" + THRESHOLD_MIN_Y_BACK );
-        //THRESHOLD_MAX_Y_FORWARD = NEUTRAL_POINT_Y + 10f;
-        //THRESHOLD_MAX_Y_BACK = NEUTRAL_POINT_Y - 10f;
 
         this.walls = walls;
 
@@ -100,20 +108,39 @@ class Player extends GameObject {
         }
     }
 
-    public void movementAndroid (float delta) {
+    @Override
+    public void draw () {
 
-        if (Gdx.input.getAccelerometerY() > THRESHOLD_MIN_X_RIGHT) {
-            rectangle.setX(rectangle.getX() + delta * MOVE_SPEED * Gdx.input.getAccelerometerY());
+    }
+
+    public void movementAndroid (float delta) {
+        float movementX = delta * SPEED_X * Gdx.input.getAccelerometerY();
+        float movementForward = delta * SPEED_FORWARD * Gdx.input.getAccelerometerZ();
+        float movementBack = delta * SPEED_BACK * Gdx.input.getAccelerometerZ();
+
+        //RIGHT
+        getMyCorners(rectangle.x + movementX, rectangle.y);
+        if (Gdx.input.getAccelerometerY() > THRESHOLD_MIN_X_RIGHT && upright && downright) {
+            rectangle.setX(rectangle.getX() + movementX);
         }
-        if (Gdx.input.getAccelerometerY() < THRESHOLD_MIN_X_LEFT) {
-            rectangle.setX(rectangle.getX() + delta * MOVE_SPEED * Gdx.input.getAccelerometerY());
+
+        //LEFT
+        getMyCorners(rectangle.x + movementX, rectangle.y);
+        if (Gdx.input.getAccelerometerY() < THRESHOLD_MIN_X_LEFT && upleft && downleft) {
+            rectangle.setX(rectangle.getX() + movementX);
         }
-        if (Gdx.input.getAccelerometerZ() > THRESHOLD_MIN_Y_FORWARD) {
-            rectangle.setY(rectangle.getY() + delta * MOVE_SPEED * Gdx.input.getAccelerometerZ());
+
+        //UP
+        getMyCorners(rectangle.x, rectangle.y + movementForward + rectangle.height
+        );
+        if (Gdx.input.getAccelerometerZ() > THRESHOLD_MIN_Y_FORWARD && upleft && upright) {
+            rectangle.setY(rectangle.getY() + movementForward);
         }
-        if (Gdx.input.getAccelerometerZ() < THRESHOLD_MIN_Y_BACK) {
-            rectangle.setY(rectangle.getY() + delta * MOVE_SPEED * Gdx.input.getAccelerometerZ()
-                * BACKWARDS_MULTIPLIER);
+
+        //DOWN
+        getMyCorners(rectangle.x, rectangle.y + movementBack);
+        if (Gdx.input.getAccelerometerZ() < THRESHOLD_MIN_Y_BACK && downleft && downright) {
+            rectangle.setY(rectangle.getY() + movementBack);
         }
 
     }
