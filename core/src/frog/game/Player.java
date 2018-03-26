@@ -48,10 +48,10 @@ class Player extends GameObject {
     private final float SPEED_BACK = SPEED_X * 5f;
 
     public Player(TiledMapTileLayer walls) {
-        texture = new Texture("gfx/paahahmoluonnos.png");
+        texture = new Texture("gfx/sammakko.png");
         rectangle = new Rectangle(4f, 4f,
-                texture.getWidth() / 300f,
-                texture.getHeight() / 300f);
+                texture.getWidth() / 1f,
+                texture.getHeight() / 1f);
         moveSpeed = 256f;
 
         NEUTRAL_POINT_X = Gdx.input.getAccelerometerY();
@@ -109,10 +109,6 @@ class Player extends GameObject {
         }
     }
 
-    @Override
-    public void draw () {
-
-    }
 
     public void movementAndroid (float delta) {
         float movementX = delta * SPEED_X * Gdx.input.getAccelerometerY();
@@ -173,8 +169,8 @@ class Player extends GameObject {
     }
 
     public void returnToLastCheckpoint() {
-        this.rectangle.x = (getLastCheckpointX());
-        this.rectangle.y = (getLastCheckpointY());
+        this.setX(getLastCheckpointX());
+        this.setY(getLastCheckpointY());
         Gdx.app.log("TAG", "Returned to Checkpoint!");
     }
 }

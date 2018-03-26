@@ -15,7 +15,7 @@ public class EnemyFish extends Enemy {
     private boolean isMovingRight;
 
     public EnemyFish(float speed, float rangeAmount, boolean movingRight) {
-        this.texture = new Texture("gfx/kalaproto2.png");
+        this.texture = new Texture("gfx/kala.png");
         this.rectangle = new Rectangle(5f, 5f,
                 texture.getWidth() / 300f,
                 texture.getHeight() / 300f);

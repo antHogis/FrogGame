@@ -18,9 +18,9 @@ public class Checkpoint extends GameObject {
     }
 
     public void checkCollision(Player frog) {
-        if (this.rectangle.overlaps(frog.rectangle)) {
-            frog.setLastCheckpointX(this.rectangle.x + (texture.getWidth() / 2));
-            frog.setLastCheckpointY(this.rectangle.y + (texture.getHeight() / 2));
+        if (this.rectangle.overlaps(frog.rectangle) && this.isCleared == false) {
+            frog.setLastCheckpointX(this.rectangle.x);
+            frog.setLastCheckpointY(this.rectangle.y);
             Gdx.app.log("TAG", "Checkpoint Saved!");
             setIsCleared(true);
         }

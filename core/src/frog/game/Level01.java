@@ -54,32 +54,35 @@ public class Level01 implements Screen {
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
         frog = new Player((TiledMapTileLayer) tiledMap.getLayers().get("walls-texture"));
-        frog.setWidth(96);
-        frog.setHeight(96);
+        frog.setWidth(128);
+        frog.setHeight(64);
         frog.setX(32);
         frog.setY(32);
         frog.setLastCheckpointX(32);
         frog.setLastCheckpointY(32);
         fish = new EnemyFish(2f, 128f, true );
-        fish.setWidth(84);
-        fish.setHeight(76);
+        fish.setWidth(48);
+        fish.setHeight(32);
         fish.setX(280);
         fish.setY(128);
         fish2 = new EnemyFish(3f, 200f, true );
-        fish2.setWidth(84);
-        fish2.setHeight(76);
+        fish2.setWidth(48);
+        fish2.setHeight(32);
         fish2.setX(1080);
         fish2.setY(256);
-        fish3 = new EnemyFish(4f, 164f, true );
-        fish3.setWidth(84);
-        fish3.setHeight(76);
-        fish3.setX(720);
-        fish3.setY(64);
+        fish3 = new EnemyFish(30f, 600f, true );
+        fish3.setWidth(48);
+        fish3.setHeight(32);
+        fish3.setX(280);
+        fish3.setY(550);
         coin1 = new TimeCoin();
         coin1.setWidth(84);
         coin1.setHeight(76);
-        coin1.setX(256);
+        coin1.setX(280);
         coin1.setY(256);
+        check01 = new Checkpoint(314f, 314f);
+        check01.setWidth(84);
+        check01.setHeight(76);
 
     }
 
@@ -108,6 +111,7 @@ public class Level01 implements Screen {
         frog.moveTemporary();
 
         moveCamera();
+        check01.checkCollision(frog);
 
         tiledMapRenderer.render();
 
@@ -117,6 +121,7 @@ public class Level01 implements Screen {
         fish3.draw(batch);
         coin1.draw(batch);
         frog.draw(batch);
+        check01.draw(batch);
         batch.end();
 
         endLevel();
