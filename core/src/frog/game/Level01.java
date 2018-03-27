@@ -116,7 +116,7 @@ public class Level01 implements Screen {
         fish2.checkCollision(frog);
         fish3.moveLeftRight();
         fish3.checkCollision(frog);
-        frog.moveTemporary();
+        frog.moveTemporary(Gdx.graphics.getDeltaTime());
 
         moveCamera();
         check01.checkCollision(frog);
