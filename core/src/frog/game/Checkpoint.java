@@ -12,8 +12,8 @@ public class Checkpoint extends GameObject {
     private boolean isCleared;
 
     public Checkpoint(float x, float y) {
-        texture = new Texture("gfx/paahahmoluonnos.png");
-        rectangle = new Rectangle(x, y, texture.getWidth() / 250f, texture.getHeight() / 250f);
+        texture = new Texture("gfx/cp.png");
+        rectangle = new Rectangle(x, y, texture.getWidth(), texture.getHeight());
         isCleared = false;
     }
 
