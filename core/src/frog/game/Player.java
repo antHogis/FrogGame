@@ -5,8 +5,11 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 
 
 /**
@@ -16,6 +19,7 @@ import com.badlogic.gdx.math.Rectangle;
 class Player extends GameObject {
 
     private TiledMapTileLayer walls;
+    private TiledMap tiledMap;
     boolean upleft, upright, downleft, downright;
     private int TILE_DIMENSION = 32;
     private float moveSpeed;
@@ -38,16 +42,16 @@ class Player extends GameObject {
     private float THRESHOLD_MIN_X_RIGHT;
     private float THRESHOLD_MIN_X_LEFT;
 
-    private final float THRESHOLD_VALUE_Y_FORWARD = 3f;
+    private final float THRESHOLD_VALUE_Y_FORWARD = 2f;
     private final float THRESHOLD_VALUE_Y_BACK = 0.5f;
     private float THRESHOLD_MIN_Y_FORWARD;
     private float THRESHOLD_MIN_Y_BACK;
 
     private final float SPEED_X = 25f;
-    private final float SPEED_FORWARD = SPEED_X * 0.25f;
-    private final float SPEED_BACK = SPEED_X * 5f;
+    private final float SPEED_FORWARD = SPEED_X * 0.55f;
+    private final float SPEED_BACK = SPEED_X * 10f;
 
-    public Player(TiledMapTileLayer walls) {
+    public Player(TiledMapTileLayer walls, TiledMap tiledMap) {
         texture = new Texture("gfx/sammakko.png");
         rectangle = new Rectangle(4f, 4f,
                 texture.getWidth() / 1f,
@@ -70,7 +74,9 @@ class Player extends GameObject {
         Gdx.app.log("TAG", "Thresh back:" + THRESHOLD_MIN_Y_BACK );
 
         this.walls = walls;
+        this.tiledMap = tiledMap;
 
+        //imageSheet2D = TextureRegion.split();
     }
 
 
@@ -91,40 +97,64 @@ class Player extends GameObject {
     }
 
     //Väliaikainen liikkuminen testiä varten
-    public void moveTemporary() {
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            this.setX(this.getX() + this.moveSpeed * Gdx.graphics.getDeltaTime());
+    public void moveTemporary(float delta) {
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)
+                && !overlapsMapObject("walls-rectangle",
+                new Rectangle(this.rectangle.x+(moveSpeed*delta),
+                        this.rectangle.y,
+                        this.rectangle.width,
+                        this.rectangle.height))) {
+            this.setX(this.getX() + this.moveSpeed * delta);
         }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            this.setX(this.getX() - this.moveSpeed * Gdx.graphics.getDeltaTime());
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)
+                && !overlapsMapObject("walls-rectangle",
+                new Rectangle(this.rectangle.x-(moveSpeed*delta),
+                        this.rectangle.y,
+                        this.rectangle.width,
+                        this.rectangle.height))) {
+            this.setX(this.getX() - this.moveSpeed * delta);
+
         }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            this.setY(this.getY() + this.moveSpeed * Gdx.graphics.getDeltaTime());
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)
+                && !overlapsMapObject("walls-rectangle",
+                new Rectangle(this.rectangle.x,
+                        this.rectangle.y+(moveSpeed*delta),
+                        this.rectangle.width,
+                        this.rectangle.height))) {
+            this.setY(this.getY() + this.moveSpeed * delta);
+
         }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            this.setY(this.getY() - this.moveSpeed * Gdx.graphics.getDeltaTime());
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)
+                && !overlapsMapObject("walls-rectangle",
+                new Rectangle(this.rectangle.x,
+                        this.rectangle.y-(moveSpeed*delta),
+                        this.rectangle.width,
+                        this.rectangle.height))) {
+            this.setY(this.getY() - this.moveSpeed * delta);
+
         }
     }
 
-
+/*
     public void movementAndroid (float delta) {
-        float movementX = delta * SPEED_X * Gdx.input.getAccelerometerY();
+        float movementRight = delta * SPEED_X * Gdx.input.getAccelerometerY();
+        float movementLeft = delta * SPEED_X * Gdx.input.getAccelerometerY();
         float movementForward = delta * SPEED_FORWARD * Gdx.input.getAccelerometerZ();
         float movementBack = delta * SPEED_BACK * Gdx.input.getAccelerometerZ();
 
         //RIGHT
-        getMyCorners(rectangle.x + movementX, rectangle.y);
+        getMyCorners(rectangle.x + movementRight, rectangle.y);
         if (Gdx.input.getAccelerometerY() > THRESHOLD_MIN_X_RIGHT && upright && downright) {
-            rectangle.setX(rectangle.getX() + movementX);
+            rectangle.setX(rectangle.getX() + movementRight);
         }
 
         //LEFT
-        getMyCorners(rectangle.x + movementX, rectangle.y);
+        getMyCorners(rectangle.x + movementLeft, rectangle.y);
         if (Gdx.input.getAccelerometerY() < THRESHOLD_MIN_X_LEFT && upleft && downleft) {
-            rectangle.setX(rectangle.getX() + movementX);
+            rectangle.setX(rectangle.getX() + movementLeft);
         }
 
         //UP
@@ -141,7 +171,51 @@ class Player extends GameObject {
         }
 
     }
+ */
+    public void movementAndroid (float delta) {
+        float movementRight = delta * SPEED_X * Gdx.input.getAccelerometerY();
+        float movementLeft = delta * SPEED_X * Gdx.input.getAccelerometerY();
+        float movementForward = delta * SPEED_FORWARD * Gdx.input.getAccelerometerZ();
+        float movementBack = delta * SPEED_BACK * Gdx.input.getAccelerometerZ();
 
+        //RIGHT
+
+        if (Gdx.input.getAccelerometerY() > THRESHOLD_MIN_X_RIGHT
+                && !overlapsMapObject("walls-rectangle",
+                new Rectangle(this.rectangle.x+movementRight, this.rectangle.y,
+                        this.rectangle.width,
+                        this.rectangle.height))) {
+            rectangle.setX(rectangle.getX() + movementRight);
+        }
+
+        //LEFT
+        if (Gdx.input.getAccelerometerY() < THRESHOLD_MIN_X_LEFT
+                && !overlapsMapObject("walls-rectangle",
+                new Rectangle(this.rectangle.x+movementLeft, this.rectangle.y,
+                        this.rectangle.width,
+                        this.rectangle.height))) {
+            rectangle.setX(rectangle.getX() + movementLeft);
+        }
+
+        //UP
+        if (Gdx.input.getAccelerometerZ() > THRESHOLD_MIN_Y_FORWARD
+                && !overlapsMapObject("walls-rectangle",
+                new Rectangle(this.rectangle.x, this.rectangle.y + movementForward,
+                        this.rectangle.width,
+                        this.rectangle.height))) {
+            rectangle.setY(rectangle.getY() + movementForward);
+        }
+
+        //DOWN
+        if (Gdx.input.getAccelerometerZ() < THRESHOLD_MIN_Y_BACK 
+                && !overlapsMapObject("walls-rectangle",
+                new Rectangle(this.rectangle.x, this.rectangle.y + movementBack,
+                        this.rectangle.width,
+                        this.rectangle.height))) {
+            rectangle.setY(rectangle.getY() + movementBack);
+        }
+
+    }
     public void getMyCorners(float pX, float pY){
 
         float downYPos  = pY;
@@ -172,5 +246,16 @@ class Player extends GameObject {
         this.setX(getLastCheckpointX());
         this.setY(getLastCheckpointY());
         Gdx.app.log("TAG", "Returned to Checkpoint!");
+    }
+
+    private boolean overlapsMapObject (String path, Rectangle rectangle) {
+        Array<RectangleMapObject> mapObjects = tiledMap.getLayers().get(path).getObjects().getByType(RectangleMapObject.class);
+        for (RectangleMapObject mapObject : mapObjects) {
+            Rectangle mapObjectRectangle = mapObject.getRectangle();
+            if (rectangle.overlaps(mapObjectRectangle)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

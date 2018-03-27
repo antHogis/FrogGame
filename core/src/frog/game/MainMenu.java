@@ -3,6 +3,9 @@ package frog.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 /**
  * Created by Anton on 13.3.2018.
@@ -10,9 +13,15 @@ import com.badlogic.gdx.graphics.GL20;
 
 public class MainMenu implements Screen {
     private FrogMain host;
+    private Texture main;
+    private SpriteBatch batch;
+    private OrthographicCamera camera;
 
     public MainMenu(FrogMain host) {
         this.host = host;
+        main = new Texture(Gdx.files.internal("gfx/Menu.png"));
+        batch = host.getBatch();
+        camera = host.getCamera();
     }
 
     @Override
@@ -24,6 +33,10 @@ public class MainMenu implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        batch.begin();
+        batch.draw(main, 0, 0);
+        batch.end();
 
         if (Gdx.input.isTouched()) {
             Gdx.app.log("TAG", "Setting Screen");

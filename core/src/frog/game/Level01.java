@@ -2,6 +2,7 @@ package frog.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -28,6 +29,8 @@ public class Level01 implements Screen {
     private EnemyFish fish3;
     private TimeCoin coin1;
 
+    private Music bgMusic;
+
     private TiledMap tiledMap;
     private TiledMapRenderer tiledMapRenderer;
 
@@ -53,9 +56,9 @@ public class Level01 implements Screen {
         tiledMap = new TmxMapLoader().load("lvl/testMap.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
-        frog = new Player((TiledMapTileLayer) tiledMap.getLayers().get("walls-texture"));
-        frog.setWidth(128);
-        frog.setHeight(64);
+        frog = new Player((TiledMapTileLayer) tiledMap.getLayers().get("walls-texture"), tiledMap);
+        frog.setWidth(96);
+        frog.setHeight(35.625f);
         frog.setX(32);
         frog.setY(32);
         frog.setLastCheckpointX(32);
@@ -70,7 +73,7 @@ public class Level01 implements Screen {
         fish2.setHeight(32);
         fish2.setX(1080);
         fish2.setY(256);
-        fish3 = new EnemyFish(30f, 600f, true );
+        fish3 = new EnemyFish(5f, 600f, true );
         fish3.setWidth(48);
         fish3.setHeight(32);
         fish3.setX(280);
@@ -84,6 +87,11 @@ public class Level01 implements Screen {
         check01.setWidth(84);
         check01.setHeight(76);
 
+        /*
+        bgMusic = Gdx.audio.newMusic(Gdx.files.internal("../music/mariowater.mp3"));
+        bgMusic.setLooping(true);
+        bgMusic.setVolume(0.25f);
+        bgMusic.play();*/
     }
 
     @Override
@@ -119,7 +127,7 @@ public class Level01 implements Screen {
         fish.draw(batch);
         fish2.draw(batch);
         fish3.draw(batch);
-        coin1.draw(batch);
+        //coin1.draw(batch);
         frog.draw(batch);
         check01.draw(batch);
         batch.end();
@@ -175,13 +183,21 @@ public class Level01 implements Screen {
         }
     }
 
-    private void endLevel () {
-        Array<RectangleMapObject> endZones = tiledMap.getLayers().get("endzone-rectangle").getObjects().getByType(RectangleMapObject.class);
+    private boolean overlapsMapObject (String path) {
+        Array<RectangleMapObject> endZones = tiledMap.getLayers().get(path).getObjects().getByType(RectangleMapObject.class);
         for (RectangleMapObject endZone : endZones) {
             Rectangle endZoneRectangle = endZone.getRectangle();
             if (frog.rectangle.overlaps(endZoneRectangle)) {
-                host.setScreen(new MainMenu(host));
+                return true;
             }
         }
+        return false;
     }
+
+    private void endLevel() {
+        if (overlapsMapObject("endzone-rectangle")) {
+            host.setScreen(new MainMenu(host));
+        }
+    }
+
 }
