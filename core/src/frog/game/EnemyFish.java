@@ -25,7 +25,8 @@ public class EnemyFish extends Enemy {
         this.range = rangeAmount;
     }
 
-    public void moveLeftRight() {
+    @Override
+    public void movement() {
         if (isMovingRight && amountMoved < range) {
             this.setX(this.getX() + movementSpeed);
             this.amountMoved = this.amountMoved + this.movementSpeed;

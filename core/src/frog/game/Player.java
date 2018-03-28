@@ -20,8 +20,6 @@ class Player extends GameObject {
 
     private TiledMapTileLayer walls;
     private TiledMap tiledMap;
-    boolean upleft, upright, downleft, downright;
-    private int TILE_DIMENSION = 32;
     private float moveSpeed;
     private float lastCheckpointX;
     private float lastCheckpointY;
@@ -43,8 +41,8 @@ class Player extends GameObject {
     private float THRESHOLD_MIN_X_LEFT;
 
     private final float THRESHOLD_VALUE_Y_FORWARD = 2f;
-    private final float THRESHOLD_VALUE_Y_BACK = 0.5f;
     private float THRESHOLD_MIN_Y_FORWARD;
+    private final float THRESHOLD_VALUE_Y_BACK = 0.5f;
     private float THRESHOLD_MIN_Y_BACK;
 
     private final float SPEED_X = 25f;
@@ -138,7 +136,7 @@ class Player extends GameObject {
         }
     }
 
-/*
+
     public void movementAndroid (float delta) {
         float movementRight = delta * SPEED_X * Gdx.input.getAccelerometerY();
         float movementLeft = delta * SPEED_X * Gdx.input.getAccelerometerY();
@@ -146,43 +144,9 @@ class Player extends GameObject {
         float movementBack = delta * SPEED_BACK * Gdx.input.getAccelerometerZ();
 
         //RIGHT
-        getMyCorners(rectangle.x + movementRight, rectangle.y);
-        if (Gdx.input.getAccelerometerY() > THRESHOLD_MIN_X_RIGHT && upright && downright) {
-            rectangle.setX(rectangle.getX() + movementRight);
-        }
-
-        //LEFT
-        getMyCorners(rectangle.x + movementLeft, rectangle.y);
-        if (Gdx.input.getAccelerometerY() < THRESHOLD_MIN_X_LEFT && upleft && downleft) {
-            rectangle.setX(rectangle.getX() + movementLeft);
-        }
-
-        //UP
-        getMyCorners(rectangle.x, rectangle.y + movementForward + rectangle.height
-        );
-        if (Gdx.input.getAccelerometerZ() > THRESHOLD_MIN_Y_FORWARD && upleft && upright) {
-            rectangle.setY(rectangle.getY() + movementForward);
-        }
-
-        //DOWN
-        getMyCorners(rectangle.x, rectangle.y + movementBack);
-        if (Gdx.input.getAccelerometerZ() < THRESHOLD_MIN_Y_BACK && downleft && downright) {
-            rectangle.setY(rectangle.getY() + movementBack);
-        }
-
-    }
- */
-    public void movementAndroid (float delta) {
-        float movementRight = delta * SPEED_X * Gdx.input.getAccelerometerY();
-        float movementLeft = delta * SPEED_X * Gdx.input.getAccelerometerY();
-        float movementForward = delta * SPEED_FORWARD * Gdx.input.getAccelerometerZ();
-        float movementBack = delta * SPEED_BACK * Gdx.input.getAccelerometerZ();
-
-        //RIGHT
-
         if (Gdx.input.getAccelerometerY() > THRESHOLD_MIN_X_RIGHT
                 && !overlapsMapObject("walls-rectangle",
-                new Rectangle(this.rectangle.x+movementRight, this.rectangle.y,
+                    new Rectangle(this.rectangle.x+movementRight, this.rectangle.y,
                         this.rectangle.width,
                         this.rectangle.height))) {
             rectangle.setX(rectangle.getX() + movementRight);
@@ -191,7 +155,7 @@ class Player extends GameObject {
         //LEFT
         if (Gdx.input.getAccelerometerY() < THRESHOLD_MIN_X_LEFT
                 && !overlapsMapObject("walls-rectangle",
-                new Rectangle(this.rectangle.x+movementLeft, this.rectangle.y,
+                    new Rectangle(this.rectangle.x+movementLeft, this.rectangle.y,
                         this.rectangle.width,
                         this.rectangle.height))) {
             rectangle.setX(rectangle.getX() + movementLeft);
@@ -200,7 +164,7 @@ class Player extends GameObject {
         //UP
         if (Gdx.input.getAccelerometerZ() > THRESHOLD_MIN_Y_FORWARD
                 && !overlapsMapObject("walls-rectangle",
-                new Rectangle(this.rectangle.x, this.rectangle.y + movementForward,
+                    new Rectangle(this.rectangle.x, this.rectangle.y + movementForward,
                         this.rectangle.width,
                         this.rectangle.height))) {
             rectangle.setY(rectangle.getY() + movementForward);
@@ -209,27 +173,31 @@ class Player extends GameObject {
         //DOWN
         if (Gdx.input.getAccelerometerZ() < THRESHOLD_MIN_Y_BACK 
                 && !overlapsMapObject("walls-rectangle",
-                new Rectangle(this.rectangle.x, this.rectangle.y + movementBack,
+                    new Rectangle(this.rectangle.x, this.rectangle.y + movementBack,
                         this.rectangle.width,
                         this.rectangle.height))) {
             rectangle.setY(rectangle.getY() + movementBack);
         }
 
     }
-    public void getMyCorners(float pX, float pY){
-
-        float downYPos  = pY;
-        float upYPos    = rectangle.height + downYPos;
-
-        float leftXPos  = pX;
-        float rightXPos = rectangle.width  + leftXPos;
-
-        upleft    = isFree(leftXPos,  upYPos);
-        downleft  = isFree(leftXPos,  downYPos);
-        upright   = isFree(rightXPos, upYPos);
-        downright = isFree(rightXPos, downYPos);
+    private float getAdjustedX() {
+        //adjustedY = 0;
+        if(NEUTRAL_POINT_X < 0) {
+            return Gdx.input.getAccelerometerY() + Math.abs(NEUTRAL_POINT_X);
+        } else {
+            return Gdx.input.getAccelerometerY() - NEUTRAL_POINT_X;
+        }
     }
 
+    private float getAdjustedY() {
+        //adjustedZ = 0;
+        if(NEUTRAL_POINT_Y < 0) {
+            return Gdx.input.getAccelerometerZ() + Math.abs(NEUTRAL_POINT_Y);
+        } else {
+            return Gdx.input.getAccelerometerZ() - NEUTRAL_POINT_Y;
+        }
+    }
+/*
     private boolean isFree(float x, float y) {
 
         int indexX = (int) x / TILE_DIMENSION;
@@ -240,7 +208,7 @@ class Player extends GameObject {
         } else {
             return true;
         }
-    }
+    }*/
 
     public void returnToLastCheckpoint() {
         this.setX(getLastCheckpointX());
@@ -250,6 +218,7 @@ class Player extends GameObject {
 
     private boolean overlapsMapObject (String path, Rectangle rectangle) {
         Array<RectangleMapObject> mapObjects = tiledMap.getLayers().get(path).getObjects().getByType(RectangleMapObject.class);
+
         for (RectangleMapObject mapObject : mapObjects) {
             Rectangle mapObjectRectangle = mapObject.getRectangle();
             if (rectangle.overlaps(mapObjectRectangle)) {

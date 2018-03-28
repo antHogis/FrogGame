@@ -24,6 +24,7 @@ public class Level01 implements Screen {
     private SpriteBatch batch;
     private Player frog;
     private Checkpoint check01;
+    private Array<Enemy> enemies;
     private EnemyFish fish;
     private EnemyFish fish2;
     private EnemyFish fish3;
@@ -48,7 +49,7 @@ public class Level01 implements Screen {
     public Level01(FrogMain host) {
         this.host = host;
         batch = host.getBatch();
-        camera = host.getCamera();
+        camera = new OrthographicCamera();
         camera.setToOrtho(false,
                 WINDOW_WIDTH,
                 WINDOW_HEIGHT);
@@ -87,11 +88,15 @@ public class Level01 implements Screen {
         check01.setWidth(84);
         check01.setHeight(76);
 
-        /*
-        bgMusic = Gdx.audio.newMusic(Gdx.files.internal("../music/mariowater.mp3"));
+        enemies = new Array<Enemy>();
+        enemies.add(fish);
+        enemies.add(fish2);
+        enemies.add(fish3);
+
+        bgMusic = Gdx.audio.newMusic(Gdx.files.internal("music/mariowater.mp3"));
         bgMusic.setLooping(true);
         bgMusic.setVolume(0.25f);
-        bgMusic.play();*/
+        //bgMusic.play();
     }
 
     @Override
@@ -108,14 +113,9 @@ public class Level01 implements Screen {
         tiledMapRenderer.setView(camera);
         batch.setProjectionMatrix(camera.combined);
 
+        moveEnemies();
 
         frog.movementAndroid(Gdx.graphics.getDeltaTime());
-        fish.moveLeftRight();
-        fish.checkCollision(frog);
-        fish2.moveLeftRight();
-        fish2.checkCollision(frog);
-        fish3.moveLeftRight();
-        fish3.checkCollision(frog);
         frog.moveTemporary(Gdx.graphics.getDeltaTime());
 
         moveCamera();
@@ -124,14 +124,11 @@ public class Level01 implements Screen {
         tiledMapRenderer.render();
 
         batch.begin();
-        fish.draw(batch);
-        fish2.draw(batch);
-        fish3.draw(batch);
-        //coin1.draw(batch);
-        frog.draw(batch);
+        drawEnemies();
         check01.draw(batch);
         batch.end();
 
+        respawnFromWall();
         endLevel();
     }
 
@@ -157,8 +154,7 @@ public class Level01 implements Screen {
 
     @Override
     public void dispose() {
-        host.dispose();
-
+        batch.dispose();
     }
 
     private void moveCamera () {
@@ -184,10 +180,10 @@ public class Level01 implements Screen {
     }
 
     private boolean overlapsMapObject (String path) {
-        Array<RectangleMapObject> endZones = tiledMap.getLayers().get(path).getObjects().getByType(RectangleMapObject.class);
-        for (RectangleMapObject endZone : endZones) {
-            Rectangle endZoneRectangle = endZone.getRectangle();
-            if (frog.rectangle.overlaps(endZoneRectangle)) {
+        Array<RectangleMapObject> mapObjects = tiledMap.getLayers().get(path).getObjects().getByType(RectangleMapObject.class);
+        for (RectangleMapObject mapObject : mapObjects) {
+            Rectangle mapObjectRectangle = mapObject.getRectangle();
+            if (frog.rectangle.overlaps(mapObjectRectangle)) {
                 return true;
             }
         }
@@ -197,6 +193,25 @@ public class Level01 implements Screen {
     private void endLevel() {
         if (overlapsMapObject("endzone-rectangle")) {
             host.setScreen(new MainMenu(host));
+        }
+    }
+
+    private void respawnFromWall () {
+        if (overlapsMapObject("walls-rectangle")) {
+            frog.returnToLastCheckpoint();
+        }
+    }
+
+    private void moveEnemies() {
+        for(Enemy enemy : enemies) {
+            enemy.movement();
+            enemy.checkCollision(frog);
+        }
+    }
+
+    private void drawEnemies() {
+        for(Enemy enemy : enemies) {
+            enemy.draw(batch);
         }
     }
 

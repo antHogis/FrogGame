@@ -22,17 +22,19 @@ public class MainMenu implements Screen {
         main = new Texture(Gdx.files.internal("gfx/Menu.png"));
         batch = host.getBatch();
         camera = host.getCamera();
+        camera.setToOrtho(false, host.getVIEWPORT_WIDTH(), host.getVIEWPORT_HEIGHT());
     }
 
     @Override
     public void show() {
-
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        batch.setProjectionMatrix(camera.combined);
 
         batch.begin();
         batch.draw(main, 0, 0);

@@ -17,4 +17,9 @@ public abstract class Enemy extends GameObject {
             frog.returnToLastCheckpoint();
         }
     }
+
+    //Dummy method to be overridden
+    public void movement() {
+
+    }
 }

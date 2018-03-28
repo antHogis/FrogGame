@@ -7,12 +7,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class FrogMain extends Game {
 	private SpriteBatch batch;
     private OrthographicCamera camera;
+    private int VIEWPORT_WIDTH = 1280;
+    private int VIEWPORT_HEIGHT = 800;
 	
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 16f, 10f);
+        camera.setToOrtho(false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
         setScreen(new MainMenu(this));
 	}
 
@@ -32,5 +34,13 @@ public class FrogMain extends Game {
 
     public OrthographicCamera getCamera() {
         return camera;
+    }
+
+    public int getVIEWPORT_WIDTH() {
+        return VIEWPORT_WIDTH;
+    }
+
+    public int getVIEWPORT_HEIGHT() {
+        return VIEWPORT_HEIGHT;
     }
 }
