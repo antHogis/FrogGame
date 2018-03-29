@@ -14,6 +14,13 @@ abstract class GameObject {
     Rectangle rectangle;
     Texture texture;
 
+    private Texture textureSheet;
+    private TextureRegion [][] textureSheet2D;
+    private TextureRegion [] textureSheet1D;
+    private int SHEET_COLUMNS;
+    private int SHEET_ROWS;
+
+
     public Texture getTexture() {
         return this.texture;
     }

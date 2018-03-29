@@ -18,7 +18,6 @@ import com.badlogic.gdx.utils.Array;
 
 class Player extends GameObject {
 
-    private TiledMapTileLayer walls;
     private TiledMap tiledMap;
     private float moveSpeed;
     private float lastCheckpointX;
@@ -36,20 +35,18 @@ class Player extends GameObject {
     private float NEUTRAL_POINT_X;
     private float NEUTRAL_POINT_Y;
 
-    private final float THRESHOLD_VALUE_X = 1.5f;
-    private float THRESHOLD_MIN_X_RIGHT;
-    private float THRESHOLD_MIN_X_LEFT;
+    private final float THRESHOLD_VALUE = 0.5f;
 
-    private final float THRESHOLD_VALUE_Y_FORWARD = 2f;
-    private float THRESHOLD_MIN_Y_FORWARD;
-    private final float THRESHOLD_VALUE_Y_BACK = 0.5f;
-    private float THRESHOLD_MIN_Y_BACK;
+    private float THRESHOLD_MIN_X_RIGHT = THRESHOLD_VALUE;
+    private float THRESHOLD_MIN_X_LEFT = -1*THRESHOLD_VALUE;
+    private float THRESHOLD_MIN_Y_FORWARD = THRESHOLD_VALUE;
+    private float THRESHOLD_MIN_Y_BACK = (-1*THRESHOLD_VALUE) + 0.15f;
 
-    private final float SPEED_X = 25f;
-    private final float SPEED_FORWARD = SPEED_X * 0.55f;
-    private final float SPEED_BACK = SPEED_X * 10f;
+    private final float SPEED_X = 50f;
+    private final float SPEED_UP = SPEED_X - 10;
+    private final float SPEED_DOWN = SPEED_X + 10;
 
-    public Player(TiledMapTileLayer walls, TiledMap tiledMap) {
+    public Player(TiledMap tiledMap) {
         texture = new Texture("gfx/sammakko.png");
         rectangle = new Rectangle(4f, 4f,
                 texture.getWidth() / 1f,
@@ -61,17 +58,16 @@ class Player extends GameObject {
         Gdx.app.log("TAG", "x:" + NEUTRAL_POINT_X);
         Gdx.app.log("TAG", "y:" + NEUTRAL_POINT_Y);
 
-        THRESHOLD_MIN_X_RIGHT = NEUTRAL_POINT_X + THRESHOLD_VALUE_X;
-        THRESHOLD_MIN_X_LEFT = NEUTRAL_POINT_X - THRESHOLD_VALUE_X;
+        //THRESHOLD_MIN_X_RIGHT = NEUTRAL_POINT_X + THRESHOLD_VALUE;
+        //THRESHOLD_MIN_X_LEFT = NEUTRAL_POINT_X - THRESHOLD_VALUE;
         Gdx.app.log("TAG", "Thresh right:" + THRESHOLD_MIN_X_RIGHT );
         Gdx.app.log("TAG", "Thresh left:" + THRESHOLD_MIN_X_LEFT );
 
-        THRESHOLD_MIN_Y_FORWARD = NEUTRAL_POINT_Y + THRESHOLD_VALUE_Y_FORWARD;
-        THRESHOLD_MIN_Y_BACK = NEUTRAL_POINT_Y;
+        //THRESHOLD_MIN_Y_FORWARD = NEUTRAL_POINT_Y + THRESHOLD_VALUE;
+        //THRESHOLD_MIN_Y_BACK = NEUTRAL_POINT_Y - THRESHOLD_VALUE;
         Gdx.app.log("TAG", "Thresh forw:" + THRESHOLD_MIN_Y_FORWARD );
         Gdx.app.log("TAG", "Thresh back:" + THRESHOLD_MIN_Y_BACK );
 
-        this.walls = walls;
         this.tiledMap = tiledMap;
 
         //imageSheet2D = TextureRegion.split();
@@ -138,13 +134,13 @@ class Player extends GameObject {
 
 
     public void movementAndroid (float delta) {
-        float movementRight = delta * SPEED_X * Gdx.input.getAccelerometerY();
-        float movementLeft = delta * SPEED_X * Gdx.input.getAccelerometerY();
-        float movementForward = delta * SPEED_FORWARD * Gdx.input.getAccelerometerZ();
-        float movementBack = delta * SPEED_BACK * Gdx.input.getAccelerometerZ();
+        float movementRight = delta * SPEED_X * getAdjustedX();
+        float movementLeft = movementRight;
+        float movementForward = delta * SPEED_UP * getAdjustedY();
+        float movementBack = delta * SPEED_DOWN * getAdjustedY();
 
         //RIGHT
-        if (Gdx.input.getAccelerometerY() > THRESHOLD_MIN_X_RIGHT
+        if (getAdjustedX()> THRESHOLD_MIN_X_RIGHT
                 && !overlapsMapObject("walls-rectangle",
                     new Rectangle(this.rectangle.x+movementRight, this.rectangle.y,
                         this.rectangle.width,
@@ -153,7 +149,7 @@ class Player extends GameObject {
         }
 
         //LEFT
-        if (Gdx.input.getAccelerometerY() < THRESHOLD_MIN_X_LEFT
+        if (getAdjustedX() < THRESHOLD_MIN_X_LEFT
                 && !overlapsMapObject("walls-rectangle",
                     new Rectangle(this.rectangle.x+movementLeft, this.rectangle.y,
                         this.rectangle.width,
@@ -162,7 +158,7 @@ class Player extends GameObject {
         }
 
         //UP
-        if (Gdx.input.getAccelerometerZ() > THRESHOLD_MIN_Y_FORWARD
+        if (getAdjustedY() > THRESHOLD_MIN_Y_FORWARD
                 && !overlapsMapObject("walls-rectangle",
                     new Rectangle(this.rectangle.x, this.rectangle.y + movementForward,
                         this.rectangle.width,
@@ -171,7 +167,7 @@ class Player extends GameObject {
         }
 
         //DOWN
-        if (Gdx.input.getAccelerometerZ() < THRESHOLD_MIN_Y_BACK 
+        if (getAdjustedY() < THRESHOLD_MIN_Y_BACK
                 && !overlapsMapObject("walls-rectangle",
                     new Rectangle(this.rectangle.x, this.rectangle.y + movementBack,
                         this.rectangle.width,
@@ -181,34 +177,12 @@ class Player extends GameObject {
 
     }
     private float getAdjustedX() {
-        //adjustedY = 0;
-        if(NEUTRAL_POINT_X < 0) {
-            return Gdx.input.getAccelerometerY() + Math.abs(NEUTRAL_POINT_X);
-        } else {
-            return Gdx.input.getAccelerometerY() - NEUTRAL_POINT_X;
-        }
+        return Gdx.input.getAccelerometerY() - NEUTRAL_POINT_X;
     }
 
     private float getAdjustedY() {
-        //adjustedZ = 0;
-        if(NEUTRAL_POINT_Y < 0) {
-            return Gdx.input.getAccelerometerZ() + Math.abs(NEUTRAL_POINT_Y);
-        } else {
-            return Gdx.input.getAccelerometerZ() - NEUTRAL_POINT_Y;
-        }
+        return Gdx.input.getAccelerometerZ() - NEUTRAL_POINT_Y;
     }
-/*
-    private boolean isFree(float x, float y) {
-
-        int indexX = (int) x / TILE_DIMENSION;
-        int indexY = (int) y / TILE_DIMENSION;
-
-        if(walls.getCell(indexX, indexY) != null) {
-            return false;
-        } else {
-            return true;
-        }
-    }*/
 
     public void returnToLastCheckpoint() {
         this.setX(getLastCheckpointX());

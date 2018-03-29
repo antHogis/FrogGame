@@ -19,7 +19,7 @@ import com.badlogic.gdx.utils.Array;
  * Created by Anton on 13.3.2018.
  */
 
-public class Level01 implements Screen {
+public class Level implements Screen {
     private FrogMain host;
     private SpriteBatch batch;
     private Player frog;
@@ -46,7 +46,7 @@ public class Level01 implements Screen {
     private final int WORLD_WIDTH_PIXELS = TILE_AMOUNT_WIDTH * TILE_WIDTH;
     private final int WORLD_HEIGHT_PIXELS = TILE_AMOUNT_HEIGHT * TILE_HEIGHT;
 
-    public Level01(FrogMain host) {
+    public Level(FrogMain host, String levelPath) {
         this.host = host;
         batch = host.getBatch();
         camera = new OrthographicCamera();
@@ -54,10 +54,10 @@ public class Level01 implements Screen {
                 WINDOW_WIDTH,
                 WINDOW_HEIGHT);
 
-        tiledMap = new TmxMapLoader().load("lvl/testMap.tmx");
+        tiledMap = new TmxMapLoader().load(levelPath);
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
-        frog = new Player((TiledMapTileLayer) tiledMap.getLayers().get("walls-texture"), tiledMap);
+        frog = new Player(tiledMap);
         frog.setWidth(96);
         frog.setHeight(35.625f);
         frog.setX(32);
@@ -124,6 +124,7 @@ public class Level01 implements Screen {
         tiledMapRenderer.render();
 
         batch.begin();
+        frog.draw(batch);
         drawEnemies();
         check01.draw(batch);
         batch.end();

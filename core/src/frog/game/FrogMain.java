@@ -7,8 +7,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class FrogMain extends Game {
 	private SpriteBatch batch;
     private OrthographicCamera camera;
-    private int VIEWPORT_WIDTH = 1280;
-    private int VIEWPORT_HEIGHT = 800;
+    private final int VIEWPORT_WIDTH = 1280;
+    private final int VIEWPORT_HEIGHT = 800;
 	
 	@Override
 	public void create () {
