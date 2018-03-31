@@ -37,20 +37,21 @@ class Player extends GameObject {
 
     private final float THRESHOLD_VALUE = 0.5f;
 
-    private float THRESHOLD_MIN_X_RIGHT = THRESHOLD_VALUE;
-    private float THRESHOLD_MIN_X_LEFT = -1*THRESHOLD_VALUE;
-    private float THRESHOLD_MIN_Y_FORWARD = THRESHOLD_VALUE;
-    private float THRESHOLD_MIN_Y_BACK = (-1*THRESHOLD_VALUE) + 0.15f;
+    private final float THRESHOLD_MIN_X_RIGHT = THRESHOLD_VALUE;
+    private final float THRESHOLD_MIN_X_LEFT = -1*THRESHOLD_VALUE;
+    private final float THRESHOLD_MIN_Y_FORWARD = THRESHOLD_VALUE + 0.1f;
+    private final float THRESHOLD_MIN_Y_BACK = (-1*THRESHOLD_VALUE) + 0.15f;
 
     private final float SPEED_X = 50f;
     private final float SPEED_UP = SPEED_X - 10;
     private final float SPEED_DOWN = SPEED_X + 10;
 
-    public Player(TiledMap tiledMap) {
+    public Player(TiledMap tiledMap, int TILE_DIMENSION) {
+        //Tekstuurin koko 512x190px
         texture = new Texture("gfx/sammakko.png");
         rectangle = new Rectangle(4f, 4f,
-                texture.getWidth() / 1f,
-                texture.getHeight() / 1f);
+                TILE_DIMENSION * 2,
+                (texture.getWidth()*TILE_DIMENSION*2)/texture.getHeight());
         moveSpeed = 256f;
 
         NEUTRAL_POINT_X = Gdx.input.getAccelerometerY();
@@ -200,5 +201,8 @@ class Player extends GameObject {
             }
         }
         return false;
+    }
+    private void getSpawnPoint() {
+        
     }
 }

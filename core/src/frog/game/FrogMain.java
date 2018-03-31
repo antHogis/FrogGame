@@ -9,6 +9,7 @@ public class FrogMain extends Game {
     private OrthographicCamera camera;
     private final int VIEWPORT_WIDTH = 1280;
     private final int VIEWPORT_HEIGHT = 800;
+    private final int TILE_DIMENSION = 128;
 	
 	@Override
 	public void create () {
@@ -42,5 +43,9 @@ public class FrogMain extends Game {
 
     public int getVIEWPORT_HEIGHT() {
         return VIEWPORT_HEIGHT;
+    }
+
+    public int getTILE_DIMENSION() {
+        return TILE_DIMENSION;
     }
 }

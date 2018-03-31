@@ -35,35 +35,30 @@ public class Level implements Screen {
     private TiledMap tiledMap;
     private TiledMapRenderer tiledMapRenderer;
 
-    private final int TILE_WIDTH = 32;
-    private final int TILE_HEIGHT = 32;
+    private final int TILE_DIMENSION = 128;
+
     private final int TILE_AMOUNT_WIDTH = 50;
     private final int TILE_AMOUNT_HEIGHT = 30;
 
     private OrthographicCamera camera;
-    private final int WINDOW_WIDTH = 640;
-    private final int WINDOW_HEIGHT = 400;
-    private final int WORLD_WIDTH_PIXELS = TILE_AMOUNT_WIDTH * TILE_WIDTH;
-    private final int WORLD_HEIGHT_PIXELS = TILE_AMOUNT_HEIGHT * TILE_HEIGHT;
+    private final int WINDOW_WIDTH_PIXELS = 2048;
+    private final int WINDOW_HEIGHT_PIXELS = 1600;
+    private final int WORLD_WIDTH_PIXELS = TILE_AMOUNT_WIDTH * TILE_DIMENSION;
+    private final int WORLD_HEIGHT_PIXELS = TILE_AMOUNT_HEIGHT * TILE_DIMENSION;
 
     public Level(FrogMain host, String levelPath) {
         this.host = host;
         batch = host.getBatch();
         camera = new OrthographicCamera();
         camera.setToOrtho(false,
-                WINDOW_WIDTH,
-                WINDOW_HEIGHT);
+                WINDOW_WIDTH_PIXELS,
+                WINDOW_HEIGHT_PIXELS);
 
         tiledMap = new TmxMapLoader().load(levelPath);
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
-        frog = new Player(tiledMap);
-        frog.setWidth(96);
-        frog.setHeight(35.625f);
-        frog.setX(32);
-        frog.setY(32);
-        frog.setLastCheckpointX(32);
-        frog.setLastCheckpointY(32);
+        frog = new Player(tiledMap, host.getTILE_DIMENSION());
+        /*
         fish = new EnemyFish(2f, 128f, true );
         fish.setWidth(48);
         fish.setHeight(32);
@@ -91,12 +86,13 @@ public class Level implements Screen {
         enemies = new Array<Enemy>();
         enemies.add(fish);
         enemies.add(fish2);
-        enemies.add(fish3);
+        enemies.add(fish3);*/
 
         bgMusic = Gdx.audio.newMusic(Gdx.files.internal("music/mariowater.mp3"));
         bgMusic.setLooping(true);
         bgMusic.setVolume(0.25f);
         //bgMusic.play();
+        spawnAtStart();
     }
 
     @Override
@@ -113,20 +109,20 @@ public class Level implements Screen {
         tiledMapRenderer.setView(camera);
         batch.setProjectionMatrix(camera.combined);
 
-        moveEnemies();
+        //moveEnemies();
 
         frog.movementAndroid(Gdx.graphics.getDeltaTime());
         frog.moveTemporary(Gdx.graphics.getDeltaTime());
 
         moveCamera();
-        check01.checkCollision(frog);
+        //check01.checkCollision(frog);
 
         tiledMapRenderer.render();
 
         batch.begin();
         frog.draw(batch);
-        drawEnemies();
-        check01.draw(batch);
+        //drawEnemies();
+        //check01.draw(batch);
         batch.end();
 
         respawnFromWall();
@@ -163,20 +159,20 @@ public class Level implements Screen {
                 frog.getY(),
                 0);
 
-        if(camera.position.x < WINDOW_WIDTH / 2){
-            camera.position.x = WINDOW_WIDTH / 2;
+        if(camera.position.x < WINDOW_WIDTH_PIXELS / 2){
+            camera.position.x = WINDOW_WIDTH_PIXELS / 2;
         }
 
-        if(camera.position.y > WORLD_HEIGHT_PIXELS - WINDOW_HEIGHT / 2) {
-            camera.position.y = WORLD_HEIGHT_PIXELS - WINDOW_HEIGHT / 2;
+        if(camera.position.y > WORLD_HEIGHT_PIXELS - WINDOW_HEIGHT_PIXELS / 2) {
+            camera.position.y = WORLD_HEIGHT_PIXELS - WINDOW_HEIGHT_PIXELS / 2;
         }
 
-        if(camera.position.y < WINDOW_HEIGHT / 2) {
-            camera.position.y = WINDOW_HEIGHT / 2;
+        if(camera.position.y < WINDOW_HEIGHT_PIXELS / 2) {
+            camera.position.y = WINDOW_HEIGHT_PIXELS / 2;
         }
 
-        if(camera.position.x > WORLD_WIDTH_PIXELS - WINDOW_WIDTH / 2f) {
-            camera.position.x = WORLD_WIDTH_PIXELS - WINDOW_WIDTH / 2f;
+        if(camera.position.x > WORLD_WIDTH_PIXELS - WINDOW_WIDTH_PIXELS / 2f) {
+            camera.position.x = WORLD_WIDTH_PIXELS - WINDOW_WIDTH_PIXELS / 2f;
         }
     }
 
@@ -215,5 +211,16 @@ public class Level implements Screen {
             enemy.draw(batch);
         }
     }
+
+    private void spawnAtStart() {
+        Array<RectangleMapObject> startPoints = tiledMap.getLayers().get("frog-spawn-rectangle").getObjects().getByType(RectangleMapObject.class);
+        for (RectangleMapObject startPoint : startPoints) {
+            frog.setX(startPoint.getRectangle().getX());
+            frog.setY(startPoint.getRectangle().getY());
+            frog.setLastCheckpointX(frog.getX());
+            frog.setLastCheckpointY(frog.getY());
+        }
+    }
+
 
 }
