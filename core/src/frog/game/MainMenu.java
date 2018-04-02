@@ -42,7 +42,13 @@ public class MainMenu implements Screen {
 
         if (Gdx.input.isTouched()) {
             Gdx.app.log("TAG", "Setting Screen");
-            host.setScreen(new Level(this.host, "lvl/piialevel.tmx"));
+            host.setScreen(new Level(this.host,
+                    "lvl/piialevel.tmx",
+                    1,
+                    1,
+                    1,
+                    0,
+                    2));
         }
 
     }

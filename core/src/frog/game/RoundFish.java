@@ -8,21 +8,20 @@ import com.badlogic.gdx.math.Rectangle;
  * Created by Lauri on 24.3.2018.
  */
 
-public class EnemyFish extends Enemy {
+public class RoundFish extends Enemy {
     private float amountMoved;
     private float movementSpeed;
     private float range;
     private boolean isMovingRight;
 
-    public EnemyFish(float speed, float rangeAmount, boolean movingRight) {
+    public RoundFish() {
         this.texture = new Texture("gfx/kala.png");
         this.rectangle = new Rectangle(5f, 5f,
                 texture.getWidth() / 300f,
                 texture.getHeight() / 300f);
         this.amountMoved = 0f;
-        this.movementSpeed = speed;
-        this.isMovingRight = movingRight;
-        this.range = rangeAmount;
+        this.movementSpeed = 40f;
+        this.isMovingRight = true;
     }
 
     @Override

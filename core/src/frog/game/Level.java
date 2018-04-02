@@ -25,15 +25,17 @@ public class Level implements Screen {
     private Player frog;
     private Checkpoint check01;
     private Array<Enemy> enemies;
-    private EnemyFish fish;
-    private EnemyFish fish2;
-    private EnemyFish fish3;
     private TimeCoin coin1;
 
     private Music bgMusic;
 
     private TiledMap tiledMap;
     private TiledMapRenderer tiledMapRenderer;
+    private final int AMOUNT_ROUNDFISH;
+    private final int AMOUNT_FISHLONG;
+    private final int AMOUNT_OCTOPUS1;
+    private final int AMOUNT_OCTOPUS2;
+    private final int AMOUNT_CHECKPOINT;
 
     private final int TILE_DIMENSION = 128;
 
@@ -46,7 +48,13 @@ public class Level implements Screen {
     private final int WORLD_WIDTH_PIXELS = TILE_AMOUNT_WIDTH * TILE_DIMENSION;
     private final int WORLD_HEIGHT_PIXELS = TILE_AMOUNT_HEIGHT * TILE_DIMENSION;
 
-    public Level(FrogMain host, String levelPath) {
+    public Level(FrogMain host,
+                 String levelPath,
+                 int AMOUNT_ROUNDFISH,
+                 int AMOUNT_FISHLONG,
+                 int AMOUNT_OCTOPUS1,
+                 int AMOUNT_OCTOPUS2,
+                 int AMOUNT_CHECKPOINT) {
         this.host = host;
         batch = host.getBatch();
         camera = new OrthographicCamera();
@@ -59,17 +67,20 @@ public class Level implements Screen {
 
         frog = new Player(tiledMap, host.getTILE_DIMENSION());
 
-        /*
+        this.AMOUNT_ROUNDFISH = AMOUNT_ROUNDFISH;
+        this.AMOUNT_FISHLONG = AMOUNT_FISHLONG;
+        this.AMOUNT_OCTOPUS1 = AMOUNT_OCTOPUS1;
+        this.AMOUNT_OCTOPUS2 = AMOUNT_OCTOPUS2;
+        this.AMOUNT_CHECKPOINT = AMOUNT_CHECKPOINT;
+
         enemies = new Array<Enemy>();
-        enemies.add(fish);
-        enemies.add(fish2);
-        enemies.add(fish3);*/
+        addEnemies();
 
         bgMusic = Gdx.audio.newMusic(Gdx.files.internal("music/mariowater.mp3"));
         bgMusic.setLooping(true);
         bgMusic.setVolume(0.25f);
         //bgMusic.play();
-        spawnAtStart();
+        spawnFrog();
     }
 
     @Override
@@ -189,14 +200,37 @@ public class Level implements Screen {
         }
     }
 
-    private void spawnAtStart() {
-        Array<RectangleMapObject> startPoints = tiledMap.getLayers().get("frog-spawn-rectangle").getObjects().getByType(RectangleMapObject.class);
+    private void spawnFrog() {
+        Array<RectangleMapObject> startPoints = 
+                tiledMap.getLayers().get("frog-spawn-rectangle").getObjects().getByType(RectangleMapObject.class);
         for (RectangleMapObject startPoint : startPoints) {
             frog.setX(startPoint.getRectangle().getX());
             frog.setY(startPoint.getRectangle().getY());
-            //frog.setLastCheckpointX(frog.getX());
-            //frog.setLastCheckpointY(frog.getY());
+            frog.setLastCheckpointX(frog.getX());
+            frog.setLastCheckpointY(frog.getY());
         }
+    }
+
+    private void addEnemies() {
+        //Adding enemies of the type RoundFish
+        for (int i=1; i<=AMOUNT_ROUNDFISH; i++) {
+            enemies.add(new RoundFish());
+
+            Array<RectangleMapObject> startPoints = 
+                    tiledMap.getLayers().get("roundfish-"+i+"-start").getObjects().getByType(RectangleMapObject.class);
+            for (RectangleMapObject startPoint : startPoints) {
+                enemies.peek().setX(startPoint.getRectangle().getX());
+                enemies.peek().setY(startPoint.getRectangle().getY());
+            }
+
+            Array<RectangleMapObject> endPoints =
+                    tiledMap.getLayers().get("roundfish-"+i+"-end").getObjects().getByType(RectangleMapObject.class);
+            for (RectangleMapObject endPoint : endPoints) {
+                enemies.peek().setMOVEMENT_ENDPOINT_X(endPoint.getRectangle().getX());
+                enemies.peek().setMOVEMENT_ENDPOINT_Y(endPoint.getRectangle().getY());
+            }
+        }
+
     }
 
 
