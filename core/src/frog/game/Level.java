@@ -58,31 +58,8 @@ public class Level implements Screen {
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
         frog = new Player(tiledMap, host.getTILE_DIMENSION());
-        /*
-        fish = new EnemyFish(2f, 128f, true );
-        fish.setWidth(48);
-        fish.setHeight(32);
-        fish.setX(280);
-        fish.setY(128);
-        fish2 = new EnemyFish(3f, 200f, true );
-        fish2.setWidth(48);
-        fish2.setHeight(32);
-        fish2.setX(1080);
-        fish2.setY(256);
-        fish3 = new EnemyFish(5f, 600f, true );
-        fish3.setWidth(48);
-        fish3.setHeight(32);
-        fish3.setX(280);
-        fish3.setY(550);
-        coin1 = new TimeCoin();
-        coin1.setWidth(84);
-        coin1.setHeight(76);
-        coin1.setX(280);
-        coin1.setY(256);
-        check01 = new Checkpoint(314f, 314f);
-        check01.setWidth(84);
-        check01.setHeight(76);
 
+        /*
         enemies = new Array<Enemy>();
         enemies.add(fish);
         enemies.add(fish2);
@@ -217,8 +194,8 @@ public class Level implements Screen {
         for (RectangleMapObject startPoint : startPoints) {
             frog.setX(startPoint.getRectangle().getX());
             frog.setY(startPoint.getRectangle().getY());
-            frog.setLastCheckpointX(frog.getX());
-            frog.setLastCheckpointY(frog.getY());
+            //frog.setLastCheckpointX(frog.getX());
+            //frog.setLastCheckpointY(frog.getY());
         }
     }
 

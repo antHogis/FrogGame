@@ -50,9 +50,10 @@ class Player extends GameObject {
         //Tekstuurin koko 512x190px
         texture = new Texture("gfx/sammakko.png");
         rectangle = new Rectangle(4f, 4f,
-                TILE_DIMENSION * 2,
-                (texture.getWidth()*TILE_DIMENSION*2)/texture.getHeight());
-        moveSpeed = 256f;
+                256, 128);
+        //TILE_DIMENSION * 2,
+        //(texture.getWidth()*TILE_DIMENSION*2)/texture.getHeight())
+        moveSpeed = 512f;
 
         NEUTRAL_POINT_X = Gdx.input.getAccelerometerY();
         NEUTRAL_POINT_Y = Gdx.input.getAccelerometerZ();
