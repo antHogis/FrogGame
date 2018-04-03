@@ -220,7 +220,6 @@ public class Level implements Screen {
                     tiledMap.getLayers().get("roundfish-"+i+"-start").getObjects().getByType(RectangleMapObject.class);
             for (RectangleMapObject startPoint : startPoints) {
                 enemies.peek().setMOVEMENT_STARTPOINT_X(startPoint.getRectangle().getX());
-                enemies.peek().setMOVEMENT_STARTPOINT_Y(startPoint.getRectangle().getY());
                 enemies.peek().setX(startPoint.getRectangle().getX());
                 enemies.peek().setY(startPoint.getRectangle().getY());
             }
@@ -228,8 +227,7 @@ public class Level implements Screen {
             Array<RectangleMapObject> endPoints =
                     tiledMap.getLayers().get("roundfish-"+i+"-end").getObjects().getByType(RectangleMapObject.class);
             for (RectangleMapObject endPoint : endPoints) {
-                enemies.peek().setMOVEMENT_ENDPOINT_X(endPoint.getRectangle().getX());
-                enemies.peek().setMOVEMENT_ENDPOINT_Y(endPoint.getRectangle().getY());
+                enemies.peek().setMOVEMENT_ENDPOINT_X(endPoint.getRectangle().getX()+endPoint.getRectangle().getWidth());
             }
         }
 

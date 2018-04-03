@@ -18,7 +18,7 @@ public class RoundFish extends Enemy {
         this.rectangle = new Rectangle(5f, 5f,
                 texture.getWidth() / 300f,
                 texture.getHeight() / 300f);
-        this.rectangle.setWidth(TILE_DIMENSION);
+        this.rectangle.setWidth(TILE_DIMENSION*2);
         this.rectangle.setHeight((texture.getHeight()*rectangle.getWidth())/texture.getWidth());
         this.amountMoved = 0f;
         this.movementSpeed = 128f;
@@ -28,7 +28,7 @@ public class RoundFish extends Enemy {
     @Override
     public void movement() {
 
-        if(this.rectangle.x < this.getMOVEMENT_ENDPOINT_X() && isMovingRight) {
+        if(this.rectangle.x+this.rectangle.width < this.getMOVEMENT_ENDPOINT_X() && isMovingRight) {
             this.setX(this.getX()+Gdx.graphics.getDeltaTime()*movementSpeed);
 
         } else if (isMovingRight) {
