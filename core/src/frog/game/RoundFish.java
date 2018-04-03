@@ -11,33 +11,33 @@ import com.badlogic.gdx.math.Rectangle;
 public class RoundFish extends Enemy {
     private float amountMoved;
     private float movementSpeed;
-    private float range;
     private boolean isMovingRight;
 
-    public RoundFish() {
+    public RoundFish(int TILE_DIMENSION) {
         this.texture = new Texture("gfx/kala.png");
         this.rectangle = new Rectangle(5f, 5f,
                 texture.getWidth() / 300f,
                 texture.getHeight() / 300f);
+        this.rectangle.setWidth(TILE_DIMENSION);
+        this.rectangle.setHeight((texture.getHeight()*rectangle.getWidth())/texture.getWidth());
         this.amountMoved = 0f;
-        this.movementSpeed = 40f;
+        this.movementSpeed = 128f;
         this.isMovingRight = true;
     }
 
     @Override
     public void movement() {
-        if (isMovingRight && amountMoved < range) {
-            this.setX(this.getX() + movementSpeed);
-            this.amountMoved = this.amountMoved + this.movementSpeed;
-            if (amountMoved >= range) {
-                this.isMovingRight = false;
-            }
-        } else if (!isMovingRight && amountMoved >= 0) {
-            this.setX(this.getX() - movementSpeed);
-            this.amountMoved = this.amountMoved - this.movementSpeed;
-            if (this.amountMoved <= 0) {
-                this.isMovingRight = true;
-            }
+
+        if(this.rectangle.x < this.getMOVEMENT_ENDPOINT_X() && isMovingRight) {
+            this.setX(this.getX()+Gdx.graphics.getDeltaTime()*movementSpeed);
+
+        } else if (isMovingRight) {
+            isMovingRight = false;
+        }
+        if(this.rectangle.x > this.getMOVEMENT_STARTPOINT_X() && !isMovingRight) {
+            this.setX(this.getX()-Gdx.graphics.getDeltaTime()*movementSpeed);
+        } else if (!isMovingRight) {
+            isMovingRight = true;
         }
 
     }

@@ -97,7 +97,7 @@ public class Level implements Screen {
         tiledMapRenderer.setView(camera);
         batch.setProjectionMatrix(camera.combined);
 
-        //moveEnemies();
+        moveEnemies();
 
         frog.movementAndroid(Gdx.graphics.getDeltaTime());
         frog.moveTemporary(Gdx.graphics.getDeltaTime());
@@ -109,7 +109,7 @@ public class Level implements Screen {
 
         batch.begin();
         frog.draw(batch);
-        //drawEnemies();
+        drawEnemies();
         //check01.draw(batch);
         batch.end();
 
@@ -214,11 +214,13 @@ public class Level implements Screen {
     private void addEnemies() {
         //Adding enemies of the type RoundFish
         for (int i=1; i<=AMOUNT_ROUNDFISH; i++) {
-            enemies.add(new RoundFish());
+            enemies.add(new RoundFish(TILE_DIMENSION));
 
             Array<RectangleMapObject> startPoints = 
                     tiledMap.getLayers().get("roundfish-"+i+"-start").getObjects().getByType(RectangleMapObject.class);
             for (RectangleMapObject startPoint : startPoints) {
+                enemies.peek().setMOVEMENT_STARTPOINT_X(startPoint.getRectangle().getX());
+                enemies.peek().setMOVEMENT_STARTPOINT_Y(startPoint.getRectangle().getY());
                 enemies.peek().setX(startPoint.getRectangle().getX());
                 enemies.peek().setY(startPoint.getRectangle().getY());
             }
@@ -232,6 +234,5 @@ public class Level implements Screen {
         }
 
     }
-
 
 }
