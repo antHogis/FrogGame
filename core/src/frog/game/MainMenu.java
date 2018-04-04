@@ -48,7 +48,7 @@ public class MainMenu implements Screen {
                     1,
                     1,
                     0,
-                    2));
+                    1));
         }
 
     }

@@ -8,11 +8,23 @@ import com.badlogic.gdx.math.Rectangle;
  */
 
 public class TimeCoin extends GameObject {
+    private boolean isCleared;
 
-    public TimeCoin() {
+    public TimeCoin(float x, float y, int TILE_DIMENSION) {
         this.texture = new Texture("gfx/TimeCoin.png");
-        this.rectangle = new Rectangle(4f, 4f,
-                texture.getWidth() / 300f,
-                texture.getHeight() / 300f);
+        this.rectangle = new Rectangle(x, y,
+                TILE_DIMENSION,
+                TILE_DIMENSION);
+        isCleared = false;
+    }
+
+    public void checkCollision(Player frog) {
+        if (frog.rectangle.overlaps(this.rectangle)) {
+            isCleared = true;
+        }
+    }
+
+    public boolean getIsCleared() {
+        return isCleared;
     }
 }
