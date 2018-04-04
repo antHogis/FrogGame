@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -118,7 +117,6 @@ public class Level implements Screen {
         batch.begin();
         frog.draw(batch);
         drawObjects();
-        //check01.draw(batch);
         batch.end();
 
         respawnFromWall();
@@ -259,11 +257,20 @@ public class Level implements Screen {
     }
 
     private void addLevelObjects() {
-        //Adding enemies of the type RoundFish
+        addRoundFish();
+        addLongFish();
+        addOctopi();
+        addCheckpoints();
+        addTimeCoins();
+        addSeaweed();
+        addRocks();
+    }
+
+    private void addRoundFish() {
         for (int i=1; i<=AMOUNT_ROUNDFISH; i++) {
             enemies.add(new RoundFish(TILE_DIMENSION));
 
-            Array<RectangleMapObject> startPoints = 
+            Array<RectangleMapObject> startPoints =
                     tiledMap.getLayers().get("roundfish-"+i+"-start").getObjects().getByType(RectangleMapObject.class);
             for (RectangleMapObject startPoint : startPoints) {
                 enemies.peek().setMOVEMENT_STARTPOINT_X(startPoint.getRectangle().getX());
@@ -277,8 +284,9 @@ public class Level implements Screen {
                 enemies.peek().setMOVEMENT_ENDPOINT_X(endPoint.getRectangle().getX()+endPoint.getRectangle().getWidth());
             }
         }
+    }
 
-        //Adding enemies of the type LongFish
+    private void addLongFish() {
         for (int i=1; i<=AMOUNT_LONGFISH; i++) {
             enemies.add(new LongFish(TILE_DIMENSION));
 
@@ -296,7 +304,9 @@ public class Level implements Screen {
                 enemies.peek().setMOVEMENT_ENDPOINT_X(endPoint.getRectangle().getX()+endPoint.getRectangle().getWidth());
             }
         }
+    }
 
+    private void addOctopi() {
         //Adding enemies of the type Octopus1
         for (int i=1; i<=AMOUNT_OCTOPUS1; i++) {
             enemies.add(new Octopus1(TILE_DIMENSION));
@@ -334,10 +344,12 @@ public class Level implements Screen {
                 enemies.peek().setMOVEMENT_ENDPOINT_Y(endPoint.getRectangle().getY());
             }
         }
+    }
 
-        //Adding checkpoints
+    private void addCheckpoints() {
         Array<RectangleMapObject> checkpointRectangles =
                 tiledMap.getLayers().get("checkpoint-rectangle").getObjects().getByType(RectangleMapObject.class);
+
         for (RectangleMapObject checkpointRectangle : checkpointRectangles) {
             checkpoints.add(new Checkpoint(checkpointRectangle.getRectangle().getX(),
                     checkpointRectangle.getRectangle().getY(),
@@ -345,8 +357,9 @@ public class Level implements Screen {
                     checkpointRectangle.getRectangle().getHeight(),
                     TILE_DIMENSION));
         }
+    }
 
-        //Adding timecoins
+    private void addTimeCoins() {
         Array<RectangleMapObject> timeCoinRectangles =
                 tiledMap.getLayers().get("timecoin-rectangle").getObjects().getByType(RectangleMapObject.class);
         for (RectangleMapObject timeCoinRectangle : timeCoinRectangles) {
@@ -354,10 +367,13 @@ public class Level implements Screen {
                     timeCoinRectangle.getRectangle().getY(),
                     TILE_DIMENSION));
         }
+    }
 
+    private void addSeaweed() {
         //Adding seaweed that point up
         Array<RectangleMapObject> seaweedRectangles =
                 tiledMap.getLayers().get("grass-up").getObjects().getByType(RectangleMapObject.class);
+
         for (RectangleMapObject seaweedRectangle : seaweedRectangles) {
             seaweeds.add(new Seaweed(seaweedRectangle.getRectangle().getX(),
                     seaweedRectangle.getRectangle().getY(),
@@ -368,6 +384,7 @@ public class Level implements Screen {
         //Adding seaweed that point down
         seaweedRectangles =
                 tiledMap.getLayers().get("grass-down").getObjects().getByType(RectangleMapObject.class);
+
         for (RectangleMapObject seaweedRectangle : seaweedRectangles) {
             seaweeds.add(new Seaweed(seaweedRectangle.getRectangle().getX(),
                     0,
@@ -377,7 +394,9 @@ public class Level implements Screen {
             seaweeds.peek().setY(seaweedRectangle.getRectangle().getY()
                     + seaweedRectangle.getRectangle().getHeight() - seaweeds.peek().getHeight());
         }
+    }
 
+    private void addRocks() {
         //Adding rocks that point up
         Array<RectangleMapObject> rockRectangles =
                 tiledMap.getLayers().get("rock-up").getObjects().getByType(RectangleMapObject.class);
@@ -401,11 +420,4 @@ public class Level implements Screen {
         }
     }
 
-    public int getTimeSubtracted() {
-        return timeSubtracted;
-    }
-
-    public void setTimeSubtracted(int timeSubtracted) {
-        this.timeSubtracted = timeSubtracted;
-    }
 }

@@ -48,7 +48,6 @@ class Player extends GameObject {
     private float movementModifier = 1f;
 
     public Player(TiledMap tiledMap, int TILE_DIMENSION) {
-        //Tekstuurin koko 512x190px
         texture = new Texture("gfx/sammakko.png");
         rectangle = new Rectangle(0, 0,
                 0, 0);
