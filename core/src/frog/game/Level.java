@@ -187,7 +187,7 @@ public class Level implements Screen {
         if (overlapsMapObject("endzone-rectangle")) {
             int endTime = (int) ((System.currentTimeMillis()-startTime)/1000);
             Gdx.app.log("TAG", "Time before subtracted: " + Integer.toString(endTime));
-            endTime -= timeSubtracted;
+            endTime += timeSubtracted;
             Gdx.app.log("TAG", "Time after subtracted:" + Integer.toString(endTime));
             host.setScreen(new LevelFinish(host, endTime));
         }
