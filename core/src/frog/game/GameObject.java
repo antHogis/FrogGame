@@ -73,10 +73,10 @@ abstract class GameObject {
         return oneDim;
     }
 
-    private void flip(Animation<TextureRegion> animation) {
+    private void flip(Animation<TextureRegion> animation, boolean xFlip, boolean yFlip) {
         TextureRegion[] regions = animation.getKeyFrames();
         for(TextureRegion r : regions) {
-            r.flip(true, false);
+            r.flip(xFlip, yFlip);
         }
     }
 

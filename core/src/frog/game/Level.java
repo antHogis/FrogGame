@@ -22,24 +22,26 @@ import com.badlogic.gdx.utils.Array;
 public class Level implements Screen {
     private FrogMain host;
     private SpriteBatch batch;
+
     private Player frog;
-    private Checkpoint check01;
     private Array<Enemy> enemies;
     private Array<Checkpoint> checkpoints;
     private Array<TimeCoin> timeCoins;
+    private Array<Rock> rocks;
+    private Array<Seaweed> seaweeds;
+
+    private final float startTime;
 
     private Music bgMusic;
-
     private TiledMap tiledMap;
     private TiledMapRenderer tiledMapRenderer;
+
     private final int AMOUNT_ROUNDFISH;
     private final int AMOUNT_LONGFISH;
     private final int AMOUNT_OCTOPUS1;
     private final int AMOUNT_OCTOPUS2;
-    private final int AMOUNT_TIMECOIN;
 
     private final int TILE_DIMENSION = 128;
-
     private final int TILE_AMOUNT_WIDTH = 50;
     private final int TILE_AMOUNT_HEIGHT = 30;
 
@@ -66,17 +68,17 @@ public class Level implements Screen {
         tiledMap = new TmxMapLoader().load(levelPath);
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
-        frog = new Player(tiledMap, host.getTILE_DIMENSION());
+        frog = new Player(tiledMap, TILE_DIMENSION);
 
         this.AMOUNT_ROUNDFISH = AMOUNT_ROUNDFISH;
         this.AMOUNT_LONGFISH = AMOUNT_LONGFISH;
         this.AMOUNT_OCTOPUS1 = AMOUNT_OCTOPUS1;
         this.AMOUNT_OCTOPUS2 = AMOUNT_OCTOPUS2;
-        this.AMOUNT_TIMECOIN = AMOUNT_TIMECOIN;
 
         enemies = new Array<Enemy>();
         checkpoints = new Array<Checkpoint>();
         timeCoins = new Array<TimeCoin>();
+        seaweeds = new Array<Seaweed>();
         addLevelObjects();
 
         bgMusic = Gdx.audio.newMusic(Gdx.files.internal("music/mariowater.mp3"));
@@ -84,6 +86,8 @@ public class Level implements Screen {
         bgMusic.setVolume(0.25f);
         //bgMusic.play();
         spawnFrog();
+
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -100,13 +104,12 @@ public class Level implements Screen {
         tiledMapRenderer.setView(camera);
         batch.setProjectionMatrix(camera.combined);
 
+        checkObjectCollision();
         moveEnemies();
 
         frog.movementAndroid(Gdx.graphics.getDeltaTime());
         frog.moveTemporary(Gdx.graphics.getDeltaTime());
-
         moveCamera();
-        checkObjectCollision();
 
         tiledMapRenderer.render();
 
@@ -180,7 +183,8 @@ public class Level implements Screen {
 
     private void endLevel() {
         if (overlapsMapObject("endzone-rectangle")) {
-            host.setScreen(new MainMenu(host));
+            int endTime = (int) ((System.currentTimeMillis()-startTime)/1000);
+            host.setScreen(new LevelFinish(host, endTime));
         }
     }
 
@@ -209,6 +213,9 @@ public class Level implements Screen {
                 timeCoin.draw(batch);
             }
         }
+        for (Seaweed seaweed : seaweeds) {
+            seaweed.draw(batch);
+        }
     }
 
     private void spawnFrog() {
@@ -230,6 +237,9 @@ public class Level implements Screen {
         }
         for (TimeCoin timeCoin : timeCoins) {
             timeCoin.checkCollision(frog);
+        }
+        for (Seaweed seaweed : seaweeds) {
+            seaweed.checkCollision(frog);
         }
     }
 
@@ -311,6 +321,26 @@ public class Level implements Screen {
                     TILE_DIMENSION));
         }
 
+        //Adding seaweed
+        Array<RectangleMapObject> seaweedRectangles =
+                tiledMap.getLayers().get("grass-up").getObjects().getByType(RectangleMapObject.class);
+        for (RectangleMapObject seaweedRectangle : seaweedRectangles) {
+            seaweeds.add(new Seaweed(seaweedRectangle.getRectangle().getX(),
+                    seaweedRectangle.getRectangle().getY(),
+                    TILE_DIMENSION,
+                    true));
+        }
+
+        seaweedRectangles =
+                tiledMap.getLayers().get("grass-down").getObjects().getByType(RectangleMapObject.class);
+        for (RectangleMapObject seaweedRectangle : seaweedRectangles) {
+            seaweeds.add(new Seaweed(seaweedRectangle.getRectangle().getX(),
+                    0,
+                    TILE_DIMENSION,
+                    false));
+            seaweeds.peek().setY(seaweedRectangle.getRectangle().getY()
+                    + seaweedRectangle.getRectangle().getHeight() - seaweeds.peek().getHeight());
+        }
     }
 
 }

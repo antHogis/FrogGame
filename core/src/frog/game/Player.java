@@ -45,6 +45,7 @@ class Player extends GameObject {
     private final float SPEED_X = 180f;
     private final float SPEED_UP = SPEED_X - 10;
     private final float SPEED_DOWN = SPEED_X + 10;
+    private float movementModifier = 1f;
 
     public Player(TiledMap tiledMap, int TILE_DIMENSION) {
         //Tekstuurin koko 512x190px
@@ -136,10 +137,10 @@ class Player extends GameObject {
 
 
     public void movementAndroid (float delta) {
-        float movementRight = delta * SPEED_X * getAdjustedX();
-        float movementLeft = movementRight;
-        float movementForward = delta * SPEED_UP * getAdjustedY();
-        float movementBack = delta * SPEED_DOWN * getAdjustedY();
+        float movementRight = delta * SPEED_X * getAdjustedX() * movementModifier;
+        float movementLeft = movementRight * movementModifier;
+        float movementForward = delta * SPEED_UP * getAdjustedY() * movementModifier;
+        float movementBack = delta * SPEED_DOWN * getAdjustedY() * movementModifier;
 
         //RIGHT
         if (getAdjustedX()> THRESHOLD_MIN_X_RIGHT
@@ -178,6 +179,7 @@ class Player extends GameObject {
         }
 
     }
+
     private float getAdjustedX() {
         return Gdx.input.getAccelerometerY() - NEUTRAL_POINT_X;
     }
@@ -203,7 +205,8 @@ class Player extends GameObject {
         }
         return false;
     }
-    private void getSpawnPoint() {
-        
+
+    public void setMovementModifier(float movementModifier) {
+        this.movementModifier = movementModifier;
     }
 }
