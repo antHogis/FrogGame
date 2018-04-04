@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class TimeCoin extends GameObject {
     private boolean isCleared;
+    private boolean subtracted;
 
     public TimeCoin(float x, float y, int TILE_DIMENSION) {
         this.texture = new Texture("gfx/TimeCoin.png");
@@ -26,5 +27,13 @@ public class TimeCoin extends GameObject {
 
     public boolean getIsCleared() {
         return isCleared;
+    }
+
+    public boolean isSubtracted() {
+        return subtracted;
+    }
+
+    public void setSubtracted(boolean subtracted) {
+        this.subtracted = subtracted;
     }
 }

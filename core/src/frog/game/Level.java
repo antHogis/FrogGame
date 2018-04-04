@@ -31,6 +31,7 @@ public class Level implements Screen {
     private Array<Seaweed> seaweeds;
 
     private final float startTime;
+    private int timeSubtracted = 0;
 
     private Music bgMusic;
     private TiledMap tiledMap;
@@ -56,8 +57,8 @@ public class Level implements Screen {
                  int AMOUNT_ROUNDFISH,
                  int AMOUNT_LONGFISH,
                  int AMOUNT_OCTOPUS1,
-                 int AMOUNT_OCTOPUS2,
-                 int AMOUNT_TIMECOIN) {
+                 int AMOUNT_OCTOPUS2) {
+
         this.host = host;
         batch = host.getBatch();
         camera = new OrthographicCamera();
@@ -79,6 +80,7 @@ public class Level implements Screen {
         checkpoints = new Array<Checkpoint>();
         timeCoins = new Array<TimeCoin>();
         seaweeds = new Array<Seaweed>();
+        rocks = new Array<Rock>();
         addLevelObjects();
 
         bgMusic = Gdx.audio.newMusic(Gdx.files.internal("music/mariowater.mp3"));
@@ -184,6 +186,9 @@ public class Level implements Screen {
     private void endLevel() {
         if (overlapsMapObject("endzone-rectangle")) {
             int endTime = (int) ((System.currentTimeMillis()-startTime)/1000);
+            Gdx.app.log("TAG", "Time before subtracted: " + Integer.toString(endTime));
+            endTime -= timeSubtracted;
+            Gdx.app.log("TAG", "Time after subtracted:" + Integer.toString(endTime));
             host.setScreen(new LevelFinish(host, endTime));
         }
     }
@@ -216,6 +221,9 @@ public class Level implements Screen {
         for (Seaweed seaweed : seaweeds) {
             seaweed.draw(batch);
         }
+        for (Rock rock : rocks) {
+            rock.draw(batch);
+        }
     }
 
     private void spawnFrog() {
@@ -237,9 +245,16 @@ public class Level implements Screen {
         }
         for (TimeCoin timeCoin : timeCoins) {
             timeCoin.checkCollision(frog);
+            if (timeCoin.getIsCleared() && !timeCoin.isSubtracted()) {
+                timeSubtracted -= 5;
+                timeCoin.setSubtracted(true);
+            }
         }
         for (Seaweed seaweed : seaweeds) {
             seaweed.checkCollision(frog);
+        }
+        for (Rock rock : rocks) {
+            rock.checkCollision(frog);
         }
     }
 
@@ -282,7 +297,7 @@ public class Level implements Screen {
             }
         }
 
-        //Adding enemies of the type Octopus
+        //Adding enemies of the type Octopus1
         for (int i=1; i<=AMOUNT_OCTOPUS1; i++) {
             enemies.add(new Octopus1(TILE_DIMENSION));
 
@@ -296,6 +311,25 @@ public class Level implements Screen {
 
             Array<RectangleMapObject> endPoints =
                     tiledMap.getLayers().get("octopus1-"+i+"-end").getObjects().getByType(RectangleMapObject.class);
+            for (RectangleMapObject endPoint : endPoints) {
+                enemies.peek().setMOVEMENT_ENDPOINT_Y(endPoint.getRectangle().getY());
+            }
+        }
+
+        //Adding enemies of the type Octopus2
+        for (int i=1; i<=AMOUNT_OCTOPUS2; i++) {
+            enemies.add(new Octopus1(TILE_DIMENSION));
+
+            Array<RectangleMapObject> startPoints =
+                    tiledMap.getLayers().get("octopus2-"+i+"-start").getObjects().getByType(RectangleMapObject.class);
+            for (RectangleMapObject startPoint : startPoints) {
+                enemies.peek().setMOVEMENT_STARTPOINT_Y(startPoint.getRectangle().getY()+startPoint.getRectangle().getHeight()-enemies.peek().getHeight());
+                enemies.peek().setX(startPoint.getRectangle().getX());
+                enemies.peek().setY(enemies.peek().getMOVEMENT_STARTPOINT_Y());
+            }
+
+            Array<RectangleMapObject> endPoints =
+                    tiledMap.getLayers().get("octopus2-"+i+"-end").getObjects().getByType(RectangleMapObject.class);
             for (RectangleMapObject endPoint : endPoints) {
                 enemies.peek().setMOVEMENT_ENDPOINT_Y(endPoint.getRectangle().getY());
             }
@@ -321,7 +355,7 @@ public class Level implements Screen {
                     TILE_DIMENSION));
         }
 
-        //Adding seaweed
+        //Adding seaweed that point up
         Array<RectangleMapObject> seaweedRectangles =
                 tiledMap.getLayers().get("grass-up").getObjects().getByType(RectangleMapObject.class);
         for (RectangleMapObject seaweedRectangle : seaweedRectangles) {
@@ -331,6 +365,7 @@ public class Level implements Screen {
                     true));
         }
 
+        //Adding seaweed that point down
         seaweedRectangles =
                 tiledMap.getLayers().get("grass-down").getObjects().getByType(RectangleMapObject.class);
         for (RectangleMapObject seaweedRectangle : seaweedRectangles) {
@@ -338,9 +373,39 @@ public class Level implements Screen {
                     0,
                     TILE_DIMENSION,
                     false));
+            //Set post-construction to allow grass rectangles to be made as any size in Tiled
             seaweeds.peek().setY(seaweedRectangle.getRectangle().getY()
                     + seaweedRectangle.getRectangle().getHeight() - seaweeds.peek().getHeight());
         }
+
+        //Adding rocks that point up
+        Array<RectangleMapObject> rockRectangles =
+                tiledMap.getLayers().get("rock-up").getObjects().getByType(RectangleMapObject.class);
+        for (RectangleMapObject rockRectangle : rockRectangles) {
+            rocks.add(new Rock(rockRectangle.getRectangle().getX(),
+                    rockRectangle.getRectangle().getY(),
+                    TILE_DIMENSION,
+                    true));
+        }
+
+        //Adding rocks that point down
+        rockRectangles =
+                tiledMap.getLayers().get("rock-down").getObjects().getByType(RectangleMapObject.class);
+        for (RectangleMapObject rockRectangle : rockRectangles) {
+            rocks.add(new Rock(rockRectangle.getRectangle().getX(),
+                    0,
+                    TILE_DIMENSION,
+                    false));
+            rocks.peek().setY(rockRectangle.getRectangle().getY()
+                    + rockRectangle.getRectangle().getHeight() - rocks.peek().getHeight());
+        }
     }
 
+    public int getTimeSubtracted() {
+        return timeSubtracted;
+    }
+
+    public void setTimeSubtracted(int timeSubtracted) {
+        this.timeSubtracted = timeSubtracted;
+    }
 }
