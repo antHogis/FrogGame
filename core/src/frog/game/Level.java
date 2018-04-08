@@ -41,25 +41,34 @@ public class Level implements Screen {
     private final int AMOUNT_OCTOPUS1;
     private final int AMOUNT_OCTOPUS2;
 
-    private final int TILE_DIMENSION = 128;
-    private final int TILE_AMOUNT_WIDTH = 50;
-    private final int TILE_AMOUNT_HEIGHT = 30;
+    private final int TILE_DIMENSION;
+    private final int TILE_AMOUNT_WIDTH;
+    private final int TILE_AMOUNT_HEIGHT;
 
     private OrthographicCamera camera;
-    private final int WINDOW_WIDTH_PIXELS = 2048;
-    private final int WINDOW_HEIGHT_PIXELS = 1600;
-    private final int WORLD_WIDTH_PIXELS = TILE_AMOUNT_WIDTH * TILE_DIMENSION;
-    private final int WORLD_HEIGHT_PIXELS = TILE_AMOUNT_HEIGHT * TILE_DIMENSION;
+    private final int WINDOW_WIDTH_PIXELS = 1664;
+    private final int WINDOW_HEIGHT_PIXELS = 1040;
+    private final int WORLD_WIDTH_PIXELS;
+    private final int WORLD_HEIGHT_PIXELS;
 
     public Level(FrogMain host,
                  String levelPath,
                  int AMOUNT_ROUNDFISH,
                  int AMOUNT_LONGFISH,
                  int AMOUNT_OCTOPUS1,
-                 int AMOUNT_OCTOPUS2) {
+                 int AMOUNT_OCTOPUS2,
+                 int TILE_AMOUNT_WIDTH,
+                 int TILE_AMOUNT_HEIGHT) {
 
         this.host = host;
         batch = host.getBatch();
+
+        this.TILE_AMOUNT_WIDTH = TILE_AMOUNT_WIDTH;
+        this.TILE_AMOUNT_HEIGHT = TILE_AMOUNT_HEIGHT;
+        TILE_DIMENSION = host.getTILE_DIMENSION();
+        WORLD_WIDTH_PIXELS = this.TILE_AMOUNT_WIDTH * TILE_DIMENSION;
+        WORLD_HEIGHT_PIXELS = this.TILE_AMOUNT_HEIGHT * TILE_DIMENSION;
+
         camera = new OrthographicCamera();
         camera.setToOrtho(false,
                 WINDOW_WIDTH_PIXELS,
@@ -68,12 +77,13 @@ public class Level implements Screen {
         tiledMap = new TmxMapLoader().load(levelPath);
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
-        frog = new Player(tiledMap, TILE_DIMENSION);
-
         this.AMOUNT_ROUNDFISH = AMOUNT_ROUNDFISH;
         this.AMOUNT_LONGFISH = AMOUNT_LONGFISH;
         this.AMOUNT_OCTOPUS1 = AMOUNT_OCTOPUS1;
         this.AMOUNT_OCTOPUS2 = AMOUNT_OCTOPUS2;
+
+        frog = new Player(tiledMap, TILE_DIMENSION);
+        spawnFrog();
 
         enemies = new Array<Enemy>();
         checkpoints = new Array<Checkpoint>();
@@ -86,7 +96,6 @@ public class Level implements Screen {
         bgMusic.setLooping(true);
         bgMusic.setVolume(0.25f);
         //bgMusic.play();
-        spawnFrog();
 
         startTime = System.currentTimeMillis();
     }
@@ -98,7 +107,7 @@ public class Level implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(0, 0.30f, 0.40f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         camera.update();
@@ -360,63 +369,74 @@ public class Level implements Screen {
     }
 
     private void addTimeCoins() {
-        Array<RectangleMapObject> timeCoinRectangles =
-                tiledMap.getLayers().get("timecoin-rectangle").getObjects().getByType(RectangleMapObject.class);
-        for (RectangleMapObject timeCoinRectangle : timeCoinRectangles) {
-            timeCoins.add(new TimeCoin(timeCoinRectangle.getRectangle().getX(),
-                    timeCoinRectangle.getRectangle().getY(),
-                    TILE_DIMENSION));
+        if (tiledMap.getLayers().get("timecoin-rectangle") != null) {
+            Array<RectangleMapObject> timeCoinRectangles =
+                    tiledMap.getLayers().get("timecoin-rectangle").getObjects().getByType(RectangleMapObject.class);
+            for (RectangleMapObject timeCoinRectangle : timeCoinRectangles) {
+                timeCoins.add(new TimeCoin(timeCoinRectangle.getRectangle().getX(),
+                        timeCoinRectangle.getRectangle().getY(),
+                        TILE_DIMENSION));
+            }
         }
     }
 
     private void addSeaweed() {
         //Adding seaweed that point up
-        Array<RectangleMapObject> seaweedRectangles =
-                tiledMap.getLayers().get("grass-up").getObjects().getByType(RectangleMapObject.class);
+        if (tiledMap.getLayers().get("grass-up") != null) {
+            Array<RectangleMapObject> seaweedRectangles =
+                    tiledMap.getLayers().get("grass-up").getObjects().getByType(RectangleMapObject.class);
 
-        for (RectangleMapObject seaweedRectangle : seaweedRectangles) {
-            seaweeds.add(new Seaweed(seaweedRectangle.getRectangle().getX(),
-                    seaweedRectangle.getRectangle().getY(),
-                    TILE_DIMENSION,
-                    true));
+            for (RectangleMapObject seaweedRectangle : seaweedRectangles) {
+                seaweeds.add(new Seaweed(seaweedRectangle.getRectangle().getX(),
+                        seaweedRectangle.getRectangle().getY(),
+                        TILE_DIMENSION,
+                        true));
+            }
         }
 
         //Adding seaweed that point down
-        seaweedRectangles =
-                tiledMap.getLayers().get("grass-down").getObjects().getByType(RectangleMapObject.class);
+        if (tiledMap.getLayers().get("grass-down") != null) {
+            Array<RectangleMapObject> seaweedRectangles =
+                    tiledMap.getLayers().get("grass-down").getObjects().getByType(RectangleMapObject.class);
 
-        for (RectangleMapObject seaweedRectangle : seaweedRectangles) {
-            seaweeds.add(new Seaweed(seaweedRectangle.getRectangle().getX(),
-                    0,
-                    TILE_DIMENSION,
-                    false));
-            //Set post-construction to allow grass rectangles to be made as any size in Tiled
-            seaweeds.peek().setY(seaweedRectangle.getRectangle().getY()
-                    + seaweedRectangle.getRectangle().getHeight() - seaweeds.peek().getHeight());
+            for (RectangleMapObject seaweedRectangle : seaweedRectangles) {
+                seaweeds.add(new Seaweed(seaweedRectangle.getRectangle().getX(),
+                        0,
+                        TILE_DIMENSION,
+                        false));
+                //Set post-construction to allow grass rectangles to be made as any size in Tiled
+                seaweeds.peek().setY(seaweedRectangle.getRectangle().getY()
+                        + seaweedRectangle.getRectangle().getHeight() - seaweeds.peek().getHeight());
+            }
         }
+
     }
 
     private void addRocks() {
         //Adding rocks that point up
-        Array<RectangleMapObject> rockRectangles =
-                tiledMap.getLayers().get("rock-up").getObjects().getByType(RectangleMapObject.class);
-        for (RectangleMapObject rockRectangle : rockRectangles) {
-            rocks.add(new Rock(rockRectangle.getRectangle().getX(),
-                    rockRectangle.getRectangle().getY(),
-                    TILE_DIMENSION,
-                    true));
+        if (tiledMap.getLayers().get("rock-up") != null) {
+            Array<RectangleMapObject> rockRectangles =
+                    tiledMap.getLayers().get("rock-up").getObjects().getByType(RectangleMapObject.class);
+            for (RectangleMapObject rockRectangle : rockRectangles) {
+                rocks.add(new Rock(rockRectangle.getRectangle().getX(),
+                        rockRectangle.getRectangle().getY(),
+                        TILE_DIMENSION,
+                        true));
+            }
         }
 
         //Adding rocks that point down
-        rockRectangles =
-                tiledMap.getLayers().get("rock-down").getObjects().getByType(RectangleMapObject.class);
-        for (RectangleMapObject rockRectangle : rockRectangles) {
-            rocks.add(new Rock(rockRectangle.getRectangle().getX(),
-                    0,
-                    TILE_DIMENSION,
-                    false));
-            rocks.peek().setY(rockRectangle.getRectangle().getY()
-                    + rockRectangle.getRectangle().getHeight() - rocks.peek().getHeight());
+        if (tiledMap.getLayers().get("rock-down") != null) {
+            Array<RectangleMapObject> rockRectangles =
+                    tiledMap.getLayers().get("rock-down").getObjects().getByType(RectangleMapObject.class);
+            for (RectangleMapObject rockRectangle : rockRectangles) {
+                rocks.add(new Rock(rockRectangle.getRectangle().getX(),
+                        0,
+                        TILE_DIMENSION,
+                        false));
+                rocks.peek().setY(rockRectangle.getRectangle().getY()
+                        + rockRectangle.getRectangle().getHeight() - rocks.peek().getHeight());
+            }
         }
     }
 

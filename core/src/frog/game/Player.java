@@ -35,20 +35,22 @@ class Player extends GameObject {
     private float NEUTRAL_POINT_X;
     private float NEUTRAL_POINT_Y;
 
-    private final float THRESHOLD_VALUE = 0.5f;
+    private final float THRESHOLD_VALUE = 0.35f;
 
     private final float THRESHOLD_MIN_X_RIGHT = THRESHOLD_VALUE;
     private final float THRESHOLD_MIN_X_LEFT = -1*THRESHOLD_VALUE;
     private final float THRESHOLD_MIN_Y_FORWARD = THRESHOLD_VALUE + 0.3f;
     private final float THRESHOLD_MIN_Y_BACK = (-1*THRESHOLD_VALUE) + 0.15f;
 
-    private final float SPEED_X = 180f;
+    private final float SPEED_X = 220f;
     private final float SPEED_UP = SPEED_X - 10;
     private final float SPEED_DOWN = SPEED_X + 10;
     private float movementModifier = 1f;
 
     public Player(TiledMap tiledMap, int TILE_DIMENSION) {
         texture = new Texture("gfx/sammakko.png");
+
+        //Rectangle values not specified here, because t
         rectangle = new Rectangle(0, 0,
                 0, 0);
         this.rectangle.setWidth(TILE_DIMENSION*2);

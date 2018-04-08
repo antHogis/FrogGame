@@ -47,9 +47,21 @@ public class MainMenu implements Screen {
                     1,
                     1,
                     1,
-                    0));
+                    0,
+                    50,
+                    30));
         }
-
+        /*if (Gdx.input.isTouched()) {
+            Gdx.app.log("TAG", "Setting Screen");
+            host.setScreen(new Level(this.host,
+                    "lvl/0-1.tmx",
+                    0,
+                    0,
+                    1,
+                    0,
+                    25,
+                    15));
+        }*/
     }
 
     @Override
