@@ -18,9 +18,10 @@ public class LevelFinish implements Screen {
     private SpriteBatch batch;
     private int timeElapsed;
     private BitmapFont font;
+    private int nextIndex;
 
 
-    public LevelFinish(FrogMain host, int timeElapsed) {
+    public LevelFinish(FrogMain host, int timeElapsed, int nextIndex) {
         this.host = host;
         batch = host.getBatch();
         camera = host.getCamera();
@@ -29,6 +30,8 @@ public class LevelFinish implements Screen {
         font = new BitmapFont();
         font.setColor(Color.BLACK);
         font.getData().setScale(4f);
+
+        this.nextIndex = nextIndex;
     }
 
     @Override
@@ -46,7 +49,7 @@ public class LevelFinish implements Screen {
         changeScreen();
 
         batch.begin();
-        font.draw(batch, "Map finished in: " + Integer.toString(timeElapsed) + " seconds",0,host.getVIEWPORT_HEIGHT()/2);
+        font.draw(batch, "Kenttä läpäisty ajassa: " + Integer.toString(timeElapsed) + " sekuntia",0,host.getVIEWPORT_HEIGHT()/2);
         batch.end();
     }
 
@@ -77,7 +80,12 @@ public class LevelFinish implements Screen {
 
     private void changeScreen() {
         if (Gdx.input.isTouched()) {
-            host.setScreen(new MainMenu(host));
+            if(nextIndex >= host.getLevels().size) {
+                host.setScreen(new MainMenu(host));
+            } else {
+                host.setScreen(host.getLevels().get(nextIndex));
+            }
+
         }
     }
 }

@@ -196,7 +196,9 @@ public class Level implements Screen {
             Gdx.app.log("TAG", "Time before subtracted: " + Integer.toString(endTime));
             endTime += timeSubtracted;
             Gdx.app.log("TAG", "Time after subtracted:" + Integer.toString(endTime));
-            host.setScreen(new LevelFinish(host, endTime));
+
+            int nextIndex = host.getLevels().indexOf(this, true) + 1;
+            host.setScreen(new LevelFinish(host, endTime, nextIndex));
         }
     }
 

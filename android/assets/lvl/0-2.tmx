@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.1.2" orientation="orthogonal" renderorder="right-down" width="25" height="15" tilewidth="128" tileheight="128" infinite="0" nextobjectid="30">
+ <tileset firstgid="1" source="Tile map 9 tileä - vähennetty kiviä.tsx"/>
+ <tileset firstgid="10" source="Tile map 9 x (128px x 128px).tsx"/>
+ <tileset firstgid="19" source="Erilaiset keskipalat perustileihin.tsx"/>
+ <layer name="Tile Layer 1" width="25" height="15">
+  <data encoding="csv">
+8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,5,20,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,5,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,22,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,21,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,19,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,0,0,0,0,0,0,4,21,
+8,8,8,8,8,8,8,8,8,8,8,8,8,8,5,5,6,0,0,0,0,0,0,4,20,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,5,6,0,0,0,0,0,0,4,5,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,5,6,0,0,0,0,0,0,4,21,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,8,9,0,0,0,0,0,0,4,5,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,20,
+2,2,2,2,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,22,
+5,22,5,5,5,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,5,
+5,20,5,19,20,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,21,
+5,5,5,21,22,5,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,5,5
+</data>
+ </layer>
+ <objectgroup name="walls-rectangle" visible="0">
+  <object id="19" x="0" y="0" width="2944" height="128"/>
+  <object id="20" x="2944" y="0" width="256" height="1920"/>
+  <object id="21" x="768" y="1792" width="2176" height="128"/>
+  <object id="22" x="0" y="1408" width="768" height="512"/>
+  <object id="23" x="0" y="640" width="1792" height="256"/>
+  <object id="24" x="1792" y="640" width="384" height="640"/>
+  <object id="25" x="0" y="128" width="128" height="512"/>
+ </objectgroup>
+ <objectgroup name="checkpoint-rectangle">
+  <object id="9" x="1920" y="128" width="128" height="512"/>
+ </objectgroup>
+ <objectgroup name="rock-up">
+  <object id="27" x="896" y="1536" width="256" height="256"/>
+ </objectgroup>
+ <objectgroup name="timecoin-rectangle">
+  <object id="28" x="1280" y="1152" width="128" height="128"/>
+ </objectgroup>
+ <objectgroup name="frog-spawn-rectangle">
+  <object id="13" x="128" y="384" width="128" height="128"/>
+ </objectgroup>
+ <objectgroup name="grass-down" offsetx="128" offsety="0">
+  <object id="29" x="1152" y="128" width="256" height="256"/>
+ </objectgroup>
+ <objectgroup name="roundfish-1-start">
+  <object id="16" x="2176" y="1024" width="128" height="128"/>
+ </objectgroup>
+ <objectgroup name="roundfish-1-end">
+  <object id="17" x="2816" y="1024" width="128" height="128"/>
+ </objectgroup>
+ <objectgroup name="endzone-rectangle">
+  <object id="18" x="0" y="896" width="256" height="512"/>
+ </objectgroup>
+</map>
