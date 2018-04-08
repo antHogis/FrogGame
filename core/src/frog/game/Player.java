@@ -62,13 +62,9 @@ class Player extends GameObject {
         Gdx.app.log("TAG", "x:" + NEUTRAL_POINT_X);
         Gdx.app.log("TAG", "y:" + NEUTRAL_POINT_Y);
 
-        //THRESHOLD_MIN_X_RIGHT = NEUTRAL_POINT_X + THRESHOLD_VALUE;
-        //THRESHOLD_MIN_X_LEFT = NEUTRAL_POINT_X - THRESHOLD_VALUE;
         Gdx.app.log("TAG", "Thresh right:" + THRESHOLD_MIN_X_RIGHT );
         Gdx.app.log("TAG", "Thresh left:" + THRESHOLD_MIN_X_LEFT );
 
-        //THRESHOLD_MIN_Y_FORWARD = NEUTRAL_POINT_Y + THRESHOLD_VALUE;
-        //THRESHOLD_MIN_Y_BACK = NEUTRAL_POINT_Y - THRESHOLD_VALUE;
         Gdx.app.log("TAG", "Thresh forw:" + THRESHOLD_MIN_Y_FORWARD );
         Gdx.app.log("TAG", "Thresh back:" + THRESHOLD_MIN_Y_BACK );
 

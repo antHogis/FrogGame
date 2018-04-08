@@ -19,7 +19,7 @@ public class FrogMain extends Game {
 		batch = new SpriteBatch();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
-        createLevels();
+        createNewLevels();
         setScreen(new MainMenu(this));
 	}
 
@@ -53,9 +53,19 @@ public class FrogMain extends Game {
         return TILE_DIMENSION;
     }
 
-    private void createLevels() {
+    public void createNewLevels() {
 	    levels = new Array<Level>();
 
+        //Level 1
+        levels.add(new Level(this,
+                "lvl/0-1.tmx",
+                0,
+                0,
+                1,
+                0,
+                25,
+                15));
+        //Level 2
 	    levels.add(new Level(this,
                 "lvl/0-2.tmx",
                 1,
@@ -64,22 +74,16 @@ public class FrogMain extends Game {
                 0,
                 25,
                 15));
-	    /*levels.add(new Level(this,
+	    //Level 3 (Test level)
+	    levels.add(new Level(this,
                 "lvl/piialevel.tmx",
                 1,
                 1,
                 1,
                 0,
                 50,
-                30));*/
-	    levels.add(new Level(this,
-                "lvl/0-1.tmx",
-                0,
-                0,
-                1,
-                0,
-                25,
-                15));
+                30));
+
 
 
     }
