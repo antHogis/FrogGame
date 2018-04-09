@@ -91,4 +91,10 @@ public class FrogMain extends Game {
     public Array<Level> getLevels() {
         return levels;
     }
+
+    public void resetLevelTimers() {
+	    for (Level level : levels) {
+	        level.resetTimer();
+        }
+    }
 }

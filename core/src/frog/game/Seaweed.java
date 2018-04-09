@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Rectangle;
  */
 
 public class Seaweed extends GameObject {
-    private final float MOVEMENT_SLOWING = 0.5f;
+    private final float MOVEMENT_SLOWING = 0.75f;
 
     public Seaweed(float x, float y, int TILE_DIMENSION, boolean up) {
         if (up) {

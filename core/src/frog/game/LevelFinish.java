@@ -16,21 +16,21 @@ public class LevelFinish implements Screen {
     private FrogMain host;
     private OrthographicCamera camera;
     private SpriteBatch batch;
-    private int timeElapsed;
     private BitmapFont font;
     private int nextIndex;
+    String timeString;
 
 
-    public LevelFinish(FrogMain host, int timeElapsed, int nextIndex) {
+    public LevelFinish(FrogMain host, String timeString, int nextIndex) {
         this.host = host;
         batch = host.getBatch();
         camera = host.getCamera();
-        this.timeElapsed = timeElapsed;
 
         font = new BitmapFont();
         font.setColor(Color.BLACK);
         font.getData().setScale(4f);
 
+        this.timeString = timeString;
         this.nextIndex = nextIndex;
     }
 
@@ -49,7 +49,7 @@ public class LevelFinish implements Screen {
         changeScreen();
 
         batch.begin();
-        font.draw(batch, "Kenttä läpäisty ajassa: " + Integer.toString(timeElapsed) + " sekuntia",0,host.getVIEWPORT_HEIGHT()/2);
+        font.draw(batch, "Kenttä läpäisty ajassa: " + timeString,0,host.getVIEWPORT_HEIGHT()/2);
         batch.end();
     }
 
@@ -84,6 +84,7 @@ public class LevelFinish implements Screen {
                 host.createNewLevels();
                 host.setScreen(new MainMenu(host));
             } else {
+                host.resetLevelTimers();
                 host.setScreen(host.getLevels().get(nextIndex));
             }
 

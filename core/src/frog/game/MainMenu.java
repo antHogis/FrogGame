@@ -19,7 +19,7 @@ public class MainMenu implements Screen {
 
     public MainMenu(FrogMain host) {
         this.host = host;
-        main = new Texture(Gdx.files.internal("gfx/Menu.png"));
+        main = new Texture(Gdx.files.internal("ui/Menu_FI.png"));
         batch = host.getBatch();
         camera = host.getCamera();
         camera.setToOrtho(false, host.getVIEWPORT_WIDTH(), host.getVIEWPORT_HEIGHT());

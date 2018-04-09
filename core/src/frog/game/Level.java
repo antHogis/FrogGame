@@ -29,8 +29,9 @@ public class Level implements Screen {
     private Array<Rock> rocks;
     private Array<Seaweed> seaweeds;
 
-    private final float startTime;
+    private float startTime;
     private int timeSubtracted = 0;
+    private Timer timer;
 
     private Music bgMusic;
     private TiledMap tiledMap;
@@ -97,6 +98,7 @@ public class Level implements Screen {
         bgMusic.setVolume(0.25f);
         //bgMusic.play();
 
+        timer = new Timer(WINDOW_WIDTH_PIXELS, WINDOW_HEIGHT_PIXELS);
         startTime = System.currentTimeMillis();
     }
 
@@ -107,7 +109,7 @@ public class Level implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0.30f, 0.40f, 1);
+        Gdx.gl.glClearColor(0.658f, 0.980f, 0.980f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         camera.update();
@@ -121,11 +123,18 @@ public class Level implements Screen {
         frog.moveTemporary(Gdx.graphics.getDeltaTime());
         moveCamera();
 
-        tiledMapRenderer.render();
-
         batch.begin();
         frog.draw(batch);
         drawObjects();
+        timer.update();
+        timer.draw(batch, camera.position.x, camera.position.y);
+        batch.end();
+
+        tiledMapRenderer.render();
+
+        batch.begin();
+        timer.update();
+        timer.draw(batch, camera.position.x, camera.position.y);
         batch.end();
 
         respawnFromWall();
@@ -198,7 +207,7 @@ public class Level implements Screen {
             Gdx.app.log("TAG", "Time after subtracted:" + Integer.toString(endTime));
 
             int nextIndex = host.getLevels().indexOf(this, true) + 1;
-            host.setScreen(new LevelFinish(host, endTime, nextIndex));
+            host.setScreen(new LevelFinish(host, timer.getTimeString(), nextIndex));
         }
     }
 
@@ -257,6 +266,7 @@ public class Level implements Screen {
             if (timeCoin.getIsCleared() && !timeCoin.isSubtracted()) {
                 timeSubtracted -= 5;
                 timeCoin.setSubtracted(true);
+                timer.subtractTime(-5);
             }
         }
         for (Seaweed seaweed : seaweeds) {
@@ -440,6 +450,10 @@ public class Level implements Screen {
                         + rockRectangle.getRectangle().getHeight() - rocks.peek().getHeight());
             }
         }
+    }
+
+    public void resetTimer() {
+        startTime = System.currentTimeMillis();
     }
 
 }
