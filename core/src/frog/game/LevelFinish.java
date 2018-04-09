@@ -18,7 +18,7 @@ public class LevelFinish implements Screen {
     private SpriteBatch batch;
     private BitmapFont font;
     private int nextIndex;
-    String timeString;
+    private String timeString;
 
 
     public LevelFinish(FrogMain host, String timeString, int nextIndex) {
@@ -26,9 +26,7 @@ public class LevelFinish implements Screen {
         batch = host.getBatch();
         camera = host.getCamera();
 
-        font = new BitmapFont();
-        font.setColor(Color.BLACK);
-        font.getData().setScale(4f);
+        font = new BitmapFont(Gdx.files.internal("ui/fonts/lato90.txt"));
 
         this.timeString = timeString;
         this.nextIndex = nextIndex;
@@ -41,7 +39,7 @@ public class LevelFinish implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1,1,1,1);
+        Gdx.gl.glClearColor(0.658f, 0.980f, 0.980f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.setProjectionMatrix(camera.combined);
@@ -49,7 +47,9 @@ public class LevelFinish implements Screen {
         changeScreen();
 
         batch.begin();
-        font.draw(batch, "Kenttä läpäisty ajassa: " + timeString,0,host.getVIEWPORT_HEIGHT()/2);
+        font.draw(batch, "Kenttä läpäisty ajassa " + timeString,50,host.getVIEWPORT_HEIGHT()*0.75f);
+        font.draw(batch, "Paina ruutua jatkaaksesi",150,host.getVIEWPORT_HEIGHT()*0.5f);
+        font.draw(batch, "seuraavaan kenttään",220,host.getVIEWPORT_HEIGHT()*0.35f);
         batch.end();
     }
 

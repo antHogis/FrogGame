@@ -29,8 +29,6 @@ public class Level implements Screen {
     private Array<Rock> rocks;
     private Array<Seaweed> seaweeds;
 
-    private float startTime;
-    private int timeSubtracted = 0;
     private Timer timer;
 
     private Music bgMusic;
@@ -99,7 +97,6 @@ public class Level implements Screen {
         //bgMusic.play();
 
         timer = new Timer(WINDOW_WIDTH_PIXELS, WINDOW_HEIGHT_PIXELS);
-        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -124,17 +121,20 @@ public class Level implements Screen {
         moveCamera();
 
         batch.begin();
-        frog.draw(batch);
-        drawObjects();
-        timer.update();
-        timer.draw(batch, camera.position.x, camera.position.y);
+            frog.draw(batch);
+            drawObjects();
+            timer.update();
+            timer.draw(batch, camera.position.x, camera.position.y);
         batch.end();
 
         tiledMapRenderer.render();
 
         batch.begin();
-        timer.update();
-        timer.draw(batch, camera.position.x, camera.position.y);
+            for (Checkpoint checkpoint : checkpoints) {
+                    checkpoint.draw(batch);
+            }
+            timer.update();
+            timer.draw(batch, camera.position.x, camera.position.y);
         batch.end();
 
         respawnFromWall();
@@ -201,11 +201,6 @@ public class Level implements Screen {
 
     private void endLevel() {
         if (overlapsMapObject("endzone-rectangle")) {
-            int endTime = (int) ((System.currentTimeMillis()-startTime)/1000);
-            Gdx.app.log("TAG", "Time before subtracted: " + Integer.toString(endTime));
-            endTime += timeSubtracted;
-            Gdx.app.log("TAG", "Time after subtracted:" + Integer.toString(endTime));
-
             int nextIndex = host.getLevels().indexOf(this, true) + 1;
             host.setScreen(new LevelFinish(host, timer.getTimeString(), nextIndex));
         }
@@ -227,9 +222,6 @@ public class Level implements Screen {
     private void drawObjects() {
         for(Enemy enemy : enemies) {
             enemy.draw(batch);
-        }
-        for (Checkpoint checkpoint : checkpoints) {
-            checkpoint.draw(batch);
         }
         for (TimeCoin timeCoin : timeCoins) {
             if (!timeCoin.getIsCleared()) {
@@ -264,7 +256,6 @@ public class Level implements Screen {
         for (TimeCoin timeCoin : timeCoins) {
             timeCoin.checkCollision(frog);
             if (timeCoin.getIsCleared() && !timeCoin.isSubtracted()) {
-                timeSubtracted -= 5;
                 timeCoin.setSubtracted(true);
                 timer.subtractTime(-5);
             }
@@ -453,7 +444,7 @@ public class Level implements Screen {
     }
 
     public void resetTimer() {
-        startTime = System.currentTimeMillis();
+        timer.reset();
     }
 
 }
