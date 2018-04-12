@@ -53,8 +53,9 @@ public class Level implements Screen {
      */
     private Timer timer;
     private HomeButton menuButton;
- /*   private Button returnToMenuButton;
-    private Button resumeGameButton;*/
+    private PromptResponse returnToMenuButton;
+    private PromptResponse resumeGameButton;
+    private ReturnPrompt prompt;
     private boolean drawPrompt;
 
 
@@ -80,7 +81,6 @@ public class Level implements Screen {
 
         this.host = host;
         batch = host.getBatch();
-        hudBatch = new SpriteBatch();
 
         this.TILE_AMOUNT_WIDTH = TILE_AMOUNT_WIDTH;
         this.TILE_AMOUNT_HEIGHT = TILE_AMOUNT_HEIGHT;
@@ -136,7 +136,8 @@ public class Level implements Screen {
         batch.setProjectionMatrix(camera.combined);
 
         if (Gdx.input.isTouched()) {
-            processInput();
+            //promptReturn();
+            Gdx.app.log("TAG", "Touched");
         }
 
         if (gameRunning) {
@@ -144,6 +145,8 @@ public class Level implements Screen {
             moveEnemies();
             frog.movementAndroid(Gdx.graphics.getDeltaTime());
             frog.moveTemporary(Gdx.graphics.getDeltaTime());
+            respawnFromWall();
+            endLevel();
             moveCamera();
             timer.update();
         }
@@ -157,16 +160,8 @@ public class Level implements Screen {
 
         batch.begin();
             drawCheckpoints();
-            menuButton.draw(batch, camera.position.x, camera.position.y);
+            drawHUD();
         batch.end();
-
-        hudBatch.setProjectionMatrix(overlayCamera.combined);
-        hudBatch.begin();
-            timer.draw(hudBatch, camera.position.x, camera.position.y);
-        hudBatch.end();
-
-        respawnFromWall();
-        endLevel();
     }
 
     @Override
@@ -268,6 +263,17 @@ public class Level implements Screen {
     private void drawCheckpoints() {
         for (Checkpoint checkpoint : checkpoints) {
             checkpoint.draw(batch);
+        }
+    }
+
+    private void drawHUD() {
+        timer.draw(batch, camera.position.x, camera.position.y);
+        menuButton.draw(batch, camera.position.x, camera.position.y);
+
+        if (drawPrompt) {
+            prompt.draw(batch);
+            returnToMenuButton.draw(batch);
+            resumeGameButton.draw(batch);
         }
     }
 
@@ -485,12 +491,48 @@ public class Level implements Screen {
     private void createHUD_elements() {
         timer = new Timer(WINDOW_WIDTH_PIXELS, WINDOW_HEIGHT_PIXELS);
         menuButton = new HomeButton(WINDOW_WIDTH_PIXELS, WINDOW_HEIGHT_PIXELS, TILE_DIMENSION);
+
+        prompt = new ReturnPrompt(WINDOW_WIDTH_PIXELS, WINDOW_HEIGHT_PIXELS);
+        returnToMenuButton = new PromptResponse("ui/joo.png", prompt.getRectangle().getWidth());
+        resumeGameButton = new PromptResponse("ui/ei.png", prompt.getRectangle().getWidth());
+
     }
 
-    private void processInput() {
-        menuButton.processInput(camera);
-        if (menuButton.isTouched()) {
-            host.setScreen(new MainMenu(host));
+    private void promptReturn() {
+        if (gameRunning && menuButton.isTouched(camera)) {
+            gameRunning = false;
+        }
+
+        if (!gameRunning && !drawPrompt) {
+            drawPrompt = true;
+            prompt.setX(camera.position.x);
+            prompt.setY(camera.position.y);
+            Gdx.app.log("Prompt", "x " + prompt.getRectangle().getX()
+                    + "y " + prompt.getRectangle().getY());
+
+            /*
+             * Creating variables of prompt window size, in order to set it's buttons to scale
+             */
+            float promptX = prompt.getRectangle().getX();
+            float promptY = prompt.getRectangle().getY();
+            float promptWidth = prompt.getRectangle().getWidth();
+            float promptEight = promptWidth/8;
+
+            returnToMenuButton.setX(promptX + promptEight);
+            returnToMenuButton.setY(promptY + promptEight);
+            Gdx.app.log("Return ", "x " + returnToMenuButton.getX() + "y " + returnToMenuButton.getY());
+
+            resumeGameButton.setX(promptX + promptWidth - promptEight - resumeGameButton.getWidth());
+            resumeGameButton.setY(promptY + promptEight);
+        }
+
+        if (!gameRunning) {
+            if(returnToMenuButton.isTouched(camera)) {
+                host.setScreen(new MainMenu(host));
+            } else if (resumeGameButton.isTouched(camera)) {
+                gameRunning = true;
+                drawPrompt = false;
+            }
         }
     }
 }
