@@ -152,7 +152,7 @@ public class Level implements Screen {
         }
 
         batch.begin();
-            frog.draw(batch);
+            frog.drawAnimation(batch);
             drawObjects();
         batch.end();
 
@@ -245,11 +245,12 @@ public class Level implements Screen {
 
     private void drawObjects() {
         for(Enemy enemy : enemies) {
-            enemy.draw(batch);
+            enemy.drawAnimation(batch);
         }
         for (TimeCoin timeCoin : timeCoins) {
-            if (!timeCoin.getIsCleared()) {
-                timeCoin.draw(batch);
+            if (!timeCoin.isCleared()) {
+                timeCoin.drawAnimation(batch);
+                timeCoin.movement();
             }
         }
         for (Seaweed seaweed : seaweeds) {
@@ -296,7 +297,7 @@ public class Level implements Screen {
         }
         for (TimeCoin timeCoin : timeCoins) {
             timeCoin.checkCollision(frog);
-            if (timeCoin.getIsCleared() && !timeCoin.isSubtracted()) {
+            if (timeCoin.isCleared() && !timeCoin.isSubtracted()) {
                 timeCoin.setSubtracted(true);
                 timer.subtractTime(-5);
             }

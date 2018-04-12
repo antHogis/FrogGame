@@ -23,14 +23,8 @@ class Player extends GameObject {
     private float lastCheckpointX;
     private float lastCheckpointY;
 
-    private TextureRegion [][] imageSheet2D;
-    private TextureRegion [] imageSheet1D;
-    private final int IMAGE_COLS = 1;
-    private final int IMAGE_ROWS = 1;
-    private boolean facedRight;
-    private Animation<TextureRegion> animation;
-    private TextureRegion currentFrame;
-    private float stateTime;
+    private boolean flippedRight = true;
+    private boolean dontFlipRight;
 
     private float NEUTRAL_POINT_X;
     private float NEUTRAL_POINT_Y;
@@ -49,13 +43,25 @@ class Player extends GameObject {
     private float movementModifier = 1f;
 
     public Player(TiledMap tiledMap, int TILE_DIMENSION) {
-        texture = new Texture("gfx/sammakko.png");
+        textureSheet = new Texture("gfx/sammakko.png");
+        SHEET_COLUMNS = 1;
+        SHEET_ROWS = 1;
+        textureSheet2D = TextureRegion.split(textureSheet,
+                textureSheet.getWidth() / SHEET_COLUMNS,
+                textureSheet.getHeight() / SHEET_ROWS);
+        textureSheet1D = convert2Dto1D(textureSheet2D);
 
-        //Rectangle values not specified here, because t
+        stateTime = 1f;
+        animation = new Animation<TextureRegion>(4/60f, textureSheet1D);
+        currentFrame = animation.getKeyFrame(stateTime, true);
+
+        rectangle = new Rectangle(0, 0, TILE_DIMENSION*2f, 0);
+        rectangle.setHeight((this.rectangle.getWidth()*currentFrame.getRegionHeight())/currentFrame.getRegionWidth());
+
         rectangle = new Rectangle(0, 0,
                 0, 0);
         this.rectangle.setWidth(TILE_DIMENSION*3);
-        this.rectangle.setHeight((texture.getHeight()*rectangle.getWidth())/texture.getWidth());
+        this.rectangle.setHeight((currentFrame.getRegionHeight()*rectangle.getWidth())/currentFrame.getRegionWidth());
         moveSpeed = 512f;
 
         NEUTRAL_POINT_X = Gdx.input.getAccelerometerY();
@@ -147,6 +153,10 @@ class Player extends GameObject {
                         this.rectangle.width,
                         this.rectangle.height))) {
             rectangle.setX(rectangle.getX() + movementRight);
+            if (!flippedRight) {
+                flippedRight = true;
+                flip(animation, true, false);
+            }
         }
 
         //LEFT
@@ -156,6 +166,10 @@ class Player extends GameObject {
                         this.rectangle.width,
                         this.rectangle.height))) {
             rectangle.setX(rectangle.getX() + movementLeft);
+            if(flippedRight) {
+                flippedRight = false;
+                flip(animation, true, false);
+            }
         }
 
         //FORWARD

@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Vector3;
  * Created by anton on 12/04/2018.
  */
 
-public abstract class Button {
+abstract class Button {
 
     Texture texture;
     Rectangle rectangle;

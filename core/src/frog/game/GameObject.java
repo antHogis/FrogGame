@@ -1,5 +1,6 @@
 package frog.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -14,12 +15,15 @@ abstract class GameObject {
     Rectangle rectangle;
     Texture texture;
 
-    private Texture textureSheet;
-    private TextureRegion [][] textureSheet2D;
-    private TextureRegion [] textureSheet1D;
-    private int SHEET_COLUMNS;
-    private int SHEET_ROWS;
+    Texture textureSheet;
+    TextureRegion [][] textureSheet2D;
+    TextureRegion [] textureSheet1D;
+    int SHEET_COLUMNS;
+    int SHEET_ROWS;
 
+    Animation<TextureRegion> animation;
+    float stateTime;
+    TextureRegion currentFrame;
 
     public Texture getTexture() {
         return this.texture;
@@ -27,6 +31,12 @@ abstract class GameObject {
 
     public void draw(SpriteBatch batch) {
         batch.draw(this.texture, this.rectangle.x, this.rectangle.y, this.rectangle.width, this.rectangle.height);
+    }
+
+    public void drawAnimation(SpriteBatch batch) {
+        stateTime += Gdx.graphics.getDeltaTime();
+        currentFrame = animation.getKeyFrame(stateTime, true);
+        batch.draw(currentFrame, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
     }
 
     public float getX() {
@@ -60,7 +70,7 @@ abstract class GameObject {
     }
 
 
-    private TextureRegion[] convert2Dto1D (TextureRegion[][] twoDim) {
+    public TextureRegion[] convert2Dto1D (TextureRegion[][] twoDim) {
         TextureRegion [] oneDim = new TextureRegion[twoDim.length * twoDim[0].length];
         int index = 0;
 
@@ -73,7 +83,7 @@ abstract class GameObject {
         return oneDim;
     }
 
-    private void flip(Animation<TextureRegion> animation, boolean xFlip, boolean yFlip) {
+    public void flip(Animation<TextureRegion> animation, boolean xFlip, boolean yFlip) {
         TextureRegion[] regions = animation.getKeyFrames();
         for(TextureRegion r : regions) {
             r.flip(xFlip, yFlip);
