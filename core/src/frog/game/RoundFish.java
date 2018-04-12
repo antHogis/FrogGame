@@ -17,7 +17,7 @@ public class RoundFish extends Enemy {
         this.rectangle = new Rectangle(0, 0,
                 texture.getWidth(),
                 texture.getHeight());
-        this.rectangle.setWidth(TILE_DIMENSION*2);
+        this.rectangle.setWidth(TILE_DIMENSION);
         this.rectangle.setHeight((texture.getHeight()*rectangle.getWidth())/texture.getWidth());
         this.movementSpeed = 128f;
         this.isMovingRight = true;

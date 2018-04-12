@@ -43,8 +43,9 @@ class Player extends GameObject {
     private final float THRESHOLD_MIN_Y_BACK = (-1*THRESHOLD_VALUE) + 0.15f;
 
     private final float SPEED_X = 220f;
-    private final float SPEED_UP = SPEED_X - 10;
-    private final float SPEED_DOWN = SPEED_X + 10;
+    private final float SPEED_FORWARD = SPEED_X - 10;
+    private final float SPEED_BACKWARDS = SPEED_X + 10;
+    //Olemassa hidastuksia varten
     private float movementModifier = 1f;
 
     public Player(TiledMap tiledMap, int TILE_DIMENSION) {
@@ -53,7 +54,7 @@ class Player extends GameObject {
         //Rectangle values not specified here, because t
         rectangle = new Rectangle(0, 0,
                 0, 0);
-        this.rectangle.setWidth(TILE_DIMENSION*2);
+        this.rectangle.setWidth(TILE_DIMENSION*3);
         this.rectangle.setHeight((texture.getHeight()*rectangle.getWidth())/texture.getWidth());
         moveSpeed = 512f;
 
@@ -90,7 +91,7 @@ class Player extends GameObject {
         return this.lastCheckpointY;
     }
 
-    //Väliaikainen liikkuminen testiä varten
+    //Väliaikainen liikkuminen desktop-testiä varten
     public void moveTemporary(float delta) {
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)
                 && !overlapsMapObject("walls-rectangle",
@@ -136,8 +137,8 @@ class Player extends GameObject {
     public void movementAndroid (float delta) {
         float movementRight = delta * SPEED_X * getAdjustedX() * movementModifier;
         float movementLeft = movementRight * movementModifier;
-        float movementForward = delta * SPEED_UP * getAdjustedY() * movementModifier;
-        float movementBack = delta * SPEED_DOWN * getAdjustedY() * movementModifier;
+        float movementForward = delta * SPEED_FORWARD * getAdjustedY() * movementModifier;
+        float movementBack = delta * SPEED_BACKWARDS * getAdjustedY() * movementModifier;
 
         //RIGHT
         if (getAdjustedX()> THRESHOLD_MIN_X_RIGHT
@@ -157,7 +158,7 @@ class Player extends GameObject {
             rectangle.setX(rectangle.getX() + movementLeft);
         }
 
-        //UP
+        //FORWARD
         if (getAdjustedY() > THRESHOLD_MIN_Y_FORWARD
                 && !overlapsMapObject("walls-rectangle",
                     new Rectangle(this.rectangle.x, this.rectangle.y + movementForward,
@@ -166,7 +167,7 @@ class Player extends GameObject {
             rectangle.setY(rectangle.getY() + movementForward);
         }
 
-        //DOWN
+        //BACKWARDS
         if (getAdjustedY() < THRESHOLD_MIN_Y_BACK
                 && !overlapsMapObject("walls-rectangle",
                     new Rectangle(this.rectangle.x, this.rectangle.y + movementBack,

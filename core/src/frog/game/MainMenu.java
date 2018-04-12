@@ -23,6 +23,7 @@ public class MainMenu implements Screen {
         batch = host.getBatch();
         camera = host.getCamera();
         camera.setToOrtho(false, host.getVIEWPORT_WIDTH(), host.getVIEWPORT_HEIGHT());
+
     }
 
     @Override
@@ -44,28 +45,6 @@ public class MainMenu implements Screen {
             Gdx.app.log("TAG", "Setting Screen");
             host.setScreen(host.getLevels().get(0));
         }
-        /*if (Gdx.input.isTouched()) {
-            Gdx.app.log("TAG", "Setting Screen");
-            host.setScreen(new Level(this.host,
-                    "lvl/piialevel.tmx",
-                    1,
-                    1,
-                    1,
-                    0,
-                    50,
-                    30));
-        }*/
-        /*if (Gdx.input.isTouched()) {
-            Gdx.app.log("TAG", "Setting Screen");
-            host.setScreen(new Level(this.host,
-                    "lvl/0-1.tmx",
-                    0,
-                    0,
-                    1,
-                    0,
-                    25,
-                    15));
-        }*/
     }
 
     @Override

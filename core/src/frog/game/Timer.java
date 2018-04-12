@@ -15,7 +15,6 @@ public class Timer {
     private TextureRegion[] numberSplitSheet1D;
     private TextureRegion[][] numberSplitSheet2D;
     private TextureRegion[] timerTextures;
-    private Rectangle leftMostDigit;
 
     private final float WINDOW_WIDTH;
     private final float WINDOW_HEIGHT;
@@ -28,7 +27,6 @@ public class Timer {
     public Timer(float WINDOW_WIDTH, float WINDOW_HEIGHT) {
         numberSheet = new Texture("ui/numbers.png");
         colon = new TextureRegion(new Texture("ui/colon2.png"));
-        leftMostDigit = new Rectangle();
 
         numberSplitSheet2D = TextureRegion.split(numberSheet,
                 numberSheet.getWidth()/10,

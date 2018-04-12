@@ -19,9 +19,19 @@ import com.badlogic.gdx.utils.Array;
  */
 
 public class Level implements Screen {
+    /*
+     * Core elements that enable rendering and gameplay.
+     */
     private FrogMain host;
     private SpriteBatch batch;
+    private SpriteBatch hudBatch;
+    private OrthographicCamera camera;
+    private OrthographicCamera overlayCamera;
+    private boolean gameRunning;
 
+    /*
+     * Characters and objects in the level.
+     */
     private Player frog;
     private Array<Enemy> enemies;
     private Array<Checkpoint> checkpoints;
@@ -29,26 +39,35 @@ public class Level implements Screen {
     private Array<Rock> rocks;
     private Array<Seaweed> seaweeds;
 
+    /*
+     * Amounts of enemies in the Level. Initialized in the constructor.
+     *
+     * The enemies' movement paths are defined in the TiledMap, so defining their amounts separately
+     * is imperative in order to identify them and place them in the correct positions and avoid
+     * conflicting paths.
+     */
+    private final int AMOUNT_ROUNDFISH, AMOUNT_LONGFISH, AMOUNT_OCTOPUS1, AMOUNT_OCTOPUS2;
+
+    /*
+     * HUD elements and relevant modifiers
+     */
     private Timer timer;
+    private HomeButton menuButton;
+ /*   private Button returnToMenuButton;
+    private Button resumeGameButton;*/
+    private boolean drawPrompt;
 
-    private Music bgMusic;
-    private TiledMap tiledMap;
-    private TiledMapRenderer tiledMapRenderer;
 
-    private final int AMOUNT_ROUNDFISH;
-    private final int AMOUNT_LONGFISH;
-    private final int AMOUNT_OCTOPUS1;
-    private final int AMOUNT_OCTOPUS2;
+    private final Music bgMusic;
+    private final TiledMap tiledMap;
+    private final TiledMapRenderer tiledMapRenderer;
 
     private final int TILE_DIMENSION;
-    private final int TILE_AMOUNT_WIDTH;
-    private final int TILE_AMOUNT_HEIGHT;
+    private final int TILE_AMOUNT_WIDTH, TILE_AMOUNT_HEIGHT;
 
-    private OrthographicCamera camera;
     private final int WINDOW_WIDTH_PIXELS = 1664;
     private final int WINDOW_HEIGHT_PIXELS = 1040;
-    private final int WORLD_WIDTH_PIXELS;
-    private final int WORLD_HEIGHT_PIXELS;
+    private final int WORLD_WIDTH_PIXELS, WORLD_HEIGHT_PIXELS;
 
     public Level(FrogMain host,
                  String levelPath,
@@ -61,6 +80,7 @@ public class Level implements Screen {
 
         this.host = host;
         batch = host.getBatch();
+        hudBatch = new SpriteBatch();
 
         this.TILE_AMOUNT_WIDTH = TILE_AMOUNT_WIDTH;
         this.TILE_AMOUNT_HEIGHT = TILE_AMOUNT_HEIGHT;
@@ -72,6 +92,7 @@ public class Level implements Screen {
         camera.setToOrtho(false,
                 WINDOW_WIDTH_PIXELS,
                 WINDOW_HEIGHT_PIXELS);
+        overlayCamera = camera;
 
         tiledMap = new TmxMapLoader().load(levelPath);
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
@@ -91,12 +112,13 @@ public class Level implements Screen {
         rocks = new Array<Rock>();
         addLevelObjects();
 
-        bgMusic = Gdx.audio.newMusic(Gdx.files.internal("music/mariowater.mp3"));
+        bgMusic = Gdx.audio.newMusic(Gdx.files.internal("music/demo1-leikattu.wav"));
         bgMusic.setLooping(true);
         bgMusic.setVolume(0.25f);
         //bgMusic.play();
 
-        timer = new Timer(WINDOW_WIDTH_PIXELS, WINDOW_HEIGHT_PIXELS);
+        createHUD_elements();
+        gameRunning = true;
     }
 
     @Override
@@ -113,29 +135,35 @@ public class Level implements Screen {
         tiledMapRenderer.setView(camera);
         batch.setProjectionMatrix(camera.combined);
 
-        checkObjectCollision();
-        moveEnemies();
+        if (Gdx.input.isTouched()) {
+            processInput();
+        }
 
-        frog.movementAndroid(Gdx.graphics.getDeltaTime());
-        frog.moveTemporary(Gdx.graphics.getDeltaTime());
-        moveCamera();
+        if (gameRunning) {
+            checkObjectCollision();
+            moveEnemies();
+            frog.movementAndroid(Gdx.graphics.getDeltaTime());
+            frog.moveTemporary(Gdx.graphics.getDeltaTime());
+            moveCamera();
+            timer.update();
+        }
 
         batch.begin();
             frog.draw(batch);
             drawObjects();
-            timer.update();
-            timer.draw(batch, camera.position.x, camera.position.y);
         batch.end();
 
         tiledMapRenderer.render();
 
         batch.begin();
-            for (Checkpoint checkpoint : checkpoints) {
-                    checkpoint.draw(batch);
-            }
-            timer.update();
-            timer.draw(batch, camera.position.x, camera.position.y);
+            drawCheckpoints();
+            menuButton.draw(batch, camera.position.x, camera.position.y);
         batch.end();
+
+        hudBatch.setProjectionMatrix(overlayCamera.combined);
+        hudBatch.begin();
+            timer.draw(hudBatch, camera.position.x, camera.position.y);
+        hudBatch.end();
 
         respawnFromWall();
         endLevel();
@@ -202,6 +230,7 @@ public class Level implements Screen {
     private void endLevel() {
         if (overlapsMapObject("endzone-rectangle")) {
             int nextIndex = host.getLevels().indexOf(this, true) + 1;
+            bgMusic.stop();
             host.setScreen(new LevelFinish(host, timer.getTimeString(), nextIndex));
         }
     }
@@ -233,6 +262,12 @@ public class Level implements Screen {
         }
         for (Rock rock : rocks) {
             rock.draw(batch);
+        }
+    }
+
+    private void drawCheckpoints() {
+        for (Checkpoint checkpoint : checkpoints) {
+            checkpoint.draw(batch);
         }
     }
 
@@ -447,4 +482,15 @@ public class Level implements Screen {
         timer.reset();
     }
 
+    private void createHUD_elements() {
+        timer = new Timer(WINDOW_WIDTH_PIXELS, WINDOW_HEIGHT_PIXELS);
+        menuButton = new HomeButton(WINDOW_WIDTH_PIXELS, WINDOW_HEIGHT_PIXELS, TILE_DIMENSION);
+    }
+
+    private void processInput() {
+        menuButton.processInput(camera);
+        if (menuButton.isTouched()) {
+            host.setScreen(new MainMenu(host));
+        }
+    }
 }
