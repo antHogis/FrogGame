@@ -202,8 +202,8 @@ class Player extends GameObject {
      * @returns true if the closest world edge is on the left side of the player
      */
     public void setFrogSpawn(Rectangle spawnRectangle, int TILE_DIMENSION) {
-        Rectangle testRectangle = spawnRectangle;
-        testRectangle.setX(spawnRectangle.getX()-TILE_DIMENSION);
+        Rectangle testRectangle = new Rectangle(spawnRectangle.getX()-TILE_DIMENSION,
+                spawnRectangle.getY(), spawnRectangle.getWidth(),spawnRectangle.getHeight());
 
         if (overlapsMapObject("walls-rectangle", testRectangle)) {
             this.setX(spawnRectangle.getX());
