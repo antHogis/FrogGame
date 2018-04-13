@@ -24,13 +24,10 @@ class Player extends GameObject {
     private float lastCheckpointY;
 
     private boolean flippedRight = true;
-    private boolean dontFlipRight;
 
     private float NEUTRAL_POINT_X;
     private float NEUTRAL_POINT_Y;
-
     private final float THRESHOLD_VALUE = 0.35f;
-
     private final float THRESHOLD_MIN_X_RIGHT = THRESHOLD_VALUE;
     private final float THRESHOLD_MIN_X_LEFT = -1*THRESHOLD_VALUE;
     private final float THRESHOLD_MIN_Y_FORWARD = THRESHOLD_VALUE + 0.3f;
@@ -69,32 +66,7 @@ class Player extends GameObject {
         Gdx.app.log("TAG", "x:" + NEUTRAL_POINT_X);
         Gdx.app.log("TAG", "y:" + NEUTRAL_POINT_Y);
 
-        Gdx.app.log("TAG", "Thresh right:" + THRESHOLD_MIN_X_RIGHT );
-        Gdx.app.log("TAG", "Thresh left:" + THRESHOLD_MIN_X_LEFT );
-
-        Gdx.app.log("TAG", "Thresh forw:" + THRESHOLD_MIN_Y_FORWARD );
-        Gdx.app.log("TAG", "Thresh back:" + THRESHOLD_MIN_Y_BACK );
-
         this.tiledMap = tiledMap;
-
-        //imageSheet2D = TextureRegion.split();
-    }
-
-
-    public void setLastCheckpointX(float x) {
-        this.lastCheckpointX = x;
-    }
-
-    public void setLastCheckpointY(float y) {
-        this.lastCheckpointY = y;
-    }
-
-    public float getLastCheckpointX() {
-        return this.lastCheckpointX;
-    }
-
-    public float getLastCheckpointY() {
-        return this.lastCheckpointY;
     }
 
     //Väliaikainen liikkuminen desktop-testiä varten
@@ -138,7 +110,6 @@ class Player extends GameObject {
 
         }
     }
-
 
     public void movementAndroid (float delta) {
         float movementRight = delta * SPEED_X * getAdjustedX() * movementModifier;
@@ -220,5 +191,46 @@ class Player extends GameObject {
 
     public void setMovementModifier(float movementModifier) {
         this.movementModifier = movementModifier;
+    }
+
+    /*
+     * Flips the direction of the frog if he's supposed to face left. Sets position in
+     *
+     * Checks if the closest world edges are on the left side of the rectangle defining the
+     * player's starting point.
+     *
+     * @returns true if the closest world edge is on the left side of the player
+     */
+    public void setFrogSpawn(Rectangle spawnRectangle, int TILE_DIMENSION) {
+        Rectangle testRectangle = spawnRectangle;
+        testRectangle.setX(spawnRectangle.getX()-TILE_DIMENSION);
+
+        if (overlapsMapObject("walls-rectangle", testRectangle)) {
+            this.setX(spawnRectangle.getX());
+            this.setY(spawnRectangle.getY());
+        } else {
+            this.setX(spawnRectangle.getX()-this.getWidth());
+            this.setY(spawnRectangle.getY());
+            flip(animation, true, false);
+            flippedRight = false;
+        }
+        this.setLastCheckpointX(this.getX());
+        this.setLastCheckpointY(this.getY());
+    }
+
+    public void setLastCheckpointX(float x) {
+        this.lastCheckpointX = x;
+    }
+
+    public void setLastCheckpointY(float y) {
+        this.lastCheckpointY = y;
+    }
+
+    public float getLastCheckpointX() {
+        return this.lastCheckpointX;
+    }
+
+    public float getLastCheckpointY() {
+        return this.lastCheckpointY;
     }
 }

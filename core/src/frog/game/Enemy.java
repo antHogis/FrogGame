@@ -1,6 +1,7 @@
 package frog.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 
@@ -15,10 +16,12 @@ public abstract class Enemy extends GameObject {
     private float MOVEMENT_ENDPOINT_X;
     private float MOVEMENT_ENDPOINT_Y;
 
-    public void checkCollision(Player frog) {
+    public boolean collidesWith(Player frog) {
         if (this.rectangle.overlaps(frog.rectangle)) {
             Gdx.app.log("TAG", "Player killed!");
-            frog.returnToLastCheckpoint();
+            return true;
+        } else {
+            return false;
         }
     }
 
