@@ -3,6 +3,7 @@ package frog.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -60,6 +61,7 @@ public class Level implements Screen {
 
 
     private final Music bgMusic;
+    private final Sound perkele;
     private final TiledMap tiledMap;
     private final TiledMapRenderer tiledMapRenderer;
 
@@ -115,6 +117,8 @@ public class Level implements Screen {
         bgMusic = Gdx.audio.newMusic(Gdx.files.internal("music/demo1-leikattu.wav"));
         bgMusic.setLooping(true);
         bgMusic.setVolume(0.25f);
+        perkele = Gdx.audio.newSound(Gdx.files.internal("sounds/perkele.wav"));
+        perkele.setVolume(0,0.25f);
         //bgMusic.play();
 
         createHUD_elements();
@@ -136,7 +140,7 @@ public class Level implements Screen {
         batch.setProjectionMatrix(camera.combined);
 
         if (Gdx.input.isTouched()) {
-            //promptReturn();
+            promptReturn();
             Gdx.app.log("TAG", "Touched");
         }
 
@@ -239,7 +243,10 @@ public class Level implements Screen {
     private void moveEnemies() {
         for(Enemy enemy : enemies) {
             enemy.movement();
-            enemy.checkCollision(frog);
+            if (enemy.collidesWith(frog)) {
+                frog.returnToLastCheckpoint();
+                perkele.play();
+            }
         }
     }
 
@@ -283,11 +290,7 @@ public class Level implements Screen {
                 tiledMap.getLayers().get("frog-spawn-rectangle").getObjects().getByType(RectangleMapObject.class);
 
         for (RectangleMapObject startPoint : startPoints) {
-            frog.setX(startPoint.getRectangle().getX());
-            frog.setY(startPoint.getRectangle().getY());
-
-            frog.setLastCheckpointX(frog.getX());
-            frog.setLastCheckpointY(frog.getY());
+            frog.setFrogSpawn(startPoint.getRectangle(), TILE_DIMENSION);
         }
     }
 
@@ -508,6 +511,7 @@ public class Level implements Screen {
             drawPrompt = true;
             prompt.setX(camera.position.x);
             prompt.setY(camera.position.y);
+            Gdx.app.log("Camera", "x " + camera.position.x +" y "+ camera.position.y);
             Gdx.app.log("Prompt", "x " + prompt.getRectangle().getX()
                     + "y " + prompt.getRectangle().getY());
 
@@ -525,6 +529,7 @@ public class Level implements Screen {
 
             resumeGameButton.setX(promptX + promptWidth - promptEight - resumeGameButton.getWidth());
             resumeGameButton.setY(promptY + promptEight);
+            Gdx.app.log("Resume ", "x " + resumeGameButton.getX() + " y " + resumeGameButton.getY());
         }
 
         if (!gameRunning) {
