@@ -62,7 +62,7 @@ class Player extends GameObject {
                 0, 0);
         this.rectangle.setWidth(TILE_DIMENSION*3);
         this.rectangle.setHeight((currentFrame.getRegionHeight()*rectangle.getWidth())/currentFrame.getRegionWidth());
-        moveSpeed = 512f;
+        moveSpeed = 1000f;
 
         NEUTRAL_POINT_X = Gdx.input.getAccelerometerY();
         NEUTRAL_POINT_Y = Gdx.input.getAccelerometerZ();
