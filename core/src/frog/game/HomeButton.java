@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Rectangle;
  * Created by Anton on 12.4.2018.
  */
 
-public class HomeButton extends Button {
+public class HomeButton extends UiObject {
 
     private int edgeDistance = 10;
     private final float WINDOW_WIDTH, WINDOW_HEIGHT;

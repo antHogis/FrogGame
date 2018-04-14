@@ -22,7 +22,6 @@ public class MainMenu implements Screen {
         main = new Texture(Gdx.files.internal("ui/Menu_FI.png"));
         batch = host.getBatch();
         camera = host.getCamera();
-        camera.setToOrtho(false, host.getVIEWPORT_WIDTH(), host.getVIEWPORT_HEIGHT());
 
     }
 
@@ -43,6 +42,7 @@ public class MainMenu implements Screen {
 
         if (Gdx.input.isTouched()) {
             Gdx.app.log("TAG", "Setting Screen");
+            host.getLevels().get(0).startMusic();
             host.setScreen(host.getLevels().get(0));
         }
     }

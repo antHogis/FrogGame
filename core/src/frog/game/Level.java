@@ -3,7 +3,6 @@ package frog.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -61,7 +60,6 @@ public class Level implements Screen {
 
 
     private final Music bgMusic;
-    private final Sound perkele;
     private final TiledMap tiledMap;
     private final TiledMapRenderer tiledMapRenderer;
 
@@ -83,10 +81,10 @@ public class Level implements Screen {
 
         this.host = host;
         batch = host.getBatch();
+        TILE_DIMENSION = host.getTILE_DIMENSION();
 
         this.TILE_AMOUNT_WIDTH = TILE_AMOUNT_WIDTH;
         this.TILE_AMOUNT_HEIGHT = TILE_AMOUNT_HEIGHT;
-        TILE_DIMENSION = host.getTILE_DIMENSION();
         WORLD_WIDTH_PIXELS = this.TILE_AMOUNT_WIDTH * TILE_DIMENSION;
         WORLD_HEIGHT_PIXELS = this.TILE_AMOUNT_HEIGHT * TILE_DIMENSION;
 
@@ -116,10 +114,7 @@ public class Level implements Screen {
 
         bgMusic = Gdx.audio.newMusic(Gdx.files.internal("music/demo1-leikattu.wav"));
         bgMusic.setLooping(true);
-        bgMusic.setVolume(0.25f);
-        perkele = Gdx.audio.newSound(Gdx.files.internal("sounds/perkele.wav"));
-        perkele.setVolume(0,0.25f);
-        //bgMusic.play();
+        bgMusic.setVolume(0.4f);
 
         createHUD_elements();
         gameRunning = true;
@@ -194,7 +189,7 @@ public class Level implements Screen {
     }
 
     private void moveCamera () {
-        camera.position.set(frog.getX(),
+        camera.position.set(frog.getX()+frog.getWidth()/2,
                 frog.getY(),
                 0);
 
@@ -245,7 +240,7 @@ public class Level implements Screen {
             enemy.movement();
             if (enemy.collidesWith(frog)) {
                 frog.returnToLastCheckpoint();
-                perkele.play();
+                SoundController.perkele.play();
             }
         }
     }
@@ -540,5 +535,9 @@ public class Level implements Screen {
                 drawPrompt = false;
             }
         }
+    }
+
+    public void startMusic() {
+        bgMusic.play();
     }
 }

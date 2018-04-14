@@ -36,7 +36,6 @@ class Player extends GameObject {
     private final float SPEED_X = 220f;
     private final float SPEED_FORWARD = SPEED_X - 10;
     private final float SPEED_BACKWARDS = SPEED_X + 10;
-    //Olemassa hidastuksia varten
     private float movementModifier = 1f;
 
     public Player(TiledMap tiledMap, int TILE_DIMENSION) {
@@ -194,12 +193,14 @@ class Player extends GameObject {
     }
 
     /*
-     * Flips the direction of the frog if he's supposed to face left. Sets position in
+     * Sets the player's initial coordinates.
      *
-     * Checks if the closest world edges are on the left side of the rectangle defining the
-     * player's starting point.
-     *
-     * @returns true if the closest world edge is on the left side of the player
+     * Gets the coordinates from a rectangle in the tiled map which defines the starting position.
+     * If world walls are found on the left side of said rectangle, he is spawned in the coordinates
+     * of the rectangle.
+      *
+      * @param spawnRectangle is the rectangle which defines the spawn coordinates
+      * @param TILE_DIMENSION the length of an edge in a tile
      */
     public void setFrogSpawn(Rectangle spawnRectangle, int TILE_DIMENSION) {
         Rectangle testRectangle = new Rectangle(spawnRectangle.getX()-TILE_DIMENSION,
@@ -233,4 +234,5 @@ class Player extends GameObject {
     public float getLastCheckpointY() {
         return this.lastCheckpointY;
     }
+
 }

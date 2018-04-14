@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Rectangle;
  * Created by Anton on 12.4.2018.
  */
 
-public class PromptResponse extends Button {
+public class PromptResponse extends UiObject {
 
     public PromptResponse(String path, float promptWidth) {
         texture = new Texture(path);

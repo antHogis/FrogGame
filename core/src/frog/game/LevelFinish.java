@@ -14,8 +14,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class LevelFinish implements Screen {
     private FrogMain host;
-    private OrthographicCamera camera;
     private SpriteBatch batch;
+    private OrthographicCamera camera;
+    private final float WINDOW_WIDTH, WINDOW_HEIGHT;
+
     private BitmapFont font;
     private int nextIndex;
     private String timeString;
@@ -25,6 +27,8 @@ public class LevelFinish implements Screen {
         this.host = host;
         batch = host.getBatch();
         camera = host.getCamera();
+        WINDOW_WIDTH = camera.viewportWidth;
+        WINDOW_HEIGHT = camera.viewportHeight;
 
         font = new BitmapFont(Gdx.files.internal("ui/fonts/lato90.txt"));
 
@@ -47,9 +51,9 @@ public class LevelFinish implements Screen {
         changeScreen();
 
         batch.begin();
-        font.draw(batch, "Kenttä läpäisty ajassa " + timeString,50,host.getVIEWPORT_HEIGHT()*0.75f);
-        font.draw(batch, "Paina ruutua jatkaaksesi",150,host.getVIEWPORT_HEIGHT()*0.5f);
-        font.draw(batch, "seuraavaan kenttään",220,host.getVIEWPORT_HEIGHT()*0.35f);
+        font.draw(batch, "Kenttä läpäisty ajassa " + timeString,50,WINDOW_HEIGHT*0.75f);
+        font.draw(batch, "Paina ruutua jatkaaksesi",150,WINDOW_HEIGHT*0.5f);
+        font.draw(batch, "seuraavaan kenttään",220,WINDOW_HEIGHT*0.35f);
         batch.end();
     }
 
@@ -85,6 +89,7 @@ public class LevelFinish implements Screen {
                 host.setScreen(new MainMenu(host));
             } else {
                 host.resetLevelTimers();
+                host.getLevels().get(nextIndex).startMusic();
                 host.setScreen(host.getLevels().get(nextIndex));
             }
 
