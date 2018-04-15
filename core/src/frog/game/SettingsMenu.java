@@ -28,6 +28,7 @@ public class SettingsMenu extends ScreenAdapter {
     private Slider threshold_Slider;
     private SwitchButton invertY_Switch;
     private HomeButton homeButton;
+    private SwitchButton musicButton;
 
     public SettingsMenu(FrogMain host) {
         this.host = host;
@@ -64,6 +65,7 @@ public class SettingsMenu extends ScreenAdapter {
         invertY_Text.dispose();
         invertY_Switch.dispose();
         homeButton.dispose();
+        musicButton.dispose();
     }
 
     private void createUI() {
@@ -93,13 +95,16 @@ public class SettingsMenu extends ScreenAdapter {
 
         /*
          * Buttons and Sliders
-         *
-         * Tää on vielä vammanen, pitää määritellä konstruktorissa positiot koska sliderissä on
-         * 2 rectanglea ja 2 tekstuuria. Myöhemmin voisi tehdä järkevän setterin.
          */
         final float BUTTON_HEIGHT = TEXT_HEIGHT;
         final float buttonPosition_X_plusWidth = WINDOW_WIDTH - (WINDOW_WIDTH/16f);
 
+        //Homebutton (returns to main menu)
+        homeButton = new HomeButton(BUTTON_HEIGHT*1.5f);
+        homeButton.setX(0);
+        homeButton.setY(WINDOW_HEIGHT-homeButton.getHeight());
+
+        //Sensitivity Slider
         sensitivity_Slider = new Slider(ConstantsManager.MIN_SPEED,
                 ConstantsManager.MAX_SPEED,
                 ConstantsManager.settings.getFloat("speed",
@@ -108,7 +113,7 @@ public class SettingsMenu extends ScreenAdapter {
                 buttonPosition_X_plusWidth,
                 sensitivity_Text.getY());
 
-
+        //Threshold slider
         threshold_Slider = new Slider(ConstantsManager.MIN_THRESHOLD,
                 ConstantsManager.MAX_THRESHOLD,
                 ConstantsManager.settings.getFloat("threshold",
@@ -117,17 +122,24 @@ public class SettingsMenu extends ScreenAdapter {
                 buttonPosition_X_plusWidth,
                 threshold_Text.getY());
 
+        //Invert Y-axis button
         invertY_Switch = new SwitchButton("ui/buttons/on_fi.png",
                 "ui/buttons/off_fi.png",
                 BUTTON_HEIGHT,
-                ConstantsManager.settings.getBoolean("y-invert", ConstantsManager.DEFAULT_INVERT_Y));
+                ConstantsManager.settings.getBoolean
+                        ("y-invert", ConstantsManager.DEFAULT_INVERT_Y));
         invertY_Switch.setX(buttonPosition_X_plusWidth - invertY_Switch.getWidth());
         invertY_Switch.setY(invertY_Text.getY());
 
-        homeButton = new HomeButton(0,0, BUTTON_HEIGHT*1.5f);
-        homeButton.setX(0);
-        homeButton.setY(WINDOW_HEIGHT-homeButton.getHeight());
 
+        //Music button (turns music off/on)
+        musicButton = new SwitchButton(ConstantsManager.musicOnPath,
+                ConstantsManager.musicOffPath,
+                BUTTON_HEIGHT*1.5f,
+                ConstantsManager.settings.getBoolean("music-on",
+                        ConstantsManager.DEFAULT_MUSIC_ON));
+        musicButton.setX((WINDOW_WIDTH/2)-(musicButton.getWidth()/2));
+        musicButton.setY(0f);
     }
 
     private void setInputProcessor() {
@@ -147,6 +159,11 @@ public class SettingsMenu extends ScreenAdapter {
                     SettingsMenu.this.dispose();
                     host.setScreen(new MainMenu(host));
                 }
+                if (musicButton.getRectangle().contains(touch.x, touch.y)) {
+                    musicButton.setOn(!musicButton.isOn());
+                    ConstantsManager.settings.putBoolean("music-on", musicButton.isOn());
+                    SoundController.setMusicOnOff();
+                }
                 return true;
             }
 
@@ -155,7 +172,7 @@ public class SettingsMenu extends ScreenAdapter {
                 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
                 camera.unproject(touch);
 
-                if(sensitivity_Slider.getRectangle().contains(touch.x, touch.y)) {
+                if (sensitivity_Slider.getRectangle().contains(touch.x, touch.y)) {
                     sensitivity_Slider.movePoint(touch.x);
                     ConstantsManager.settings.putFloat("speed", sensitivity_Slider.getOutput());
                 }
@@ -180,5 +197,6 @@ public class SettingsMenu extends ScreenAdapter {
         threshold_Slider.draw(batch);
         invertY_Switch.draw(batch);
         homeButton.draw(batch);
+        musicButton.draw(batch);
     }
 }

@@ -1,9 +1,10 @@
 package frog.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 /**
@@ -27,7 +29,7 @@ public class Level extends ScreenAdapter {
     private SpriteBatch batch;
     private SpriteBatch hudBatch;
     private OrthographicCamera camera;
-    private OrthographicCamera overlayCamera;
+    private OrthographicCamera uiCamera;
     private boolean gameRunning;
 
     /*
@@ -53,11 +55,10 @@ public class Level extends ScreenAdapter {
      * HUD elements and relevant modifiers
      */
     private Timer timer;
-    private HomeButton menuButton;
+    private HomeButton homeButton;
 
     private final String TIME_TWO_STARS, TIME_THREE_STARS, identifier;
 
-    private final Music bgMusic;
     private final TiledMap tiledMap;
     private final TiledMapRenderer tiledMapRenderer;
 
@@ -93,7 +94,10 @@ public class Level extends ScreenAdapter {
         camera.setToOrtho(false,
                 WINDOW_WIDTH_PIXELS,
                 WINDOW_HEIGHT_PIXELS);
-        overlayCamera = camera;
+
+        uiCamera = new OrthographicCamera();
+        uiCamera.setToOrtho(false, WINDOW_WIDTH_PIXELS, WINDOW_HEIGHT_PIXELS);
+
 
         tiledMap = new TmxMapLoader().load(levelPath);
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
@@ -113,10 +117,6 @@ public class Level extends ScreenAdapter {
         rocks = new Array<Rock>();
         addLevelObjects();
 
-        bgMusic = Gdx.audio.newMusic(Gdx.files.internal("music/demo1-leikattu.wav"));
-        bgMusic.setLooping(true);
-        bgMusic.setVolume(0.4f);
-
         createHUD_elements();
 
         this.TIME_TWO_STARS = TIME_TWO_STARS;
@@ -127,7 +127,8 @@ public class Level extends ScreenAdapter {
 
     @Override
     public void show() {
-        bgMusic.play();
+        SoundController.backgroundMusic.play();
+        timer.reset();
     }
 
     @Override
@@ -140,7 +141,7 @@ public class Level extends ScreenAdapter {
         batch.setProjectionMatrix(camera.combined);
 
         if (Gdx.input.isTouched()) {
-            promptReturn();
+            //promptReturn();
             Gdx.app.log("TAG", "Touched");
         }
 
@@ -164,14 +165,18 @@ public class Level extends ScreenAdapter {
 
         batch.begin();
             drawCheckpoints();
-            drawHUD();
+        batch.end();
+
+        batch.setProjectionMatrix(uiCamera.combined);
+        batch.begin();
+        drawHUD();
+
         batch.end();
     }
 
     @Override
     public void dispose() {
         tiledMap.dispose();
-        bgMusic.dispose();
         frog.dispose();
         for(Enemy enemy : enemies) {
             enemy.dispose();
@@ -226,7 +231,7 @@ public class Level extends ScreenAdapter {
     private void endLevel() {
         if (overlapsMapObject("endzone-rectangle")) {
             int nextIndex = host.getLevels().indexOf(this, true) + 1;
-            bgMusic.stop();
+            SoundController.backgroundMusic.stop();
             this.dispose();
             host.setScreen(new LevelFinish(host,
                     identifier,
@@ -280,8 +285,8 @@ public class Level extends ScreenAdapter {
     }
 
     private void drawHUD() {
-        timer.draw(batch, camera.position.x, camera.position.y);
-        menuButton.draw(batch, camera.position.x, camera.position.y);
+        timer.draw(batch);
+        homeButton.draw(batch);
     }
 
     private void spawnFrog() {
@@ -487,11 +492,29 @@ public class Level extends ScreenAdapter {
 
     private void createHUD_elements() {
         timer = new Timer(WINDOW_WIDTH_PIXELS, WINDOW_HEIGHT_PIXELS);
-        menuButton = new HomeButton(WINDOW_WIDTH_PIXELS, WINDOW_HEIGHT_PIXELS, TILE_DIMENSION);
+
+        float menuButtonWidth = WINDOW_WIDTH_PIXELS * (1.5f/16);
+        homeButton = new HomeButton(menuButtonWidth);
+        homeButton.setX(0);
+        homeButton.setY(WINDOW_HEIGHT_PIXELS-homeButton.getHeight());
+
+        Gdx.input.setInputProcessor(new InputAdapter() {
+            @Override
+            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                Vector3 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+                uiCamera.unproject(touch);
+                if (homeButton.getRectangle().contains(touch.x, touch.y)) {
+                    Level.this.dispose();
+                    SoundController.backgroundMusic.stop();
+                    host.setScreen(new MainMenu(host));
+                }
+                return true;
+            }
+        });
     }
 
     private void promptReturn() {
-        if (gameRunning && menuButton.isTouched(camera)) {
+        if (gameRunning && homeButton.isTouched(uiCamera)) {
             this.dispose();
             host.setScreen(new MainMenu(host));
             gameRunning = false;

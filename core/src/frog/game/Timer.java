@@ -18,6 +18,10 @@ public class Timer {
 
     private final float WINDOW_WIDTH;
     private final float WINDOW_HEIGHT;
+    private float timerWidth;
+    private float timerHeight;
+    private float timerX;
+    private float timerY;
 
     private int timerMinutes = 0;
     private int timerSeconds = 0;
@@ -40,11 +44,11 @@ public class Timer {
         reset();
     }
 
-    public void draw(SpriteBatch batch, float cameraX, float cameraY) {
+    public void draw(SpriteBatch batch) {
         //Timerin yhteisleveys 292, x tulee 350 pikselin päähän oikeasta reunasta
-        float placementX = cameraX + WINDOW_WIDTH/2 - 350;
+        float placementX = WINDOW_WIDTH - 350;
         //Timerin korkeus 64, y tulee 100px päähän yläreunasta
-        float placementY = cameraY + WINDOW_HEIGHT/2 - 100;
+        float placementY = WINDOW_HEIGHT- 100;
 
         batch.draw(timerTextures[0], placementX, placementY);
 
@@ -100,6 +104,8 @@ public class Timer {
 
     private void initializeTimerTextures() {
         timerTextures = new TextureRegion[5];
+        timerHeight = 0;
+        timerWidth = 0;
 
         for (int i = 0; i < timerTextures.length; i++) {
             if (i==2) {
@@ -107,7 +113,12 @@ public class Timer {
             } else {
                 timerTextures[i] = numberSplitSheet1D[0];
             }
+            timerWidth += timerTextures[i].getRegionWidth();
         }
+        timerHeight = timerTextures[0].getRegionHeight();
+
+        timerX = WINDOW_WIDTH - timerWidth;
+        timerY = WINDOW_HEIGHT - timerHeight;
     }
 
     private TextureRegion[] convert2Dto1D (TextureRegion[][] twoDim) {

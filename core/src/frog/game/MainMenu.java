@@ -2,7 +2,6 @@ package frog.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -22,9 +21,14 @@ public class MainMenu extends ScreenAdapter {
     private OrthographicCamera camera;
     private Array<MenuButton> buttons;
 
+    private MenuButton playButton;
+    private MenuButton settingsButton;
+    private MenuButton highScoreButton;
+    private MenuButton exitButton;
+
     public MainMenu(FrogMain host) {
         this.host = host;
-        background = new Texture(Gdx.files.internal("ui/bg.png"));
+        background = new Texture(Gdx.files.internal("ui/bg2.png"));
         batch = host.getBatch();
         camera = host.getCamera();
 
@@ -59,17 +63,39 @@ public class MainMenu extends ScreenAdapter {
     private void addMenuButtons() {
         float WINDOW_WIDTH = camera.viewportWidth;
         float WINDOW_HEIGHT = camera.viewportHeight;
-        
-        buttons.add(new MenuButton(WINDOW_WIDTH * 0.43f, WINDOW_HEIGHT * 0.8f, 200, 100));
-        buttons.add(new MenuButton(WINDOW_WIDTH * 0.43f, WINDOW_HEIGHT * 0.6f, 200, 100));
-        buttons.add(new MenuButton(WINDOW_WIDTH * 0.43f, WINDOW_HEIGHT * 0.4f, 200, 100));
-        buttons.add(new MenuButton(WINDOW_WIDTH * 0.43f, WINDOW_HEIGHT * 0.2f, 200, 100));
+        float BUTTON_WIDTH = WINDOW_WIDTH * (4f/16f);
+
+        float LEFT_X = WINDOW_WIDTH*(1f/16f);
+        float RIGHT_X = WINDOW_WIDTH - WINDOW_WIDTH*(1f/16f) - BUTTON_WIDTH;
+        float TOP_Y = WINDOW_HEIGHT/2f;
+        float BOTTOM_Y = WINDOW_HEIGHT*(2f/16f);
+
+        playButton = new MenuButton(BUTTON_WIDTH,
+                ConstantsManager.myBundle.get("button_play"));
+        playButton.setX(LEFT_X);
+        playButton.setY(TOP_Y);
+
+        settingsButton = new MenuButton(BUTTON_WIDTH,
+                ConstantsManager.myBundle.get("button_settings"));
+        settingsButton.setX(RIGHT_X);
+        settingsButton.setY(TOP_Y);
+
+        highScoreButton = new MenuButton(BUTTON_WIDTH,
+                ConstantsManager.myBundle.get("button_highScore"));
+        highScoreButton.setX(LEFT_X);
+        highScoreButton.setY(BOTTOM_Y);
+
+        exitButton = new MenuButton(BUTTON_WIDTH,
+                ConstantsManager.myBundle.get("button_exit"));
+        exitButton.setX(RIGHT_X);
+        exitButton.setY(BOTTOM_Y);
     }
 
     private void drawButtons() {
-        for (MenuButton button : buttons) {
-            button.draw(batch);
-        }
+        playButton.draw(batch);
+        settingsButton.draw(batch);
+        highScoreButton.draw(batch);
+        exitButton.draw(batch);
     }
 
     private void setInputProcessor() {
@@ -80,25 +106,25 @@ public class MainMenu extends ScreenAdapter {
                 camera.unproject(touch);
 
                 //Level-select button
-                if (buttons.get(0).getRectangle().contains(touch.x,touch.y)) {
+                if (playButton.getRectangle().contains(touch.x,touch.y)) {
                     host.createNewLevels();
                     MainMenu.this.dispose();
                     host.setScreen(host.getLevels().get(0));
                 }
                 //Settings button
-                if (buttons.get(1).getRectangle().contains(touch.x,touch.y)) {
+                if (settingsButton.getRectangle().contains(touch.x,touch.y)) {
                     MainMenu.this.dispose();
                     host.setScreen(new SettingsMenu(host));
                 }
                 //High Score button
-                if (buttons.get(2).getRectangle().contains(touch.x,touch.y)) {
+                if (highScoreButton.getRectangle().contains(touch.x,touch.y)) {
                     MainMenu.this.dispose();
                     host.setScreen(new HighScoreScreen(host));
                 }
                 //Exit button
-                if (buttons.get(3).getRectangle().contains(touch.x,touch.y)) {
+                if (exitButton.getRectangle().contains(touch.x,touch.y)) {
                     MainMenu.this.dispose();
-                    host.setScreen(new HighScoreScreen(host));
+                    Gdx.app.exit();
                 }
 
                 return true;

@@ -1,5 +1,6 @@
 package frog.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 
@@ -9,8 +10,10 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class MenuButton extends UiObject {
 
-    public MenuButton(float x, float y, float width, float height) {
-        this.texture = new Texture("ui/MenuButton.png");
-        this.rectangle = new Rectangle(x, y, width, height);
+    public MenuButton(float width, String path) {
+        this.texture = new Texture(Gdx.files.internal(path));
+        this.rectangle = new Rectangle();
+        rectangle.width = width;
+        rectangle.height = (rectangle.width*texture.getHeight())/texture.getWidth();
     }
 }

@@ -2,6 +2,7 @@ package frog.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,7 +12,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
  * Created by Lauri on 14.4.2018.
  */
 
-public class HighScoreScreen implements Screen {
+public class HighScoreScreen extends ScreenAdapter {
 
     private FrogMain host;
     private Texture highScoreTexture;
@@ -43,26 +44,6 @@ public class HighScoreScreen implements Screen {
             Gdx.app.log("TAG", "Setting Screen");
             host.setScreen(new MainMenu(host));
         }
-
-    }
-
-    @Override
-    public void resize(int width, int height) {
-
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
 
     }
 
