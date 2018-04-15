@@ -2,6 +2,7 @@ package frog.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -18,7 +19,7 @@ import com.badlogic.gdx.utils.Array;
  * Created by Anton on 13.3.2018.
  */
 
-public class Level implements Screen {
+public class Level extends ScreenAdapter {
     /*
      * Core elements that enable rendering and gameplay.
      */
@@ -53,11 +54,6 @@ public class Level implements Screen {
      */
     private Timer timer;
     private HomeButton menuButton;
-    private PromptResponse returnToMenuButton;
-    private PromptResponse resumeGameButton;
-    private ReturnPrompt prompt;
-    private boolean drawPrompt;
-
 
     private final Music bgMusic;
     private final TiledMap tiledMap;
@@ -122,7 +118,7 @@ public class Level implements Screen {
 
     @Override
     public void show() {
-
+        bgMusic.play();
     }
 
     @Override
@@ -164,28 +160,25 @@ public class Level implements Screen {
     }
 
     @Override
-    public void resize(int width, int height) {
-
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
-
-    }
-
-    @Override
     public void dispose() {
-        batch.dispose();
+        tiledMap.dispose();
+        bgMusic.dispose();
+        frog.dispose();
+        for(Enemy enemy : enemies) {
+            enemy.dispose();
+        }
+        for (Checkpoint checkpoint : checkpoints) {
+            checkpoint.dispose();
+        }
+        for (TimeCoin timeCoin: timeCoins) {
+            timeCoin.dispose();
+        }
+        for (Seaweed seaweed : seaweeds) {
+            seaweed.dispose();
+        }
+        for (Rock rock : rocks) {
+            rock.dispose();
+        }
     }
 
     private void moveCamera () {
@@ -225,6 +218,7 @@ public class Level implements Screen {
         if (overlapsMapObject("endzone-rectangle")) {
             int nextIndex = host.getLevels().indexOf(this, true) + 1;
             bgMusic.stop();
+            this.dispose();
             host.setScreen(new LevelFinish(host, timer.getTimeString(), nextIndex));
         }
     }
@@ -272,12 +266,6 @@ public class Level implements Screen {
     private void drawHUD() {
         timer.draw(batch, camera.position.x, camera.position.y);
         menuButton.draw(batch, camera.position.x, camera.position.y);
-
-        if (drawPrompt) {
-            prompt.draw(batch);
-            returnToMenuButton.draw(batch);
-            resumeGameButton.draw(batch);
-        }
     }
 
     private void spawnFrog() {
@@ -484,21 +472,14 @@ public class Level implements Screen {
     private void createHUD_elements() {
         timer = new Timer(WINDOW_WIDTH_PIXELS, WINDOW_HEIGHT_PIXELS);
         menuButton = new HomeButton(WINDOW_WIDTH_PIXELS, WINDOW_HEIGHT_PIXELS, TILE_DIMENSION);
-
-        prompt = new ReturnPrompt(WINDOW_WIDTH_PIXELS, WINDOW_HEIGHT_PIXELS);
-        returnToMenuButton = new PromptResponse("ui/joo.png", prompt.getRectangle().getWidth());
-        resumeGameButton = new PromptResponse("ui/ei.png", prompt.getRectangle().getWidth());
-
     }
 
     private void promptReturn() {
         if (gameRunning && menuButton.isTouched(camera)) {
+            this.dispose();
             host.setScreen(new MainMenu(host));
             gameRunning = false;
         }
     }
 
-    public void startMusic() {
-        bgMusic.play();
-    }
 }

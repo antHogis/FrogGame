@@ -37,7 +37,6 @@ class Player extends GameObject {
     private float SPEED_FORWARD;
     private float SPEED_BACKWARDS;
 
-    private boolean INVERT_Y_AXIS;
     private float invert_Value;
 
     public Player(TiledMap tiledMap, int TILE_DIMENSION) {
@@ -89,7 +88,7 @@ class Player extends GameObject {
         SPEED_BACKWARDS = SPEED_X + 30;
         Gdx.app.log("Speed:", Float.toString(SPEED_X));
 
-        INVERT_Y_AXIS = ConstantsManager.settings.getBoolean("y-invert",
+        boolean INVERT_Y_AXIS = ConstantsManager.settings.getBoolean("y-invert",
                 ConstantsManager.DEFAULT_INVERT_Y);
         if (INVERT_Y_AXIS) {
             invert_Value = -1;
@@ -262,6 +261,12 @@ class Player extends GameObject {
 
     public float getLastCheckpointY() {
         return this.lastCheckpointY;
+    }
+
+    @Override
+    public void dispose() {
+        textureSheet.dispose();
+        tiledMap.dispose();
     }
 
 }

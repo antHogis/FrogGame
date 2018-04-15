@@ -3,6 +3,7 @@ package frog.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -10,12 +11,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
-
 /**
  * Created by Anton on 13.3.2018.
  */
 
-public class MainMenu implements Screen {
+public class MainMenu extends ScreenAdapter {
     private FrogMain host;
     private Texture background;
     private SpriteBatch batch;
@@ -33,9 +33,6 @@ public class MainMenu implements Screen {
         setInputProcessor();
     }
 
-    @Override
-    public void show() {
-    }
 
     @Override
     public void render(float delta) {
@@ -52,28 +49,11 @@ public class MainMenu implements Screen {
     }
 
     @Override
-    public void resize(int width, int height) {
-
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
-
-    }
-
-    @Override
     public void dispose() {
-
+        background.dispose();
+        for (MenuButton button : buttons) {
+            button.dispose();
+        }
     }
 
     private void addMenuButtons() {
@@ -102,18 +82,22 @@ public class MainMenu implements Screen {
                 //Level-select button
                 if (buttons.get(0).getRectangle().contains(touch.x,touch.y)) {
                     host.createNewLevels();
+                    MainMenu.this.dispose();
                     host.setScreen(host.getLevels().get(0));
                 }
                 //Settings button
                 if (buttons.get(1).getRectangle().contains(touch.x,touch.y)) {
+                    MainMenu.this.dispose();
                     host.setScreen(new SettingsMenu(host));
                 }
                 //High Score button
                 if (buttons.get(2).getRectangle().contains(touch.x,touch.y)) {
+                    MainMenu.this.dispose();
                     host.setScreen(new HighScoreScreen(host));
                 }
                 //Exit button
                 if (buttons.get(3).getRectangle().contains(touch.x,touch.y)) {
+                    MainMenu.this.dispose();
                     host.setScreen(new HighScoreScreen(host));
                 }
 
@@ -122,25 +106,4 @@ public class MainMenu implements Screen {
         });
     }
 
-    private void checkButtonsIsTouched() {
-        if (buttons.get(0).isTouched(camera)) {
-            Gdx.app.log("TAG", "Setting Screen");
-            host.setScreen(host.getLevels().get(0));
-        }
-
-        if (buttons.get(1).isTouched(camera)) {
-            Gdx.app.log("TAG", "Setting Screen");
-            host.setScreen(new SettingsMenu(host));
-        }
-
-        if (buttons.get(2).isTouched(camera)) {
-            Gdx.app.log("TAG", "Setting Screen");
-            host.setScreen(new HighScoreScreen(host));
-        }
-
-        if (buttons.get(3).isTouched(camera)) {
-            Gdx.app.log("TAG", "Exiting App");
-            Gdx.app.exit();
-        }
-    }
 }

@@ -40,4 +40,10 @@ public class SwitchButton extends UiObject {
     public void setOn(boolean on) {
         this.on = on;
     }
+
+    @Override
+    public void dispose() {
+        texture_on.dispose();
+        texture_off.dispose();
+    }
 }

@@ -54,6 +54,18 @@ public class SettingsMenu extends ScreenAdapter {
         batch.end();
     }
 
+    @Override
+    public void dispose() {
+        background.dispose();
+        sensitivity_Text.dispose();
+        sensitivity_Slider.dispose();
+        threshold_Text.dispose();
+        threshold_Slider.dispose();
+        invertY_Text.dispose();
+        invertY_Switch.dispose();
+        homeButton.dispose();
+    }
+
     private void createUI() {
         /*
          * TextItem objects
@@ -131,9 +143,8 @@ public class SettingsMenu extends ScreenAdapter {
                     ConstantsManager.settings.putBoolean("y-invert", invertY_Switch.isOn());
                 }
                 if (homeButton.getRectangle().contains(touch.x, touch.y)) {
-                    ConstantsManager.settings.putFloat("speed", sensitivity_Slider.getOutput());
-                    ConstantsManager.settings.putFloat("threshold", threshold_Slider.getOutput());
                     ConstantsManager.settings.flush();
+                    SettingsMenu.this.dispose();
                     host.setScreen(new MainMenu(host));
                 }
                 return true;
@@ -146,10 +157,12 @@ public class SettingsMenu extends ScreenAdapter {
 
                 if(sensitivity_Slider.getRectangle().contains(touch.x, touch.y)) {
                     sensitivity_Slider.movePoint(touch.x);
+                    ConstantsManager.settings.putFloat("speed", sensitivity_Slider.getOutput());
                 }
 
                 if (threshold_Slider.getRectangle().contains(touch.x, touch.y)) {
                     threshold_Slider.movePoint(touch.x);
+                    ConstantsManager.settings.putFloat("threshold", threshold_Slider.getOutput());
                 }
                 return true;
             }

@@ -39,35 +39,11 @@ public class FrogMain extends Game {
         levels = new Array<Level>();
 
         //Level 1
-        levels.add(new Level(this,
-                "lvl/0-1.tmx",
-                0,
-                0,
-                1,
-                0,
-                25,
-                15));
+        levels.add(createLevel("01"));
         //Level 2
-        levels.add(new Level(this,
-                "lvl/0-2.tmx",
-                1,
-                0,
-                0,
-                0,
-                25,
-                15));
+        levels.add(createLevel("02"));
         //Level 3 (Test level)
-        levels.add(new Level(this,
-                "lvl/piialevel.tmx",
-                1,
-                1,
-                1,
-                0,
-                50,
-                30));
-
-
-
+        levels.add(createLevel("03"));
     }
 
     public SpriteBatch getBatch() {
@@ -90,6 +66,32 @@ public class FrogMain extends Game {
 	    for (Level level : levels) {
 	        level.resetTimer();
         }
+    }
+
+    private Level createLevel(String identifier) {
+	    String mapPath
+                = ConstantsManager.levels.get(identifier + "_mapPath");
+	    int AMOUNT_ROUNDFISH
+                = Integer.parseInt(ConstantsManager.levels.get(identifier + "_AMOUNT_ROUNDFISH"));
+        int AMOUNT_LONGFISH
+                = Integer.parseInt(ConstantsManager.levels.get(identifier + "_AMOUNT_LONGFISH"));
+        int AMOUNT_OCTOPUS1
+                = Integer.parseInt(ConstantsManager.levels.get(identifier + "_AMOUNT_OCTOPUS1"));
+        int AMOUNT_OCTOPUS2
+                = Integer.parseInt(ConstantsManager.levels.get(identifier + "_AMOUNT_OCTOPUS2"));
+        int TILE_WIDTH
+                = Integer.parseInt(ConstantsManager.levels.get(identifier + "_TILE_AMOUNT_WIDTH"));
+        int TILE_HEIGHT
+                = Integer.parseInt(ConstantsManager.levels.get(identifier + "_TILE_AMOUNT_HEIGHT"));
+
+	    return new Level(this,
+	            mapPath,
+                AMOUNT_ROUNDFISH,
+                AMOUNT_LONGFISH,
+                AMOUNT_OCTOPUS1,
+                AMOUNT_OCTOPUS2,
+                TILE_WIDTH,
+                TILE_HEIGHT);
     }
 
 

@@ -99,4 +99,10 @@ public class Slider extends UiObject {
     public Rectangle getRectangle() {
         return barRectangle;
     }
+
+    @Override
+    public void dispose() {
+        pointTexture.dispose();
+        barTexture.dispose();
+    }
 }

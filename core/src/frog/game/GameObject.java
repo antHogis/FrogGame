@@ -90,4 +90,13 @@ abstract class GameObject {
         }
     }
 
+    public void dispose() {
+        if (texture != null) {
+            texture.dispose();
+        }
+        if (textureSheet != null) {
+            textureSheet.dispose();
+        }
+    }
+
 }

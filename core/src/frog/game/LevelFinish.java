@@ -2,6 +2,7 @@ package frog.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -12,7 +13,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
  * Created by Anton on 4.4.2018.
  */
 
-public class LevelFinish implements Screen {
+public class LevelFinish extends ScreenAdapter {
     private FrogMain host;
     private SpriteBatch batch;
     private OrthographicCamera camera;
@@ -57,38 +58,18 @@ public class LevelFinish implements Screen {
     }
 
     @Override
-    public void resize(int width, int height) {
-
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
-
-    }
-
-    @Override
     public void dispose() {
-
+        font.dispose();
     }
 
     private void changeScreen() {
         if (Gdx.input.isTouched()) {
             if(nextIndex >= host.getLevels().size) {
                 //host.createNewLevels();
+                dispose();
                 host.setScreen(new MainMenu(host));
             } else {
                 host.resetLevelTimers();
-                host.getLevels().get(nextIndex).startMusic();
                 host.setScreen(host.getLevels().get(nextIndex));
             }
 

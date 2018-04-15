@@ -66,4 +66,10 @@ abstract class UiObject {
     public Rectangle getRectangle() {
         return rectangle;
     }
+
+    public void dispose() {
+        if (texture != null) {
+            texture.dispose();
+        }
+    }
 }
