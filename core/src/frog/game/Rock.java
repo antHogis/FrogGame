@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Rectangle;
  */
 
 public class Rock extends GameObject {
-    private final float MOVEMENT_SLOWING = 0.75f;
 
     public Rock(float x, float y, int TILE_DIMENSION, boolean up) {
         //If the rock is pointing up
@@ -25,11 +24,4 @@ public class Rock extends GameObject {
         }
     }
 
-    public void checkCollision(Player frog) {
-        if (this.rectangle.overlaps(frog.rectangle)) {
-            frog.setMovementModifier(MOVEMENT_SLOWING);
-        } else {
-            frog.setMovementModifier(1);
-        }
-    }
 }

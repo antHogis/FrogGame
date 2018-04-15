@@ -13,11 +13,12 @@ public class HomeButton extends UiObject {
     private int edgeDistance = 10;
     private final float WINDOW_WIDTH, WINDOW_HEIGHT;
 
-    public HomeButton(float WINDOW_WIDTH, float WINDOW_HEIGHT, int TILE_DIMENSION) {
-        texture = new Texture("ui/button-home.png");
-        rectangle = new Rectangle(0,0,TILE_DIMENSION, 0);
-
+    public HomeButton(float WINDOW_WIDTH, float WINDOW_HEIGHT, float width) {
+        texture = ConstantsManager.homeButton;
+        rectangle = new Rectangle();
+        rectangle.setWidth(width);
         rectangle.setHeight((texture.getHeight() * rectangle.getWidth()) / texture.getWidth());
+
         this.WINDOW_WIDTH = WINDOW_WIDTH;
         this.WINDOW_HEIGHT = WINDOW_HEIGHT;
     }

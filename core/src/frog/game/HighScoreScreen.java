@@ -22,7 +22,6 @@ public class HighScoreScreen implements Screen {
         this.host = host;
         batch = host.getBatch();
         camera = host.getCamera();
-        camera.setToOrtho(false, host.getVIEWPORT_WIDTH(), host.getVIEWPORT_HEIGHT());
     }
     @Override
     public void show() {

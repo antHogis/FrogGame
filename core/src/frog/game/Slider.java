@@ -12,53 +12,51 @@ import com.badlogic.gdx.math.Vector3;
  */
 
 public class Slider extends UiObject {
-    private Texture point;
+    private Texture pointTexture;
     private Rectangle pointRectangle;
-    private Texture bar;
+    private Texture barTexture;
     private Rectangle barRectangle;
 
     private float outputMin;
     private float outputMax;
     private float output;
 
-    public Slider(float outputMin, float outputMax, float WINDOW_WIDTH, float WINDOW_HEIGHT) {
+    public Slider(float outputMin,
+                  float outputMax,
+                  float savedOutput,
+                  float height,
+                  float xPlusWidth,
+                  float y) {
         this.outputMin = outputMin;
         this.outputMax = outputMax;
 
-        bar = new Texture("bar.png");
-        point = new Texture("point.png");
+        barTexture = new Texture("ui/buttons/slider_bar.png");
+        pointTexture = new Texture("ui/buttons/slider_point.png");
 
         barRectangle = new Rectangle();
-        barRectangle.setWidth(WINDOW_WIDTH / 2);
-        barRectangle.setHeight((barRectangle.getWidth() * bar.getHeight()) / bar.getWidth());
-        barRectangle.setX(WINDOW_WIDTH / 2 - barRectangle.getWidth() / 2);
-        barRectangle.setY(WINDOW_HEIGHT / 2 - barRectangle.getHeight() / 2);
+        barRectangle.setHeight(height);
+        barRectangle.setWidth((barTexture.getWidth()*barRectangle.getHeight())/barTexture.getHeight());
+        barRectangle.setX(xPlusWidth - barRectangle.getWidth());
+        barRectangle.setY(y);
 
         pointRectangle = new Rectangle();
         pointRectangle.setWidth(barRectangle.getHeight());
         pointRectangle.setHeight(barRectangle.getHeight());
-        pointRectangle.setX(barRectangle.getX() + barRectangle.getWidth()/2 - pointRectangle.getWidth()/2);
         pointRectangle.setY(barRectangle.getY());
 
-        convertValue(pointRectangle.x);
+        pointRectangle.setX(barRectangle.getX() + barRectangle.getWidth()/2 - pointRectangle.getWidth()/2);
+        //convertValue(pointRectangle.x);
+        placePoint(savedOutput);
     }
 
     @Override
     public void draw(SpriteBatch batch) {
 
-        batch.draw(bar, barRectangle.x, barRectangle.y, barRectangle.width, barRectangle.height);
-        batch.draw(point, pointRectangle.x, pointRectangle.y, pointRectangle.width, pointRectangle.height);
+        batch.draw(barTexture, barRectangle.x, barRectangle.y, barRectangle.width, barRectangle.height);
+        batch.draw(pointTexture, pointRectangle.x, pointRectangle.y, pointRectangle.width, pointRectangle.height);
     }
 
-    public void processInput(OrthographicCamera camera) {
-        Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-        camera.unproject(touchPos);
-        if (barRectangle.contains(touchPos.x, touchPos.y)) {
-            movePoint(touchPos.x);
-        }
-    }
-
-    private void movePoint(float touchX) {
+    public void movePoint(float touchX) {
         if (touchX > barRectangle.x && touchX + pointRectangle.width < barRectangle.x+barRectangle.width) {
             pointRectangle.setX(touchX);
             convertValue(touchX);
@@ -74,6 +72,15 @@ public class Slider extends UiObject {
         output = (((touchX - touchMin) * outputRange) / touchRange) + outputMin;
     }
 
+    public void placePoint(float savedOutput) {
+        float outputRange = outputMax - outputMin;
+        float pointRange = barRectangle.getX() + barRectangle.getWidth() - pointRectangle.getWidth() - barRectangle.getX();
+
+        pointRectangle.setX((((savedOutput - outputMin) * pointRange) / outputRange) + barRectangle.getX());
+        Gdx.app.log("Placed point", "output: " + savedOutput);
+        Gdx.app.log("Placed point", "x" + pointRectangle.getX());
+    }
+
     public float getOutput() {
         return output;
     }
@@ -86,5 +93,10 @@ public class Slider extends UiObject {
     @Override
     public float getHeight() {
         return barRectangle.height;
+    }
+
+    @Override
+    public Rectangle getRectangle() {
+        return barRectangle;
     }
 }

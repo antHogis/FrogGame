@@ -300,12 +300,6 @@ public class Level implements Screen {
                 timer.subtractTime(-5);
             }
         }
-        for (Seaweed seaweed : seaweeds) {
-            seaweed.checkCollision(frog);
-        }
-        for (Rock rock : rocks) {
-            rock.checkCollision(frog);
-        }
     }
 
     private void addLevelObjects() {
@@ -499,41 +493,8 @@ public class Level implements Screen {
 
     private void promptReturn() {
         if (gameRunning && menuButton.isTouched(camera)) {
+            host.setScreen(new MainMenu(host));
             gameRunning = false;
-        }
-
-        if (!gameRunning && !drawPrompt) {
-            drawPrompt = true;
-            prompt.setX(camera.position.x);
-            prompt.setY(camera.position.y);
-            Gdx.app.log("Camera", "x " + camera.position.x +" y "+ camera.position.y);
-            Gdx.app.log("Prompt", "x " + prompt.getRectangle().getX()
-                    + "y " + prompt.getRectangle().getY());
-
-            /*
-             * Creating variables of prompt window size, in order to set it's buttons to scale
-             */
-            float promptX = prompt.getRectangle().getX();
-            float promptY = prompt.getRectangle().getY();
-            float promptWidth = prompt.getRectangle().getWidth();
-            float promptEight = promptWidth/8;
-
-            returnToMenuButton.setX(promptX + promptEight);
-            returnToMenuButton.setY(promptY + promptEight);
-            Gdx.app.log("Return ", "x " + returnToMenuButton.getX() + "y " + returnToMenuButton.getY());
-
-            resumeGameButton.setX(promptX + promptWidth - promptEight - resumeGameButton.getWidth());
-            resumeGameButton.setY(promptY + promptEight);
-            Gdx.app.log("Resume ", "x " + resumeGameButton.getX() + " y " + resumeGameButton.getY());
-        }
-
-        if (!gameRunning) {
-            if(returnToMenuButton.isTouched(camera)) {
-                host.setScreen(new MainMenu(host));
-            } else if (resumeGameButton.isTouched(camera)) {
-                gameRunning = true;
-                drawPrompt = false;
-            }
         }
     }
 

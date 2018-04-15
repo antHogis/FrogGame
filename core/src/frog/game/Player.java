@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
@@ -27,16 +26,19 @@ class Player extends GameObject {
 
     private float NEUTRAL_POINT_X;
     private float NEUTRAL_POINT_Y;
-    private final float THRESHOLD_VALUE = 0.35f;
-    private final float THRESHOLD_MIN_X_RIGHT = THRESHOLD_VALUE;
-    private final float THRESHOLD_MIN_X_LEFT = -1*THRESHOLD_VALUE;
-    private final float THRESHOLD_MIN_Y_FORWARD = THRESHOLD_VALUE + 0.3f;
-    private final float THRESHOLD_MIN_Y_BACK = (-1*THRESHOLD_VALUE) + 0.15f;
 
-    private final float SPEED_X = 220f;
-    private final float SPEED_FORWARD = SPEED_X - 10;
-    private final float SPEED_BACKWARDS = SPEED_X + 10;
-    private float movementModifier = 1f;
+    private float THRESHOLD_VALUE;
+    private float THRESHOLD_MIN_X_RIGHT;
+    private float THRESHOLD_MIN_X_LEFT;
+    private float THRESHOLD_MIN_Y_FORWARD;
+    private float THRESHOLD_MIN_Y_BACK;
+
+    private float SPEED_X;
+    private float SPEED_FORWARD;
+    private float SPEED_BACKWARDS;
+
+    private boolean INVERT_Y_AXIS;
+    private float invert_Value;
 
     public Player(TiledMap tiledMap, int TILE_DIMENSION) {
         textureSheet = new Texture("gfx/sammakko.png");
@@ -60,12 +62,41 @@ class Player extends GameObject {
         this.rectangle.setHeight((currentFrame.getRegionHeight()*rectangle.getWidth())/currentFrame.getRegionWidth());
         moveSpeed = 1000f;
 
-        NEUTRAL_POINT_X = Gdx.input.getAccelerometerY();
-        NEUTRAL_POINT_Y = Gdx.input.getAccelerometerZ();
-        Gdx.app.log("TAG", "x:" + NEUTRAL_POINT_X);
-        Gdx.app.log("TAG", "y:" + NEUTRAL_POINT_Y);
+        initializeMovement();
 
         this.tiledMap = tiledMap;
+    }
+
+    private void initializeMovement() {
+        NEUTRAL_POINT_X = Gdx.input.getAccelerometerY();
+        NEUTRAL_POINT_Y = Gdx.input.getAccelerometerZ();
+        Gdx.app.log("TAG", "neutral x:" + NEUTRAL_POINT_X);
+        Gdx.app.log("TAG", "neutral y:" + NEUTRAL_POINT_Y);
+
+        THRESHOLD_VALUE = ConstantsManager.settings.getFloat("threshold",
+                ConstantsManager.DEFAULT_THRESHOLD);
+
+        THRESHOLD_MIN_X_RIGHT = THRESHOLD_VALUE;
+        THRESHOLD_MIN_X_LEFT = -1*THRESHOLD_VALUE;
+        THRESHOLD_MIN_Y_FORWARD = THRESHOLD_VALUE + 0.3f;
+        THRESHOLD_MIN_Y_BACK = (-1*THRESHOLD_VALUE) + 0.15f;
+        Gdx.app.log("Thresh:", Float.toString(THRESHOLD_VALUE));
+
+        SPEED_X = ConstantsManager.settings.getFloat("speed",
+                ConstantsManager.DEFAULT_SPEED);
+
+        SPEED_FORWARD = SPEED_X + 10;
+        SPEED_BACKWARDS = SPEED_X + 30;
+        Gdx.app.log("Speed:", Float.toString(SPEED_X));
+
+        INVERT_Y_AXIS = ConstantsManager.settings.getBoolean("y-invert",
+                ConstantsManager.DEFAULT_INVERT_Y);
+        if (INVERT_Y_AXIS) {
+            invert_Value = -1;
+        } else {
+            invert_Value = 1;
+        }
+
     }
 
     //Väliaikainen liikkuminen desktop-testiä varten
@@ -111,10 +142,11 @@ class Player extends GameObject {
     }
 
     public void movementAndroid (float delta) {
-        float movementRight = delta * SPEED_X * getAdjustedX() * movementModifier;
-        float movementLeft = movementRight * movementModifier;
-        float movementForward = delta * SPEED_FORWARD * getAdjustedY() * movementModifier;
-        float movementBack = delta * SPEED_BACKWARDS * getAdjustedY() * movementModifier;
+        float movementRight = delta * SPEED_X * getAdjustedX();
+        float movementLeft = movementRight;
+        float movementForward = delta * SPEED_FORWARD * getAdjustedY() * invert_Value;
+        float movementBack = delta * SPEED_BACKWARDS * getAdjustedY() * invert_Value;
+
 
         //RIGHT
         if (getAdjustedX()> THRESHOLD_MIN_X_RIGHT
@@ -162,6 +194,7 @@ class Player extends GameObject {
 
     }
 
+
     private float getAdjustedX() {
         return Gdx.input.getAccelerometerY() - NEUTRAL_POINT_X;
     }
@@ -186,10 +219,6 @@ class Player extends GameObject {
             }
         }
         return false;
-    }
-
-    public void setMovementModifier(float movementModifier) {
-        this.movementModifier = movementModifier;
     }
 
     /*

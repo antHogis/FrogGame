@@ -13,7 +13,7 @@ public class SoundController {
 
     public static Sound perkele = Gdx.audio.newSound(Gdx.files.internal("sounds/perkele.wav"));
 
-    public static void initialize() {
+    public static void equalize() {
         sounds.add(perkele);
 
         for (Sound sound : sounds) {

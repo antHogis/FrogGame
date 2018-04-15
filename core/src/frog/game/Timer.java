@@ -41,7 +41,7 @@ public class Timer {
     }
 
     public void draw(SpriteBatch batch, float cameraX, float cameraY) {
-        //Timerin yhteisleveys 292, x tulee 300 pikselin päähän oikeasta reunasta
+        //Timerin yhteisleveys 292, x tulee 350 pikselin päähän oikeasta reunasta
         float placementX = cameraX + WINDOW_WIDTH/2 - 350;
         //Timerin korkeus 64, y tulee 100px päähän yläreunasta
         float placementY = cameraY + WINDOW_HEIGHT/2 - 100;

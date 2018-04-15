@@ -1,8 +1,6 @@
 package frog.game;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
@@ -13,17 +11,16 @@ public class FrogMain extends Game {
     private final int WINDOW_WIDTH = 1280;
     private final int WINDOW_HEIGHT = 800;
     private final int TILE_DIMENSION = 128;
+
     private Array<Level> levels;
-    private Preferences preferences;
-	
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, WINDOW_WIDTH, WINDOW_HEIGHT);
-        createNewLevels();
-        SoundController.initialize();
-        preferences = Gdx.app.getPreferences("Preferences");
+
+        SoundController.equalize();
 
         setScreen(new MainMenu(this));
 	}
@@ -95,7 +92,5 @@ public class FrogMain extends Game {
         }
     }
 
-    public Preferences getPreferences() {
-        return preferences;
-    }
+
 }

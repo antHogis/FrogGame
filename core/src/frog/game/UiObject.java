@@ -62,4 +62,8 @@ abstract class UiObject {
     public void setHeight(float height) {
         this.rectangle.height = height;
     }
+
+    public Rectangle getRectangle() {
+        return rectangle;
+    }
 }

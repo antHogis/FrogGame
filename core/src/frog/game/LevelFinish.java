@@ -17,7 +17,6 @@ public class LevelFinish implements Screen {
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private final float WINDOW_WIDTH, WINDOW_HEIGHT;
-
     private BitmapFont font;
     private int nextIndex;
     private String timeString;
@@ -85,7 +84,7 @@ public class LevelFinish implements Screen {
     private void changeScreen() {
         if (Gdx.input.isTouched()) {
             if(nextIndex >= host.getLevels().size) {
-                host.createNewLevels();
+                //host.createNewLevels();
                 host.setScreen(new MainMenu(host));
             } else {
                 host.resetLevelTimers();
