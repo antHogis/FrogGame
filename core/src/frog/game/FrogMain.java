@@ -46,6 +46,39 @@ public class FrogMain extends Game {
         levels.add(createLevel("03"));
     }
 
+    private Level createLevel(String identifier) {
+        String mapPath
+                = ConstantsManager.levels.get(identifier + "_mapPath");
+        int AMOUNT_ROUNDFISH
+                = Integer.parseInt(ConstantsManager.levels.get(identifier + "_AMOUNT_ROUNDFISH"));
+        int AMOUNT_LONGFISH
+                = Integer.parseInt(ConstantsManager.levels.get(identifier + "_AMOUNT_LONGFISH"));
+        int AMOUNT_OCTOPUS1
+                = Integer.parseInt(ConstantsManager.levels.get(identifier + "_AMOUNT_OCTOPUS1"));
+        int AMOUNT_OCTOPUS2
+                = Integer.parseInt(ConstantsManager.levels.get(identifier + "_AMOUNT_OCTOPUS2"));
+        int TILE_WIDTH
+                = Integer.parseInt(ConstantsManager.levels.get(identifier + "_TILE_AMOUNT_WIDTH"));
+        int TILE_HEIGHT
+                = Integer.parseInt(ConstantsManager.levels.get(identifier + "_TILE_AMOUNT_HEIGHT"));
+        String TIME_TWO_STARS
+                = ConstantsManager.levels.get(identifier + "_TIME_TWO_STARS");
+        String TIME_THREE_STARS
+                = ConstantsManager.levels.get(identifier + "_TIME_THREE_STARS");
+
+        return new Level(this,
+                identifier,
+                mapPath,
+                AMOUNT_ROUNDFISH,
+                AMOUNT_LONGFISH,
+                AMOUNT_OCTOPUS1,
+                AMOUNT_OCTOPUS2,
+                TILE_WIDTH,
+                TILE_HEIGHT,
+                TIME_TWO_STARS,
+                TIME_THREE_STARS);
+    }
+
     public SpriteBatch getBatch() {
         return batch;
     }
@@ -68,31 +101,7 @@ public class FrogMain extends Game {
         }
     }
 
-    private Level createLevel(String identifier) {
-	    String mapPath
-                = ConstantsManager.levels.get(identifier + "_mapPath");
-	    int AMOUNT_ROUNDFISH
-                = Integer.parseInt(ConstantsManager.levels.get(identifier + "_AMOUNT_ROUNDFISH"));
-        int AMOUNT_LONGFISH
-                = Integer.parseInt(ConstantsManager.levels.get(identifier + "_AMOUNT_LONGFISH"));
-        int AMOUNT_OCTOPUS1
-                = Integer.parseInt(ConstantsManager.levels.get(identifier + "_AMOUNT_OCTOPUS1"));
-        int AMOUNT_OCTOPUS2
-                = Integer.parseInt(ConstantsManager.levels.get(identifier + "_AMOUNT_OCTOPUS2"));
-        int TILE_WIDTH
-                = Integer.parseInt(ConstantsManager.levels.get(identifier + "_TILE_AMOUNT_WIDTH"));
-        int TILE_HEIGHT
-                = Integer.parseInt(ConstantsManager.levels.get(identifier + "_TILE_AMOUNT_HEIGHT"));
 
-	    return new Level(this,
-	            mapPath,
-                AMOUNT_ROUNDFISH,
-                AMOUNT_LONGFISH,
-                AMOUNT_OCTOPUS1,
-                AMOUNT_OCTOPUS2,
-                TILE_WIDTH,
-                TILE_HEIGHT);
-    }
 
 
 }

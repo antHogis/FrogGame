@@ -142,4 +142,12 @@ public class Timer {
     public String getTimeString() {
         return timeString;
     }
+
+    public int getTimerMinutes() {
+        return timerMinutes;
+    }
+
+    public int getTimerSeconds() {
+        return timerSeconds;
+    }
 }

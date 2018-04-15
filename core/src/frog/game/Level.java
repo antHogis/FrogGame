@@ -55,6 +55,8 @@ public class Level extends ScreenAdapter {
     private Timer timer;
     private HomeButton menuButton;
 
+    private final String TIME_TWO_STARS, TIME_THREE_STARS, identifier;
+
     private final Music bgMusic;
     private final TiledMap tiledMap;
     private final TiledMapRenderer tiledMapRenderer;
@@ -67,13 +69,16 @@ public class Level extends ScreenAdapter {
     private final int WORLD_WIDTH_PIXELS, WORLD_HEIGHT_PIXELS;
 
     public Level(FrogMain host,
+                 String identifier,
                  String levelPath,
                  int AMOUNT_ROUNDFISH,
                  int AMOUNT_LONGFISH,
                  int AMOUNT_OCTOPUS1,
                  int AMOUNT_OCTOPUS2,
                  int TILE_AMOUNT_WIDTH,
-                 int TILE_AMOUNT_HEIGHT) {
+                 int TILE_AMOUNT_HEIGHT,
+                 String TIME_TWO_STARS,
+                 String TIME_THREE_STARS) {
 
         this.host = host;
         batch = host.getBatch();
@@ -113,6 +118,10 @@ public class Level extends ScreenAdapter {
         bgMusic.setVolume(0.4f);
 
         createHUD_elements();
+
+        this.TIME_TWO_STARS = TIME_TWO_STARS;
+        this.TIME_THREE_STARS = TIME_THREE_STARS;
+        this.identifier = identifier;
         gameRunning = true;
     }
 
@@ -219,7 +228,14 @@ public class Level extends ScreenAdapter {
             int nextIndex = host.getLevels().indexOf(this, true) + 1;
             bgMusic.stop();
             this.dispose();
-            host.setScreen(new LevelFinish(host, timer.getTimeString(), nextIndex));
+            host.setScreen(new LevelFinish(host,
+                    identifier,
+                    timer.getTimeString(),
+                    TIME_TWO_STARS,
+                    TIME_THREE_STARS,
+                    timer.getTimerMinutes(),
+                    timer.getTimerSeconds(),
+                    nextIndex));
         }
     }
 
