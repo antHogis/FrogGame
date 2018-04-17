@@ -90,7 +90,6 @@ public class LevelFinish extends ScreenAdapter {
     private void changeScreen() {
         if (Gdx.input.isTouched()) {
             if(nextIndex >= host.getLevels().size) {
-                //host.createNewLevels();
                 dispose();
                 host.setScreen(new MainMenu(host));
             } else {

@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Rectangle;
  */
 
 public class Checkpoint extends GameObject {
-    private boolean isCleared;
+    private boolean cleared;
     private Rectangle zone;
 
     public Checkpoint(float x, float y, float width, float height, int TILE_DIMENSION) {
@@ -27,7 +27,7 @@ public class Checkpoint extends GameObject {
         textureSheet1D = convert2Dto1D(textureSheet2D);
 
         stateTime = 0f;
-        animation = new Animation<TextureRegion>(5/60f, textureSheet1D);
+        animation = new Animation<TextureRegion>(6/60f, textureSheet1D);
         currentFrame = animation.getKeyFrame(stateTime, false);
 
         rectangle = new Rectangle();
@@ -36,12 +36,12 @@ public class Checkpoint extends GameObject {
         rectangle.setWidth(TILE_DIMENSION*1.25f);
         rectangle.setHeight((rectangle.width*currentFrame.getRegionHeight())/currentFrame.getRegionWidth());
 
-        isCleared = false;
+        cleared = false;
     }
 
     @Override
     public void drawAnimation(SpriteBatch batch) {
-        if (!isCleared) {
+        if (!cleared) {
             batch.draw(currentFrame, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
         } else {
             stateTime += Gdx.graphics.getDeltaTime();
@@ -51,20 +51,21 @@ public class Checkpoint extends GameObject {
     }
 
     public void checkCollision(Player frog) {
-        if (this.zone.overlaps(frog.rectangle) && !isCleared) {
+        if (this.zone.overlaps(frog.rectangle) && !cleared) {
+            SoundController.collectCoin.play();
             frog.setLastCheckpointX(this.zone.x);
             frog.setLastCheckpointY(this.zone.y);
             Gdx.app.log("TAG", "Checkpoint Saved!");
-            isCleared = true;
+            cleared = true;
         }
     }
 
-    public boolean getIsCleared() {
-        return this.isCleared;
+    public boolean isCleared() {
+        return this.cleared;
     }
 
-    public void setIsCleared(boolean x) {
-        this.isCleared = x;
+    public void setCleared(boolean x) {
+        this.cleared = x;
     }
 
 
