@@ -161,4 +161,8 @@ public class Timer {
     public int getTimerSeconds() {
         return timerSeconds;
     }
+
+    public void dispose() {
+        numberSheet.dispose();
+    }
 }

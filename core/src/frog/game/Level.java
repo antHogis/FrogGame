@@ -3,8 +3,6 @@ package frog.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -27,7 +25,6 @@ public class Level extends ScreenAdapter {
      */
     private FrogMain host;
     private SpriteBatch batch;
-    private SpriteBatch hudBatch;
     private OrthographicCamera camera;
     private OrthographicCamera uiCamera;
     private boolean gameRunning;
@@ -108,7 +105,6 @@ public class Level extends ScreenAdapter {
         this.AMOUNT_OCTOPUS2 = AMOUNT_OCTOPUS2;
 
         frog = new Player(tiledMap, TILE_DIMENSION);
-        spawnFrog();
 
         enemies = new Array<Enemy>();
         checkpoints = new Array<Checkpoint>();
@@ -127,7 +123,9 @@ public class Level extends ScreenAdapter {
 
     @Override
     public void show() {
-        SoundController.backgroundMusic.play();
+        if (ConstantsManager.settings.getBoolean("music-on", ConstantsManager.DEFAULT_AUDIO_ON)) {
+            SoundController.backgroundMusic.play();
+        }
         timer.reset();
     }
 
@@ -195,6 +193,19 @@ public class Level extends ScreenAdapter {
         }
     }
 
+    @Override
+    public void pause() {
+        SoundController.backgroundMusic.pause();
+    }
+
+    @Override
+    public void resume() {
+        SoundController.initialize();
+        if (ConstantsManager.settings.getBoolean("music-on", ConstantsManager.DEFAULT_AUDIO_ON)) {
+            SoundController.backgroundMusic.play();
+        }
+    }
+
     private void moveCamera () {
         camera.position.set(frog.getX()+frog.getWidth()/2,
                 frog.getY(),
@@ -255,7 +266,7 @@ public class Level extends ScreenAdapter {
             enemy.movement();
             if (enemy.collidesWith(frog)) {
                 frog.returnToLastCheckpoint();
-                SoundController.perkele.play();
+                SoundController.hitEnemy.play();
             }
         }
     }
@@ -280,22 +291,13 @@ public class Level extends ScreenAdapter {
 
     private void drawCheckpoints() {
         for (Checkpoint checkpoint : checkpoints) {
-            checkpoint.draw(batch);
+            checkpoint.drawAnimation(batch);
         }
     }
 
     private void drawHUD() {
         timer.draw(batch);
         homeButton.draw(batch);
-    }
-
-    private void spawnFrog() {
-        Array<RectangleMapObject> startPoints = 
-                tiledMap.getLayers().get("frog-spawn-rectangle").getObjects().getByType(RectangleMapObject.class);
-
-        for (RectangleMapObject startPoint : startPoints) {
-            frog.setFrogSpawn(startPoint.getRectangle(), TILE_DIMENSION);
-        }
     }
 
     private void checkObjectCollision() {
@@ -305,6 +307,7 @@ public class Level extends ScreenAdapter {
         for (TimeCoin timeCoin : timeCoins) {
             timeCoin.checkCollision(frog);
             if (timeCoin.isCleared() && !timeCoin.isSubtracted()) {
+                SoundController.collectCoin.play();
                 timeCoin.setSubtracted(true);
                 timer.subtractTime(-5);
             }
@@ -500,10 +503,11 @@ public class Level extends ScreenAdapter {
 
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
-            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+            public boolean touchUp(int screenX, int screenY, int pointer, int button) {
                 Vector3 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
                 uiCamera.unproject(touch);
                 if (homeButton.getRectangle().contains(touch.x, touch.y)) {
+                    SoundController.playClickSound();
                     Level.this.dispose();
                     SoundController.backgroundMusic.stop();
                     host.setScreen(new MainMenu(host));
@@ -512,13 +516,4 @@ public class Level extends ScreenAdapter {
             }
         });
     }
-
-    private void promptReturn() {
-        if (gameRunning && homeButton.isTouched(uiCamera)) {
-            this.dispose();
-            host.setScreen(new MainMenu(host));
-            gameRunning = false;
-        }
-    }
-
 }

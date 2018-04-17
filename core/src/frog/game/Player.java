@@ -17,6 +17,8 @@ import com.badlogic.gdx.utils.Array;
 
 class Player extends GameObject {
 
+    private Rectangle hitBox;
+
     private TiledMap tiledMap;
     private float moveSpeed;
     private float lastCheckpointX;
@@ -40,30 +42,34 @@ class Player extends GameObject {
     private float invert_Value;
 
     public Player(TiledMap tiledMap, int TILE_DIMENSION) {
-        textureSheet = new Texture("gfx/sammakko.png");
-        SHEET_COLUMNS = 1;
-        SHEET_ROWS = 1;
+        this.tiledMap = tiledMap;
+
+        textureSheet = new Texture("gfx/salesheet.png");
+        SHEET_COLUMNS = 4;
+        SHEET_ROWS = 3;
         textureSheet2D = TextureRegion.split(textureSheet,
                 textureSheet.getWidth() / SHEET_COLUMNS,
                 textureSheet.getHeight() / SHEET_ROWS);
         textureSheet1D = convert2Dto1D(textureSheet2D);
 
         stateTime = 1f;
-        animation = new Animation<TextureRegion>(4/60f, textureSheet1D);
+        animation = new Animation<TextureRegion>(3/60f, textureSheet1D);
         currentFrame = animation.getKeyFrame(stateTime, true);
 
-        rectangle = new Rectangle(0, 0, TILE_DIMENSION*2f, 0);
-        rectangle.setHeight((this.rectangle.getWidth()*currentFrame.getRegionHeight())/currentFrame.getRegionWidth());
-
-        rectangle = new Rectangle(0, 0,
-                0, 0);
+        rectangle = new Rectangle();
         this.rectangle.setWidth(TILE_DIMENSION*3);
         this.rectangle.setHeight((currentFrame.getRegionHeight()*rectangle.getWidth())/currentFrame.getRegionWidth());
+
+        hitBox = new Rectangle();
+        hitBox.setWidth((8f/16f)*rectangle.getWidth());
+        hitBox.setHeight((11f/16f)*rectangle.getHeight());
+
+        setFrogSpawn(TILE_DIMENSION);
+
+        //For desktop
         moveSpeed = 1000f;
-
+        //Android
         initializeMovement();
-
-        this.tiledMap = tiledMap;
     }
 
     private void initializeMovement() {
@@ -90,6 +96,7 @@ class Player extends GameObject {
 
         boolean INVERT_Y_AXIS = ConstantsManager.settings.getBoolean("y-invert",
                 ConstantsManager.DEFAULT_INVERT_Y);
+
         if (INVERT_Y_AXIS) {
             invert_Value = -1;
         } else {
@@ -191,6 +198,7 @@ class Player extends GameObject {
             rectangle.setY(rectangle.getY() + movementBack);
         }
 
+        moveHitBox();
     }
 
 
@@ -230,18 +238,27 @@ class Player extends GameObject {
       * @param spawnRectangle is the rectangle which defines the spawn coordinates
       * @param TILE_DIMENSION the length of an edge in a tile
      */
-    public void setFrogSpawn(Rectangle spawnRectangle, int TILE_DIMENSION) {
+    public void setFrogSpawn(int TILE_DIMENSION) {
+        Rectangle spawnRectangle = new Rectangle();
+        Array<RectangleMapObject> startPoints =
+                tiledMap.getLayers().get("frog-spawn-rectangle").getObjects().getByType(RectangleMapObject.class);
+        for (RectangleMapObject startPoint : startPoints) {
+            spawnRectangle = startPoint.getRectangle();
+        }
+
         Rectangle testRectangle = new Rectangle(spawnRectangle.getX()-TILE_DIMENSION,
                 spawnRectangle.getY(), spawnRectangle.getWidth(),spawnRectangle.getHeight());
 
         if (overlapsMapObject("walls-rectangle", testRectangle)) {
             this.setX(spawnRectangle.getX());
             this.setY(spawnRectangle.getY());
+            moveHitBox();
         } else {
             this.setX(spawnRectangle.getX()-this.getWidth());
             this.setY(spawnRectangle.getY());
             flip(animation, true, false);
             flippedRight = false;
+            moveHitBox();
         }
         this.setLastCheckpointX(this.getX());
         this.setLastCheckpointY(this.getY());
@@ -250,6 +267,7 @@ class Player extends GameObject {
     public void setLastCheckpointX(float x) {
         this.lastCheckpointX = x;
     }
+
 
     public void setLastCheckpointY(float y) {
         this.lastCheckpointY = y;
@@ -269,4 +287,17 @@ class Player extends GameObject {
         tiledMap.dispose();
     }
 
+    private void moveHitBox() {
+        if(flippedRight) {
+            hitBox.setX(rectangle.getX() + (7f/16f)*rectangle.getWidth());
+        } else {
+            hitBox.setX(rectangle.getX() + (1f/16f)*rectangle.getWidth());
+        }
+        hitBox.setY(rectangle.getY() + (4f/16f)*rectangle.getHeight());
+
+    }
+
+    public Rectangle getHitBox() {
+        return hitBox;
+    }
 }

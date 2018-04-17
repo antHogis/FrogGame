@@ -42,8 +42,7 @@ public class ConstantsManager {
     public static final float DEFAULT_THRESHOLD = 0.35f;
     public static final boolean DEFAULT_INVERT_Y = true;
 
-    public static final boolean DEFAULT_MUSIC_ON = true;
-    public static final float MUSIC_DEFAULT_VOL = 0.4f;
+    public static final boolean DEFAULT_AUDIO_ON = true;
 
     public static final int TILE_DIMENSION = 128;
 

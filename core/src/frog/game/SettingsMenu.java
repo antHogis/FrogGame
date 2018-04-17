@@ -40,7 +40,6 @@ public class SettingsMenu extends ScreenAdapter {
         background = new Texture(Gdx.files.internal("ui/bg.png"));
         createUI();
         setInputProcessor();
-
     }
 
     @Override
@@ -137,7 +136,7 @@ public class SettingsMenu extends ScreenAdapter {
                 ConstantsManager.musicOffPath,
                 BUTTON_HEIGHT*1.5f,
                 ConstantsManager.settings.getBoolean("music-on",
-                        ConstantsManager.DEFAULT_MUSIC_ON));
+                        ConstantsManager.DEFAULT_AUDIO_ON));
         musicButton.setX((WINDOW_WIDTH/2)-(musicButton.getWidth()/2));
         musicButton.setY(0f);
     }
@@ -151,18 +150,20 @@ public class SettingsMenu extends ScreenAdapter {
                 camera.unproject(touch);
 
                 if (invertY_Switch.getRectangle().contains(touch.x, touch.y)) {
+                    SoundController.playClickSound();
                     invertY_Switch.setOn(!invertY_Switch.isOn());
                     ConstantsManager.settings.putBoolean("y-invert", invertY_Switch.isOn());
                 }
                 if (homeButton.getRectangle().contains(touch.x, touch.y)) {
+                    SoundController.playClickSound();
                     ConstantsManager.settings.flush();
                     SettingsMenu.this.dispose();
                     host.setScreen(new MainMenu(host));
                 }
                 if (musicButton.getRectangle().contains(touch.x, touch.y)) {
+                    SoundController.playClickSound();
                     musicButton.setOn(!musicButton.isOn());
-                    ConstantsManager.settings.putBoolean("music-on", musicButton.isOn());
-                    SoundController.setMusicOnOff();
+                    ConstantsManager.settings.putBoolean("music-on", musicButton.isOn()).flush();
                 }
                 return true;
             }

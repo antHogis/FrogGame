@@ -16,8 +16,10 @@ public abstract class Enemy extends GameObject {
     private float MOVEMENT_ENDPOINT_X;
     private float MOVEMENT_ENDPOINT_Y;
 
+    Rectangle hitBox;
+
     public boolean collidesWith(Player frog) {
-        if (this.rectangle.overlaps(frog.rectangle)) {
+        if (this.rectangle.overlaps(frog.getHitBox())) {
             Gdx.app.log("TAG", "Player killed!");
             return true;
         } else {
@@ -25,7 +27,7 @@ public abstract class Enemy extends GameObject {
         }
     }
 
-    //Dummy method to be overridden
+    //Dummy method to be overridden, great coding amirite?
     public void movement() {
 
     }

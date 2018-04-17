@@ -20,7 +20,7 @@ public class FrogMain extends Game {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-        SoundController.equalize();
+        SoundController.initialize();
 
         setScreen(new MainMenu(this));
 	}
@@ -33,6 +33,11 @@ public class FrogMain extends Game {
     @Override
     public void dispose () {
         batch.dispose();
+    }
+
+    @Override
+    public void resume() {
+        SoundController.initialize();
     }
 
     public void createNewLevels() {
@@ -100,8 +105,5 @@ public class FrogMain extends Game {
 	        level.resetTimer();
         }
     }
-
-
-
 
 }

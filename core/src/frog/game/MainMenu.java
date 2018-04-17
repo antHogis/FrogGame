@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
+
 /**
  * Created by Anton on 13.3.2018.
  */
@@ -19,12 +20,11 @@ public class MainMenu extends ScreenAdapter {
     private Texture background;
     private SpriteBatch batch;
     private OrthographicCamera camera;
-    private Array<MenuButton> buttons;
 
-    private MenuButton playButton;
-    private MenuButton settingsButton;
-    private MenuButton highScoreButton;
-    private MenuButton exitButton;
+    private GenericButton playButton;
+    private GenericButton settingsButton;
+    private GenericButton highScoreButton;
+    private GenericButton exitButton;
 
     public MainMenu(FrogMain host) {
         this.host = host;
@@ -32,11 +32,9 @@ public class MainMenu extends ScreenAdapter {
         batch = host.getBatch();
         camera = host.getCamera();
 
-        buttons = new Array<MenuButton>();
         addMenuButtons();
         setInputProcessor();
     }
-
 
     @Override
     public void render(float delta) {
@@ -55,9 +53,10 @@ public class MainMenu extends ScreenAdapter {
     @Override
     public void dispose() {
         background.dispose();
-        for (MenuButton button : buttons) {
-            button.dispose();
-        }
+        playButton.dispose();
+        settingsButton.dispose();
+        highScoreButton.dispose();
+        exitButton.dispose();
     }
 
     private void addMenuButtons() {
@@ -70,22 +69,22 @@ public class MainMenu extends ScreenAdapter {
         float TOP_Y = WINDOW_HEIGHT/2f;
         float BOTTOM_Y = WINDOW_HEIGHT*(2f/16f);
 
-        playButton = new MenuButton(BUTTON_WIDTH,
+        playButton = new GenericButton(BUTTON_WIDTH,
                 ConstantsManager.myBundle.get("button_play"));
         playButton.setX(LEFT_X);
         playButton.setY(TOP_Y);
 
-        settingsButton = new MenuButton(BUTTON_WIDTH,
+        settingsButton = new GenericButton(BUTTON_WIDTH,
                 ConstantsManager.myBundle.get("button_settings"));
         settingsButton.setX(RIGHT_X);
         settingsButton.setY(TOP_Y);
 
-        highScoreButton = new MenuButton(BUTTON_WIDTH,
+        highScoreButton = new GenericButton(BUTTON_WIDTH,
                 ConstantsManager.myBundle.get("button_highScore"));
         highScoreButton.setX(LEFT_X);
         highScoreButton.setY(BOTTOM_Y);
 
-        exitButton = new MenuButton(BUTTON_WIDTH,
+        exitButton = new GenericButton(BUTTON_WIDTH,
                 ConstantsManager.myBundle.get("button_exit"));
         exitButton.setX(RIGHT_X);
         exitButton.setY(BOTTOM_Y);
@@ -100,13 +99,14 @@ public class MainMenu extends ScreenAdapter {
 
     private void setInputProcessor() {
         Gdx.input.setInputProcessor(new InputAdapter() {
+
             @Override
-            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+            public boolean touchUp(int screenX, int screenY, int pointer, int button) {
                 Vector3 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
                 camera.unproject(touch);
-
                 //Level-select button
                 if (playButton.getRectangle().contains(touch.x,touch.y)) {
+                    SoundController.playClickSound();
                     host.createNewLevels();
                     MainMenu.this.dispose();
                     host.setScreen(host.getLevels().get(0));
@@ -114,21 +114,25 @@ public class MainMenu extends ScreenAdapter {
                 //Settings button
                 if (settingsButton.getRectangle().contains(touch.x,touch.y)) {
                     MainMenu.this.dispose();
+                    SoundController.playClickSound();
                     host.setScreen(new SettingsMenu(host));
                 }
                 //High Score button
                 if (highScoreButton.getRectangle().contains(touch.x,touch.y)) {
+                    SoundController.playClickSound();
                     MainMenu.this.dispose();
                     host.setScreen(new HighScoreScreen(host));
                 }
                 //Exit button
                 if (exitButton.getRectangle().contains(touch.x,touch.y)) {
+                    SoundController.playClickSound();
                     MainMenu.this.dispose();
                     Gdx.app.exit();
                 }
-
                 return true;
             }
+
+
         });
     }
 
