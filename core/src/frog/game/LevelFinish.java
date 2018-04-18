@@ -1,6 +1,7 @@
 package frog.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -25,8 +26,6 @@ public class LevelFinish extends ScreenAdapter {
     String completed;
     private BitmapFont font;
 
-    private int nextIndex;
-
     private String identifier;
     private String timeString;
     private String TIME_TWO_STARS, TIME_THREE_STARS;
@@ -39,8 +38,7 @@ public class LevelFinish extends ScreenAdapter {
                        String TIME_TWO_STARS,
                        String TIME_THREE_STARS,
                        int timerMinutes,
-                       int timerSeconds,
-                       int nextIndex) {
+                       int timerSeconds) {
         this.host = host;
         batch = host.getBatch();
         camera = host.getCamera();
@@ -50,12 +48,13 @@ public class LevelFinish extends ScreenAdapter {
         font = new BitmapFont(Gdx.files.internal("ui/fonts/lato90.txt"));
 
         this.timeString = timeString;
-        this.nextIndex = nextIndex;
         this.TIME_TWO_STARS = TIME_TWO_STARS;
         this.TIME_THREE_STARS = TIME_THREE_STARS;
         createStars(calculateStars(timerMinutes, timerSeconds));
 
         setTextPosition();
+
+        setInputProcessor();
     }
 
     @Override
@@ -69,8 +68,6 @@ public class LevelFinish extends ScreenAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.setProjectionMatrix(camera.combined);
-
-        changeScreen();
 
         batch.begin();
         font.draw(batch,completed,textPos.x,textPos.y);
@@ -87,17 +84,15 @@ public class LevelFinish extends ScreenAdapter {
         }
     }
 
-    private void changeScreen() {
-        if (Gdx.input.isTouched()) {
-            if(nextIndex >= host.getLevels().size) {
-                dispose();
+    private void setInputProcessor() {
+        Gdx.input.setInputProcessor(new InputAdapter() {
+            @Override
+            public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+                LevelFinish.this.dispose();
                 host.setScreen(new MainMenu(host));
-            } else {
-                host.resetLevelTimers();
-                host.setScreen(host.getLevels().get(nextIndex));
+                return true;
             }
-
-        }
+        });
     }
 
     private void setTextPosition() {
@@ -172,22 +167,16 @@ public class LevelFinish extends ScreenAdapter {
         if (minutes) {
             String tempString = "";
             for (int i=0; i < timeString.length(); i++) {
-                if(timeString.charAt(i) != ':') {
-                    tempString += timeString.charAt(i);
-                } else {
-                    return Integer.parseInt(tempString);
-                }
+                if(timeString.charAt(i) != ':') tempString += timeString.charAt(i);
+                else return Integer.parseInt(tempString);
+
             }
         } else {
             String tempString = "";
             boolean found = false;
             for (int i=0; i < timeString.length(); i++) {
-                if(found) {
-                    tempString += timeString.charAt(i);
-                }
-                if(timeString.charAt(i) == ':') {
-                    found = true;
-                }
+                if(found) tempString += timeString.charAt(i);
+                if(timeString.charAt(i) == ':') found = true;
             }
             return Integer.parseInt(tempString);
         }

@@ -16,7 +16,7 @@ public abstract class Enemy extends GameObject {
     private float MOVEMENT_ENDPOINT_X;
     private float MOVEMENT_ENDPOINT_Y;
 
-    Rectangle hitBox;
+    public abstract void movement();
 
     public boolean collidesWith(Player frog) {
         if (this.rectangle.overlaps(frog.getHitBox())) {
@@ -25,11 +25,6 @@ public abstract class Enemy extends GameObject {
         } else {
             return false;
         }
-    }
-
-    //Dummy method to be overridden, great coding amirite?
-    public void movement() {
-
     }
 
     public float getMOVEMENT_ENDPOINT_X() {

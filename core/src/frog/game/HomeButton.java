@@ -16,6 +16,8 @@ public class HomeButton extends UiObject {
         rectangle = new Rectangle();
         rectangle.setWidth(width);
         rectangle.setHeight((texture.getHeight() * rectangle.getWidth()) / texture.getWidth());
+        rectangle.setX(0);
+        rectangle.setY(0);
 
     }
 }

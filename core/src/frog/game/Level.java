@@ -241,7 +241,6 @@ public class Level extends ScreenAdapter {
 
     private void endLevel() {
         if (overlapsMapObject("endzone-rectangle")) {
-            int nextIndex = host.getLevels().indexOf(this, true) + 1;
             SoundController.backgroundMusic.stop();
             this.dispose();
             host.setScreen(new LevelFinish(host,
@@ -250,8 +249,7 @@ public class Level extends ScreenAdapter {
                     TIME_TWO_STARS,
                     TIME_THREE_STARS,
                     timer.getTimerMinutes(),
-                    timer.getTimerSeconds(),
-                    nextIndex));
+                    timer.getTimerSeconds()));
         }
     }
 

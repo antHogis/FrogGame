@@ -37,7 +37,7 @@ public class SettingsMenu extends ScreenAdapter {
         WINDOW_WIDTH = camera.viewportWidth;
         WINDOW_HEIGHT = camera.viewportHeight;
 
-        background = new Texture(Gdx.files.internal("ui/bg.png"));
+        background = new Texture(Gdx.files.internal(ConstantsManager.bgGenericPath));
         createUI();
         setInputProcessor();
     }
@@ -72,7 +72,7 @@ public class SettingsMenu extends ScreenAdapter {
          * TextItem objects
          */
         final float TEXT_HEIGHT = WINDOW_HEIGHT * (1.5f/16);
-        final float textPadding = WINDOW_HEIGHT*(4f/16f) - (TEXT_HEIGHT/2f);
+        final float textMargin = WINDOW_HEIGHT*(4f/16f) - (TEXT_HEIGHT/2f);
         final float textPositionX = WINDOW_WIDTH/16f;
         float textPositionY = WINDOW_HEIGHT*(12f/16f) - (TEXT_HEIGHT/2f);
 
@@ -80,13 +80,13 @@ public class SettingsMenu extends ScreenAdapter {
         sensitivity_Text.setX(textPositionX);
         sensitivity_Text.setY(textPositionY);
 
-        textPositionY -= textPadding;
+        textPositionY -= textMargin;
 
         threshold_Text = new TextItem("ui/text_fi/raja-arvo.png", TEXT_HEIGHT);
         threshold_Text.setX(textPositionX);
         threshold_Text.setY(textPositionY);
 
-        textPositionY -= textPadding;
+        textPositionY -= textMargin;
 
         invertY_Text = new TextItem("ui/text_fi/y-akseli.png", TEXT_HEIGHT);
         invertY_Text.setX(textPositionX);
@@ -143,7 +143,7 @@ public class SettingsMenu extends ScreenAdapter {
 
     private void setInputProcessor() {
         Gdx.input.setInputProcessor(new InputAdapter() {
-            Vector3 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+            Vector3 touch;
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
                 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);

@@ -38,7 +38,6 @@ class Player extends GameObject {
     private float SPEED_X;
     private float SPEED_FORWARD;
     private float SPEED_BACKWARDS;
-
     private float invert_Value;
 
     public Player(TiledMap tiledMap, int TILE_DIMENSION) {
@@ -221,9 +220,7 @@ class Player extends GameObject {
 
         for (RectangleMapObject mapObject : mapObjects) {
             Rectangle mapObjectRectangle = mapObject.getRectangle();
-            if (rectangle.overlaps(mapObjectRectangle)) {
-                return true;
-            }
+            if (rectangle.overlaps(mapObjectRectangle)) return true;
         }
         return false;
     }

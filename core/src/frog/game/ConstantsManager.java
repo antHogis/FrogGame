@@ -14,7 +14,7 @@ public class ConstantsManager {
     public static Preferences settings = Gdx.app.getPreferences("Preferences");
 
     //public static Locale locale = new Locale("fi", "FI");
-    public static Locale locale = Locale.getDefault();
+    private static Locale locale = Locale.getDefault();
     public static I18NBundle myBundle =
             I18NBundle.createBundle(Gdx.files.internal("MyBundle"), locale);
     public static I18NBundle levels =
@@ -24,6 +24,8 @@ public class ConstantsManager {
      * File locations (non-localized)
      */
     //Ui Items
+    public static final String bgGenericPath = "ui/bg.png";
+    public static final String bgMainMenuPath = "ui/bg2.png";
     public static final String homeButtonPath = "ui/buttons/button-home.png";
     public static final String starGoldenPath = "ui/star-gold.png";
     public static final String starGreyPath = "ui/star-grey.png";

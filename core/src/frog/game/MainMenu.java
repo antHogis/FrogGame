@@ -28,7 +28,7 @@ public class MainMenu extends ScreenAdapter {
 
     public MainMenu(FrogMain host) {
         this.host = host;
-        background = new Texture(Gdx.files.internal("ui/bg2.png"));
+        background = new Texture(Gdx.files.internal(ConstantsManager.bgMainMenuPath));
         batch = host.getBatch();
         camera = host.getCamera();
 
@@ -107,9 +107,8 @@ public class MainMenu extends ScreenAdapter {
                 //Level-select button
                 if (playButton.getRectangle().contains(touch.x,touch.y)) {
                     SoundController.playClickSound();
-                    host.createNewLevels();
                     MainMenu.this.dispose();
-                    host.setScreen(host.getLevels().get(0));
+                    host.setScreen(new LevelSelect(host));
                 }
                 //Settings button
                 if (settingsButton.getRectangle().contains(touch.x,touch.y)) {
