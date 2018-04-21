@@ -47,6 +47,7 @@ public class LevelFinish extends ScreenAdapter {
 
         font = new BitmapFont(Gdx.files.internal("ui/fonts/lato90.txt"));
 
+        this.identifier = identifier;
         this.timeString = timeString;
         this.TIME_TWO_STARS = TIME_TWO_STARS;
         this.TIME_THREE_STARS = TIME_THREE_STARS;
@@ -89,7 +90,7 @@ public class LevelFinish extends ScreenAdapter {
             @Override
             public boolean touchUp(int screenX, int screenY, int pointer, int button) {
                 LevelFinish.this.dispose();
-                host.setScreen(new MainMenu(host));
+                host.setScreen(new LevelSelect(host));
                 return true;
             }
         });
@@ -121,26 +122,24 @@ public class LevelFinish extends ScreenAdapter {
         float yPos = WINDOW_HEIGHT * (1f/16f);
         float nextX = xPos + starWidth;
         
-        int index = 0;
-
-        while (index < goldenStars)  {
+        for (int i = 0; i < goldenStars; i++) {
             stars.add(new Star(starWidth, true));
-            Gdx.app.log("TAG", "Created golden star");
-            stars.get(index).setX(xPos);
-            stars.get(index).setY(yPos);
+            stars.get(stars.size-1).setX(xPos);
+            stars.get(stars.size-1).setY(yPos);
             xPos += nextX;
-            index++;
         }
+
         for(int i = 0; i < greyStars; i++) {
             stars.add(new Star(starWidth, false));
-            Gdx.app.log("TAG", "Created grey star");
-            stars.get(index).setX(xPos);
-            stars.get(index).setY(yPos);
+            stars.get(stars.size-1).setX(xPos);
+            stars.get(stars.size-1).setY(yPos);
             xPos += nextX;
-            index++;
         }
-        
-        
+
+        String key = identifier + "_stars";
+        if (goldenStars > ConstantsManager.settings.getInteger(key, 0)) {
+            ConstantsManager.settings.putInteger(key, goldenStars).flush();
+        }
     }
 
     private int calculateStars(int timerMinutes, int timerSeconds) {

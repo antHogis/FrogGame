@@ -41,7 +41,7 @@ public class Timer {
         this.WINDOW_WIDTH = WINDOW_WIDTH;
         this.WINDOW_HEIGHT = WINDOW_HEIGHT;
 
-        reset();
+        singleSecondCounter = 0;
     }
 
     public void draw(SpriteBatch batch) {
@@ -59,10 +59,11 @@ public class Timer {
 
     }
 
-    public void update () {
-        if (System.currentTimeMillis()-singleSecondCounter >= 1000) {
+    public void update (float delta) {
+        singleSecondCounter += delta;
+        if (singleSecondCounter >= 1) {
             timerSeconds += 1;
-            singleSecondCounter = System.currentTimeMillis();
+            singleSecondCounter = 0;
         }
         if (timerSeconds >= 60) {
             timerMinutes +=1;
@@ -85,7 +86,7 @@ public class Timer {
 
         timeString = minutesString + ":" + secondsString;
 
-        if (timeString.equals("59:59")) {
+        if (timeString.equals("99:59")) {
             timeString = "00:00";
         }
 
@@ -96,10 +97,6 @@ public class Timer {
                 timerTextures[i] = numberSplitSheet1D[sheetIndex];
             }
         }
-    }
-
-    public void reset(){
-        singleSecondCounter = System.currentTimeMillis();
     }
 
     private void initializeTimerTextures() {

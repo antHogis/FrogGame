@@ -27,6 +27,7 @@ public class SettingsMenu extends ScreenAdapter {
     private Slider sensitivity_Slider;
     private Slider threshold_Slider;
     private SwitchButton invertY_Switch;
+
     private HomeButton homeButton;
     private SwitchButton musicButton;
 
@@ -61,6 +62,7 @@ public class SettingsMenu extends ScreenAdapter {
         sensitivity_Slider.dispose();
         threshold_Text.dispose();
         threshold_Slider.dispose();
+
         invertY_Text.dispose();
         invertY_Switch.dispose();
         homeButton.dispose();

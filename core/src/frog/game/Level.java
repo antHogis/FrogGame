@@ -5,6 +5,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -30,7 +31,7 @@ public class Level extends ScreenAdapter {
     private boolean gameRunning;
 
     /*
-     * Characters and objects in the level.
+     * Characters and objects.
      */
     private Player frog;
     private Array<Enemy> enemies;
@@ -58,6 +59,8 @@ public class Level extends ScreenAdapter {
 
     private final TiledMap tiledMap;
     private final TiledMapRenderer tiledMapRenderer;
+    private Texture backgroundTexture;
+    private Array<Rectangle> backgroundRectangles;
 
     private final int TILE_DIMENSION;
     private final int TILE_AMOUNT_WIDTH, TILE_AMOUNT_HEIGHT;
@@ -112,7 +115,7 @@ public class Level extends ScreenAdapter {
         seaweeds = new Array<Seaweed>();
         rocks = new Array<Rock>();
         addLevelObjects();
-
+        createBackground();
         createHUD_elements();
 
         this.TIME_TWO_STARS = TIME_TWO_STARS;
@@ -126,7 +129,6 @@ public class Level extends ScreenAdapter {
         if (ConstantsManager.settings.getBoolean("music-on", ConstantsManager.DEFAULT_AUDIO_ON)) {
             SoundController.backgroundMusic.play();
         }
-        timer.reset();
     }
 
     @Override
@@ -151,10 +153,11 @@ public class Level extends ScreenAdapter {
             respawnFromWall();
             endLevel();
             moveCamera();
-            timer.update();
+            timer.update(delta);
         }
 
         batch.begin();
+            drawBackground();
             frog.drawAnimation(batch);
             drawObjects();
         batch.end();
@@ -191,6 +194,9 @@ public class Level extends ScreenAdapter {
         for (Rock rock : rocks) {
             rock.dispose();
         }
+        backgroundTexture.dispose();
+        homeButton.dispose();
+        timer.dispose();
     }
 
     @Override
@@ -298,6 +304,16 @@ public class Level extends ScreenAdapter {
         homeButton.draw(batch);
     }
 
+    private void drawBackground() {
+        for (int i = 0; i < backgroundRectangles.size; i++) {
+            batch.draw(backgroundTexture,
+                    backgroundRectangles.get(i).x,
+                    backgroundRectangles.get(i).y,
+                    backgroundRectangles.get(i).width,
+                    backgroundRectangles.get(i).height);
+        }
+    }
+
     private void checkObjectCollision() {
         for (Checkpoint checkpoint : checkpoints) {
             checkpoint.checkCollision(frog);
@@ -403,15 +419,17 @@ public class Level extends ScreenAdapter {
     }
 
     private void addCheckpoints() {
-        Array<RectangleMapObject> checkpointRectangles =
-                tiledMap.getLayers().get("checkpoint-rectangle").getObjects().getByType(RectangleMapObject.class);
+        if (tiledMap.getLayers().get("checkpoint-rectangle") != null) {
+            Array<RectangleMapObject> checkpointRectangles =
+                    tiledMap.getLayers().get("checkpoint-rectangle").getObjects().getByType(RectangleMapObject.class);
 
-        for (RectangleMapObject checkpointRectangle : checkpointRectangles) {
-            checkpoints.add(new Checkpoint(checkpointRectangle.getRectangle().getX(),
-                    checkpointRectangle.getRectangle().getY(),
-                    checkpointRectangle.getRectangle().getWidth(),
-                    checkpointRectangle.getRectangle().getHeight(),
-                    TILE_DIMENSION));
+            for (RectangleMapObject checkpointRectangle : checkpointRectangles) {
+                checkpoints.add(new Checkpoint(checkpointRectangle.getRectangle().getX(),
+                        checkpointRectangle.getRectangle().getY(),
+                        checkpointRectangle.getRectangle().getWidth(),
+                        checkpointRectangle.getRectangle().getHeight(),
+                        TILE_DIMENSION));
+            }
         }
     }
 
@@ -453,7 +471,8 @@ public class Level extends ScreenAdapter {
                         false));
                 //Set post-construction to allow grass rectangles to be made as any size in Tiled
                 seaweeds.peek().setY(seaweedRectangle.getRectangle().getY()
-                        + seaweedRectangle.getRectangle().getHeight() - seaweeds.peek().getHeight());
+                        + seaweedRectangle.getRectangle().getHeight() - seaweeds.peek().getHeight()
+                        + TILE_DIMENSION/4);
             }
         }
 
@@ -482,13 +501,9 @@ public class Level extends ScreenAdapter {
                         TILE_DIMENSION,
                         false));
                 rocks.peek().setY(rockRectangle.getRectangle().getY()
-                        + rockRectangle.getRectangle().getHeight() - rocks.peek().getHeight());
+                        + rockRectangle.getRectangle().getHeight() - rocks.peek().getHeight() + TILE_DIMENSION/4);
             }
         }
-    }
-
-    public void resetTimer() {
-        timer.reset();
     }
 
     private void createHUD_elements() {
@@ -513,5 +528,19 @@ public class Level extends ScreenAdapter {
                 return true;
             }
         });
+    }
+
+    private void createBackground() {
+        backgroundTexture = new Texture(ConstantsManager.bgGamePath);
+        backgroundRectangles = new Array<Rectangle>();
+        float backgroundWidth = WINDOW_WIDTH_PIXELS*1.5f;
+        float backgroundHeight = (backgroundWidth * backgroundTexture.getHeight()) / backgroundTexture.getWidth();
+
+        for (int y = 0; y < WORLD_HEIGHT_PIXELS; y+= backgroundHeight) {
+            for (int x = 0; x  < WORLD_WIDTH_PIXELS; x += backgroundWidth) {
+                backgroundRectangles.add(new Rectangle(x,y, backgroundWidth, backgroundHeight));
+            }
+        }
+
     }
 }

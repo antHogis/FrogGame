@@ -22,10 +22,10 @@ public class SoundController {
         hitEnemy = Gdx.audio.newSound(Gdx.files.internal("sounds/hitEnemy.mp3"));
         hitEnemy.setVolume(0, SOUNDS_VOLUME);
 
-        click = Gdx.audio.newSound(Gdx.files.internal("sounds/click.wav"));
+        click = Gdx.audio.newSound(Gdx.files.internal("sounds/click.ogg"));
         click.setVolume(0, SOUNDS_VOLUME);
 
-        collectCoin = Gdx.audio.newSound(Gdx.files.internal("sounds/coin.wav"));
+        collectCoin = Gdx.audio.newSound(Gdx.files.internal("sounds/coin.ogg"));
         collectCoin.setVolume(0, SOUNDS_VOLUME);
 
         backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/demo1-leikattu.wav"));

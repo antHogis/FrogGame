@@ -12,7 +12,7 @@ public class TextItem extends UiObject {
 
     public TextItem(String path, float height) {
         texture = new Texture(Gdx.files.internal(path));
-        rectangle = new Rectangle();
+        rectangle = new Rectangle(0,0,0,0);
         rectangle.setHeight(height);
         rectangle.setWidth((texture.getWidth() * height) / texture.getHeight());
     }
