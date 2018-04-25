@@ -85,6 +85,39 @@ public class LevelSelect extends ScreenAdapter {
         chooseLevel.dispose();
     }
 
+    private void drawUI() {
+        batch.draw(background, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+        chooseLevel.draw(batch);
+        int levelsInView = 9;
+        int starsInView = levelsInView*3;
+
+        if (currentLevelView == 1) {
+            for (int i = 0; i < levelsInView; i++) {
+                levelButtons.get(i).draw(batch);
+            }
+            for (int i = 0; i < starsInView; i++) {
+                stars.get(i).draw(batch);
+            }
+        }
+
+        if (currentLevelView == 2) {
+            for (int i = levelsInView; i < levelsInView*2; i++) {
+                levelButtons.get(i).draw(batch);
+            }
+            for (int i = starsInView; i < starsInView*2; i++) {
+                stars.get(i).draw(batch);
+            }
+        }
+
+        homeButton.draw(batch);
+        if (currentLevelView > firstLevelView) {
+            arrowLeft.draw(batch);
+        }
+        if (currentLevelView < lastLevelView) {
+            arrowRight.draw(batch);
+        }
+    }
+
     private void createUI() {
         levelButtons = new ArrayList<GenericButton>();
         stars = new ArrayList<Star>();
@@ -195,7 +228,7 @@ public class LevelSelect extends ScreenAdapter {
                     }
                 }
 
-                for (int i = 10; i < 18 && currentLevelView == 2; i++) {
+                for (int i = 9; i < 18 && currentLevelView == 2; i++) {
                     if (levelButtons.get(i).getRectangle().contains(touch.x, touch.y)) {
                         SoundController.playClickSound();
                         LevelSelect.this.dispose();
@@ -224,39 +257,6 @@ public class LevelSelect extends ScreenAdapter {
         });
     }
 
-    private void drawUI() {
-        batch.draw(background, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-        chooseLevel.draw(batch);
-        int levelsInView = 9;
-        int starsInView = levelsInView*3;
-
-        if (currentLevelView == 1) {
-            for (int i = 0; i < levelsInView; i++) {
-                levelButtons.get(i).draw(batch);
-            }
-            for (int i = 0; i < starsInView; i++) {
-                stars.get(i).draw(batch);
-            }
-        }
-
-        if (currentLevelView == 2) {
-            for (int i = levelsInView; i < levelsInView*2; i++) {
-                levelButtons.get(i).draw(batch);
-            }
-            for (int i = starsInView; i < starsInView*2; i++) {
-                stars.get(i).draw(batch);
-            }
-        }
-
-        homeButton.draw(batch);
-        if (currentLevelView > firstLevelView) {
-            arrowLeft.draw(batch);
-        }
-        if (currentLevelView < lastLevelView) {
-            arrowRight.draw(batch);
-        }
-    }
-
     private Level createLevel(String identifier) {
         String mapPath
                 = ConstantsManager.levels.get(identifier + "_mapPath");
@@ -272,10 +272,6 @@ public class LevelSelect extends ScreenAdapter {
                 = Integer.parseInt(ConstantsManager.levels.get(identifier + "_TILE_AMOUNT_WIDTH"));
         int TILE_HEIGHT
                 = Integer.parseInt(ConstantsManager.levels.get(identifier + "_TILE_AMOUNT_HEIGHT"));
-        String TIME_TWO_STARS
-                = ConstantsManager.levels.get(identifier + "_TIME_TWO_STARS");
-        String TIME_THREE_STARS
-                = ConstantsManager.levels.get(identifier + "_TIME_THREE_STARS");
 
         return new Level(host,
                 identifier,
@@ -285,9 +281,7 @@ public class LevelSelect extends ScreenAdapter {
                 AMOUNT_OCTOPUS1,
                 AMOUNT_OCTOPUS2,
                 TILE_WIDTH,
-                TILE_HEIGHT,
-                TIME_TWO_STARS,
-                TIME_THREE_STARS);
+                TILE_HEIGHT);
     }
 
     private String formatLevelNumber(int number) {

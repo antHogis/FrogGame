@@ -26,33 +26,35 @@ public class LevelFinish extends ScreenAdapter {
     String completed;
     private BitmapFont font;
 
-    private String identifier;
-    private String timeString;
-    private String TIME_TWO_STARS, TIME_THREE_STARS;
+    private final String identifier, timeString, TIME_TWO_STARS, TIME_THREE_STARS;
     private Array<Star> stars;
+
+    private int timerMinutes, timerSeconds;
 
 
     public LevelFinish(FrogMain host,
                        String identifier,
-                       String timeString,
-                       String TIME_TWO_STARS,
-                       String TIME_THREE_STARS,
-                       int timerMinutes,
-                       int timerSeconds) {
+                       String timeString) {
         this.host = host;
         batch = host.getBatch();
         camera = host.getCamera();
         WINDOW_WIDTH = camera.viewportWidth;
         WINDOW_HEIGHT = camera.viewportHeight;
 
-        font = new BitmapFont(Gdx.files.internal("ui/fonts/lato90.txt"));
-
         this.identifier = identifier;
         this.timeString = timeString;
-        this.TIME_TWO_STARS = TIME_TWO_STARS;
-        this.TIME_THREE_STARS = TIME_THREE_STARS;
-        createStars(calculateStars(timerMinutes, timerSeconds));
+        TIME_THREE_STARS = ConstantsManager.levels.get(identifier + "_TIME_THREE_STARS");
+        TIME_TWO_STARS = ConstantsManager.levels.get(identifier + "_TIME_TWO_STARS");
 
+        createStars();
+        updateScoreboard();
+
+        for (int i = 1; i <= 5; i++) {
+            Gdx.app.log("Level " + identifier + " scoreboard",
+                    ConstantsManager.settings.getString(identifier+"_top_"+i, "derp"));
+        }
+
+        font = new BitmapFont(Gdx.files.internal("ui/fonts/lato90.txt"));
         setTextPosition();
 
         setInputProcessor();
@@ -110,7 +112,8 @@ public class LevelFinish extends ScreenAdapter {
         }
     }
 
-    private void createStars(int goldenStars) {
+    private void createStars() {
+        int goldenStars = calculateStars();
         int greyStars = 3 - goldenStars;
 
         Gdx.app.log("Golden:", Integer.toString(goldenStars));
@@ -142,12 +145,36 @@ public class LevelFinish extends ScreenAdapter {
         }
     }
 
-    private int calculateStars(int timerMinutes, int timerSeconds) {
+    private void updateScoreboard() {
+        boolean scoreSaved = false;
+
+        for (int i = 1; i <= ConstantsManager.TOP_SCORES_AMOUNT && !scoreSaved; i++) {
+            String key = identifier + "_top_" + i;
+            String topScore = ConstantsManager.settings.getString(key, null);
+
+            if (topScore == null) {
+                ConstantsManager.settings.putString(key, timeString).flush();
+                scoreSaved = true;
+            } else {
+                int topScoreMinutes = parseTimeString(topScore, true);
+                int topScoreSeconds = parseTimeString(topScore, false);
+
+                if (timerMinutes <= topScoreMinutes && timerSeconds < topScoreSeconds) {
+                    ConstantsManager.settings.putString(key, timeString).flush();
+                    scoreSaved = true;
+                }
+            }
+        }
+    }
+
+    private int calculateStars() {
         int threeStarMinutes = parseTimeString(TIME_THREE_STARS, true);
         int threeStarSeconds = parseTimeString(TIME_THREE_STARS, false);
         int twoStarMinutes = parseTimeString(TIME_TWO_STARS, true);
         int twoStarSeconds = parseTimeString(TIME_TWO_STARS, false);
 
+        timerMinutes = parseTimeString(timeString, true);
+        timerSeconds = parseTimeString(timeString, false);
 
         if (timerMinutes < threeStarMinutes) {
             return 3;
@@ -181,4 +208,5 @@ public class LevelFinish extends ScreenAdapter {
         }
         return 0;
     }
+
 }

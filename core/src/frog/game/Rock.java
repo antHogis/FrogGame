@@ -13,13 +13,13 @@ public class Rock extends GameObject {
         //If the rock is pointing up
         if(up) {
             this.texture = new Texture("gfx/kiviPH.png");
-            this.rectangle = new Rectangle(x,y-(TILE_DIMENSION/8),
+            this.rectangle = new Rectangle(x,y-(TILE_DIMENSION/4),
                     TILE_DIMENSION*2, TILE_DIMENSION*2);
         }
         //If the rock is pointing down
         else {
             this.texture = new Texture("gfx/kiviPHdown.png");
-            this.rectangle = new Rectangle(x,y+(TILE_DIMENSION/2),
+            this.rectangle = new Rectangle(x,y+(TILE_DIMENSION/4),
                     TILE_DIMENSION*2, TILE_DIMENSION*2);
         }
     }

@@ -51,4 +51,7 @@ public class ConstantsManager {
 
     public static final int TILE_DIMENSION = 128;
 
+    public static final int LEVELS_AMOUNT = 18;
+    public static final int TOP_SCORES_AMOUNT = 5;
+
 }
