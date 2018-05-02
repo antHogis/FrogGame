@@ -147,7 +147,7 @@ public class LevelFinish extends ScreenAdapter {
 
     private void updateScoreboard() {
         boolean scoreSaved = false;
-
+        
         for (int i = 1; i <= ConstantsManager.TOP_SCORES_AMOUNT && !scoreSaved; i++) {
             String key = identifier + "_top_" + i;
             String topScore = ConstantsManager.settings.getString(key, null);
@@ -160,8 +160,20 @@ public class LevelFinish extends ScreenAdapter {
                 int topScoreSeconds = parseTimeString(topScore, false);
 
                 if (timerMinutes <= topScoreMinutes && timerSeconds < topScoreSeconds) {
-                    ConstantsManager.settings.putString(key, timeString).flush();
+                    //Pushing scores scores down in top 5
+                    for (int j = ConstantsManager.TOP_SCORES_AMOUNT; j > i; j--) {
+                        key = identifier + "_top_" + (j-1);
+                        String temp = ConstantsManager.settings.getString(key, null);
+                        key = identifier + "_top_" + j;
+                        ConstantsManager.settings.putString(key, temp).flush();
+                    }
+                    //Saving score to top 5 at i
+                    key = identifier + "_top_" + i;
+                    ConstantsManager.settings.putString(key, timeString);
+                    ConstantsManager.settings.flush();
                     scoreSaved = true;
+
+
                 }
             }
         }

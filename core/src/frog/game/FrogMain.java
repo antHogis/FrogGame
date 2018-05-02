@@ -11,7 +11,6 @@ public class FrogMain extends Game {
     private OrthographicCamera camera;
     private final int WINDOW_WIDTH = 1280;
     private final int WINDOW_HEIGHT = 800;
-    private final int TILE_DIMENSION = 128;
 
 	@Override
 	public void create () {
@@ -45,10 +44,6 @@ public class FrogMain extends Game {
 
     public OrthographicCamera getCamera() {
         return camera;
-    }
-
-    public int getTILE_DIMENSION() {
-        return TILE_DIMENSION;
     }
 
 }

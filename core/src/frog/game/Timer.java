@@ -133,7 +133,7 @@ public class Timer {
 
     public void subtractTime(int amount) {
         //In any case if seconds greater or equal to five
-        if (timerSeconds >= 5) {
+        if (timerSeconds >= amount) {
             timerSeconds -= Math.abs(amount);
         }
         //If seconds below five but minutes equal one or more
@@ -149,14 +149,6 @@ public class Timer {
 
     public String getTimeString() {
         return timeString;
-    }
-
-    public int getTimerMinutes() {
-        return timerMinutes;
-    }
-
-    public int getTimerSeconds() {
-        return timerSeconds;
     }
 
     public void dispose() {

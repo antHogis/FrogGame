@@ -1,7 +1,7 @@
 package frog.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 /**
@@ -28,6 +29,10 @@ public class HighScore extends ScreenAdapter {
     private final int lastLevelView;
     private int currentLevelView;
 
+    private Texture background;
+    private GenericButton homeButton;
+    private GenericButton arrowRight;
+    private GenericButton arrowLeft;
     private Array<String> texts;
     private Array<Vector2> textPositions;
 
@@ -43,9 +48,12 @@ public class HighScore extends ScreenAdapter {
         lastLevelView = ConstantsManager.LEVELS_AMOUNT;
 
         font = new BitmapFont(Gdx.files.internal("ui/fonts/lato90.txt"));
-        findLevelScores(currentLevelView);
+        createScoreView(currentLevelView);
+        createUI();
+        setInputProcessor();
 
     }
+
     @Override
     public void show() {
 
@@ -57,16 +65,10 @@ public class HighScore extends ScreenAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.setProjectionMatrix(camera.combined);
-
         batch.begin();
-        drawScores();
+            drawUI();
+            drawScores();
         batch.end();
-
-        if (Gdx.input.isTouched()) {
-            Gdx.app.log("TAG", "Setting Screen");
-            host.setScreen(new MainMenu(host));
-        }
-
     }
 
     @Override
@@ -80,7 +82,33 @@ public class HighScore extends ScreenAdapter {
         }
     }
 
-    private void findLevelScores(int level) {
+    private void drawUI() {
+        batch.draw(background, 0,0, WINDOW_WIDTH, WINDOW_HEIGHT);
+        homeButton.draw(batch);
+
+        if (currentLevelView > firstLevelView) {
+            arrowLeft.draw(batch);
+        }
+        if (currentLevelView < lastLevelView) {
+            arrowRight.draw(batch);
+        }
+    }
+
+    private void createUI() {
+        background = new Texture(Gdx.files.internal(ConstantsManager.bgGenericPath));
+
+        homeButton = new GenericButton(WINDOW_WIDTH*(4f/40f), ConstantsManager.homeButtonPath);
+        homeButton.setY(WINDOW_HEIGHT-homeButton.getHeight());
+
+        arrowLeft = new GenericButton(WINDOW_WIDTH*(4f/40f), ConstantsManager.menuArrowLeftPath);
+        arrowLeft.setY(WINDOW_HEIGHT/2 - arrowLeft.getHeight()/2);
+
+        arrowRight = new GenericButton(arrowLeft.getWidth(), ConstantsManager.menuArrowRightPath);
+        arrowRight.setY(arrowLeft.getY());
+        arrowRight.setX(WINDOW_WIDTH - arrowRight.getWidth());
+    }
+
+    private void createScoreView(int level) {
         texts = new Array<String>();
         textPositions = new Array<Vector2>();
 
@@ -112,7 +140,34 @@ public class HighScore extends ScreenAdapter {
     }
 
     private void setInputProcessor() {
+        Gdx.input.setInputProcessor(new InputAdapter() {
+            Vector3 touch;
 
+            @Override
+            public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+                touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+                camera.unproject(touch);
+
+                if (arrowLeft.getRectangle().contains(touch.x, touch.y) && currentLevelView > firstLevelView) {
+                    SoundController.playClickSound();
+                    currentLevelView--;
+                    createScoreView(currentLevelView);
+                }
+
+                if (arrowRight.getRectangle().contains(touch.x, touch.y) && currentLevelView < lastLevelView) {
+                    SoundController.playClickSound();
+                    currentLevelView++;
+                    createScoreView(currentLevelView);
+                }
+
+                if (homeButton.getRectangle().contains(touch.x, touch.y)) {
+                    SoundController.playClickSound();
+                    HighScore.this.dispose();
+                    host.setScreen(new MainMenu(host));
+                }
+                return true;
+            }
+        });
     }
 
     private String formatLevelNumber(int number) {

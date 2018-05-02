@@ -9,9 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.renderers.OrthoCachedTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
@@ -82,7 +80,7 @@ public class Level extends ScreenAdapter {
 
         this.host = host;
         batch = host.getBatch();
-        TILE_DIMENSION = host.getTILE_DIMENSION();
+        TILE_DIMENSION = ConstantsManager.TILE_DIMENSION;
 
         this.TILE_AMOUNT_WIDTH = TILE_AMOUNT_WIDTH;
         this.TILE_AMOUNT_HEIGHT = TILE_AMOUNT_HEIGHT;
@@ -167,11 +165,11 @@ public class Level extends ScreenAdapter {
         batch.begin();
             drawCheckpoints();
         batch.end();
-        /*
+
         batch.setProjectionMatrix(uiCamera.combined);
         batch.begin();
-        //drawHUD();
-        batch.end();*/
+        drawHUD();
+        batch.end();
     }
 
     @Override
@@ -378,9 +376,9 @@ public class Level extends ScreenAdapter {
     }
 
     private void addOctopi() {
-        //Adding enemies of the type Octopus1
+        //Adding enemies of the type Octopus
         for (int i=1; i<=AMOUNT_OCTOPUS1; i++) {
-            enemies.add(new Octopus1(TILE_DIMENSION));
+            enemies.add(new Octopus(TILE_DIMENSION));
 
             Array<RectangleMapObject> startPoints =
                     tiledMap.getLayers().get("octopus1-"+i+"-start").getObjects().getByType(RectangleMapObject.class);
@@ -399,7 +397,7 @@ public class Level extends ScreenAdapter {
 
         //Adding enemies of the type Octopus2
         for (int i=1; i<=AMOUNT_OCTOPUS2; i++) {
-            enemies.add(new Octopus1(TILE_DIMENSION));
+            enemies.add(new Octopus(TILE_DIMENSION));
 
             Array<RectangleMapObject> startPoints =
                     tiledMap.getLayers().get("octopus2-"+i+"-start").getObjects().getByType(RectangleMapObject.class);

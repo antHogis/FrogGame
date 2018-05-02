@@ -34,6 +34,14 @@ public class ConstantsManager {
     public static final String musicOffPath = "ui/buttons/music-off.png";
     public static final String menuArrowLeftPath = "ui/buttons/arrow-left.png";
     public static final String menuArrowRightPath = "ui/buttons/arrow-right.png";
+    public static final String levelButtonEasyIdlePath = "";
+    public static final String levelButtonEasyPressedPath = "";
+    public static final String levelButtonMediumIdlePath = "";
+    public static final String levelButtonMediumPressedPath = "";
+    public static final String levelButtonHardIdlePath = "";
+    public static final String levelButtonHardPressedPath = "";
+
+
 
     /*
      * Game-modifying values

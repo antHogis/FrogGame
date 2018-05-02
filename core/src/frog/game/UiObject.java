@@ -1,11 +1,8 @@
 package frog.game;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector3;
 
 
 /**
@@ -19,16 +16,6 @@ abstract class UiObject {
 
     public void draw(SpriteBatch batch) {
         batch.draw(texture, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
-    }
-
-    public boolean isTouched(OrthographicCamera camera) {
-        Vector3 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-        camera.unproject(touch);
-        if (rectangle.contains(touch.x, touch.y)) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     public void setX(float x) {

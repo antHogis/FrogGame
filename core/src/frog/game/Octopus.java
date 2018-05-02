@@ -10,14 +10,14 @@ import com.badlogic.gdx.math.Rectangle;
  * Created by anton on 04/04/2018.
  */
 
-public class Octopus1 extends Enemy {
+public class Octopus extends Enemy {
     private float movementSpeed;
     private boolean isMovingDown;
 
-    public Octopus1(int TILE_DIMENSION) {
-        textureSheet = new Texture("gfx/mustekala1.png");
-        SHEET_COLUMNS = 1;
-        SHEET_ROWS = 1;
+    public Octopus(int TILE_DIMENSION) {
+        textureSheet = new Texture("gfx/mustekalasheet.png");
+        SHEET_COLUMNS = 5;
+        SHEET_ROWS = 2;
         textureSheet2D = TextureRegion.split(textureSheet,
                 textureSheet.getWidth() / SHEET_COLUMNS,
                 textureSheet.getHeight() / SHEET_ROWS);
