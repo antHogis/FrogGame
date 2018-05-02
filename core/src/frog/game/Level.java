@@ -95,7 +95,6 @@ public class Level extends ScreenAdapter {
         uiCamera = new OrthographicCamera();
         uiCamera.setToOrtho(false, WINDOW_WIDTH_PIXELS, WINDOW_HEIGHT_PIXELS);
 
-
         tiledMap = new TmxMapLoader().load(levelPath);
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
@@ -113,7 +112,7 @@ public class Level extends ScreenAdapter {
         rocks = new Array<Rock>();
         addLevelObjects();
         createBackground();
-        createHUD_elements();
+        createUI();
 
         this.identifier = identifier;
         gameRunning = true;
@@ -168,7 +167,7 @@ public class Level extends ScreenAdapter {
 
         batch.setProjectionMatrix(uiCamera.combined);
         batch.begin();
-        drawHUD();
+        drawUI();
         batch.end();
     }
 
@@ -304,7 +303,7 @@ public class Level extends ScreenAdapter {
         }
     }
 
-    private void drawHUD() {
+    private void drawUI() {
         timer.draw(batch);
         homeButton.draw(batch);
     }
@@ -503,7 +502,7 @@ public class Level extends ScreenAdapter {
         }
     }
 
-    private void createHUD_elements() {
+    private void createUI() {
         timer = new Timer(WINDOW_WIDTH_PIXELS, WINDOW_HEIGHT_PIXELS);
 
         float menuButtonWidth = WINDOW_WIDTH_PIXELS * (1.5f/16);

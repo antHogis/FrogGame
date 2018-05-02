@@ -1,9 +1,14 @@
 package frog.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+
+import java.util.ArrayList;
 
 /**
  * Created by Anton on 9.4.2018.
@@ -15,13 +20,10 @@ public class Timer {
     private TextureRegion[] numberSplitSheet1D;
     private TextureRegion[][] numberSplitSheet2D;
     private TextureRegion[] timerTextures;
+    private ArrayList<Rectangle> timerRectangles;
 
     private final float WINDOW_WIDTH;
     private final float WINDOW_HEIGHT;
-    private float timerWidth;
-    private float timerHeight;
-    private float timerX;
-    private float timerY;
 
     private int timerMinutes = 0;
     private int timerSeconds = 0;
@@ -29,33 +31,40 @@ public class Timer {
     private String timeString = "";
 
     public Timer(float WINDOW_WIDTH, float WINDOW_HEIGHT) {
-        numberSheet = new Texture("ui/numbers.png");
-        colon = new TextureRegion(new Texture("ui/colon2.png"));
+        this.WINDOW_WIDTH = WINDOW_WIDTH;
+        this.WINDOW_HEIGHT = WINDOW_HEIGHT;
+        
+        numberSheet = new Texture("ui/timerSheet.png");
+        colon = new TextureRegion(new Texture("ui/colon3.png"));
+
+        //font = new BitmapFont(Gdx.files.internal("ui/fonts/patHand120.txt"));
 
         numberSplitSheet2D = TextureRegion.split(numberSheet,
                 numberSheet.getWidth()/10,
                 numberSheet.getHeight()/1);
         numberSplitSheet1D = convert2Dto1D(numberSplitSheet2D);
         initializeTimerTextures();
-
-        this.WINDOW_WIDTH = WINDOW_WIDTH;
-        this.WINDOW_HEIGHT = WINDOW_HEIGHT;
-
+        
         singleSecondCounter = 0;
     }
 
     public void draw(SpriteBatch batch) {
-        //Timerin yhteisleveys 292, x tulee 350 pikselin päähän oikeasta reunasta
-        float placementX = WINDOW_WIDTH - 350;
-        //Timerin korkeus 64, y tulee 100px päähän yläreunasta
-        float placementY = WINDOW_HEIGHT- 100;
 
-        batch.draw(timerTextures[0], placementX, placementY);
+        for (int i = 0; i < timerTextures.length; i++) {
+            batch.draw(timerTextures[i],
+                    timerRectangles.get(i).x,
+                    timerRectangles.get(i).y,
+                    timerRectangles.get(i).width,
+                    timerRectangles.get(i).height);
+        }
+
+       /* batch.draw(timerTextures[0], timerX, timerY);
 
         for (int i=1; i < timerTextures.length; i++) {
-            placementX += timerTextures[i].getRegionWidth();
-            batch.draw(timerTextures[i], placementX, placementY);
-        }
+            timerX += timerTextures[i].getRegionWidth();
+            batch.draw(timerTextures[i], timerX, timerY);
+        }*/
+        /*font.draw(batch, timeString, timerX, timerY);*/
 
     }
 
@@ -75,13 +84,13 @@ public class Timer {
         if (timerSeconds < 10) {
             secondsString = "0" + timerSeconds;
         } else {
-            secondsString = "" + timerSeconds;
+            secondsString = Integer.toString(timerSeconds);
         }
 
         if (timerMinutes < 10) {
             minutesString = "0" + timerMinutes;
         } else {
-            minutesString = "" + timerMinutes;
+            minutesString = Integer.toString(timerMinutes);
         }
 
         timeString = minutesString + ":" + secondsString;
@@ -91,9 +100,9 @@ public class Timer {
         }
 
         for (int i=0; i < timeString.length(); i++) {
-            if (i != 2) {
+            if (timeString.charAt(i) != ':') {
                 String numberAtIndex = "" + timeString.charAt(i);
-                int sheetIndex = Integer.parseInt(numberAtIndex);
+                int sheetIndex = Integer.parseInt("" + timeString.charAt(i));
                 timerTextures[i] = numberSplitSheet1D[sheetIndex];
             }
         }
@@ -101,21 +110,37 @@ public class Timer {
 
     private void initializeTimerTextures() {
         timerTextures = new TextureRegion[5];
-        timerHeight = 0;
-        timerWidth = 0;
+        timerRectangles = new ArrayList<Rectangle>(5);
+        float rectangleHeight = WINDOW_HEIGHT* (3f/40f);
+        float posY = WINDOW_HEIGHT - rectangleHeight - (WINDOW_HEIGHT * (1f/40f));
+        float posX = WINDOW_WIDTH - (WINDOW_WIDTH * (1f/40f));
 
         for (int i = 0; i < timerTextures.length; i++) {
             if (i==2) {
                 timerTextures[i] = colon;
+                timerRectangles.add(new Rectangle());
+                timerRectangles.get(i).setWidth(
+                        (timerTextures[i].getRegionWidth() * rectangleHeight) / timerTextures[i].getRegionHeight());
+                timerRectangles.get(i).setHeight(rectangleHeight);
+                timerRectangles.get(i).setY(posY);
             } else {
                 timerTextures[i] = numberSplitSheet1D[0];
+                timerRectangles.add(new Rectangle());
+                timerRectangles.get(i).setWidth(
+                        (timerTextures[i].getRegionWidth() * rectangleHeight) / timerTextures[i].getRegionHeight());
+                timerRectangles.get(i).setHeight(rectangleHeight);
+                timerRectangles.get(i).setY(posY);
             }
-            timerWidth += timerTextures[i].getRegionWidth();
         }
-        timerHeight = timerTextures[0].getRegionHeight();
 
-        timerX = WINDOW_WIDTH - timerWidth;
-        timerY = WINDOW_HEIGHT - timerHeight;
+        for (Rectangle timerRectangle : timerRectangles) {
+            posX -= timerRectangle.width;
+        }
+
+       for (Rectangle timerRectangle : timerRectangles) {
+            timerRectangle.setX(posX);
+            posX += timerRectangle.width;
+       }
     }
 
     private TextureRegion[] convert2Dto1D (TextureRegion[][] twoDim) {
@@ -133,7 +158,7 @@ public class Timer {
 
     public void subtractTime(int amount) {
         //In any case if seconds greater or equal to five
-        if (timerSeconds >= amount) {
+        if (timerSeconds >= Math.abs(amount)) {
             timerSeconds -= Math.abs(amount);
         }
         //If seconds below five but minutes equal one or more

@@ -15,16 +15,16 @@ public class LongFish extends Enemy {
     private boolean isMovingRight;
 
     public LongFish(int TILE_DIMENSION) {
-        textureSheet = new Texture("gfx/ankerias.png");
-        SHEET_COLUMNS = 1;
-        SHEET_ROWS = 1;
+        textureSheet = new Texture("gfx/longFishSheet.png");
+        SHEET_COLUMNS = 4;
+        SHEET_ROWS = 2;
         textureSheet2D = TextureRegion.split(textureSheet,
                 textureSheet.getWidth() / SHEET_COLUMNS,
                 textureSheet.getHeight() / SHEET_ROWS);
         textureSheet1D = convert2Dto1D(textureSheet2D);
 
         stateTime = 1f;
-        animation = new Animation<TextureRegion>(4/60f, textureSheet1D);
+        animation = new Animation<TextureRegion>(6/60f, textureSheet1D);
         currentFrame = animation.getKeyFrame(stateTime, true);
 
         rectangle = new Rectangle(0, 0,TILE_DIMENSION*2,0);

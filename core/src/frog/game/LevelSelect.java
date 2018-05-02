@@ -6,7 +6,9 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import java.util.ArrayList;
@@ -28,10 +30,14 @@ public class LevelSelect extends ScreenAdapter {
     private GenericButton arrowLeft;
     private ArrayList<GenericButton> levelButtons;
     private ArrayList<Star> stars;
+    private BitmapFont font;
+    private ArrayList<Vector2> numberPlacements;
 
-    private final int firstLevelView;
-    private final int lastLevelView;
-    private int currentLevelView;
+    private final int levelsInView = 6;
+    private final int firstLevelView = 1;
+    private final int lastLevelView = 3;
+    private int currentLevelView = firstLevelView;
+
 
     public LevelSelect(FrogMain host) {
         this.host = host;
@@ -42,10 +48,9 @@ public class LevelSelect extends ScreenAdapter {
 
         background = new Texture(Gdx.files.internal(ConstantsManager.bgGenericPath));
         createUI();
-        firstLevelView = 1;
-        currentLevelView = firstLevelView;
-        lastLevelView = levelButtons.size()/9;
         setInputProcessor();
+
+        font = new BitmapFont(Gdx.files.internal("ui/fonts/patHand120.txt"));
     }
 
     @Override
@@ -88,24 +93,16 @@ public class LevelSelect extends ScreenAdapter {
     private void drawUI() {
         batch.draw(background, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
         chooseLevel.draw(batch);
-        int levelsInView = 9;
-        int starsInView = levelsInView*3;
+        int starsInView = levelsInView * 3;
 
-        if (currentLevelView == 1) {
-            for (int i = 0; i < levelsInView; i++) {
-                levelButtons.get(i).draw(batch);
-            }
-            for (int i = 0; i < starsInView; i++) {
-                stars.get(i).draw(batch);
-            }
-        }
-
-        if (currentLevelView == 2) {
-            for (int i = levelsInView; i < levelsInView*2; i++) {
-                levelButtons.get(i).draw(batch);
-            }
-            for (int i = starsInView; i < starsInView*2; i++) {
-                stars.get(i).draw(batch);
+        for(int i = firstLevelView; i <= lastLevelView; i++) {
+            if (currentLevelView == i) {
+                for (int j = levelsInView * (i - 1); j < levelsInView * i; j++) {
+                    levelButtons.get(j).draw(batch);
+                }
+                for (int j = starsInView * (i - 1); j < starsInView * i; j++) {
+                    stars.get(j).draw(batch);
+                }
             }
         }
 
@@ -116,21 +113,23 @@ public class LevelSelect extends ScreenAdapter {
         if (currentLevelView < lastLevelView) {
             arrowRight.draw(batch);
         }
+
+        font.draw(batch, "0", WINDOW_WIDTH/2, WINDOW_HEIGHT/2);
     }
 
     private void createUI() {
         levelButtons = new ArrayList<GenericButton>();
         stars = new ArrayList<Star>();
-        final float BUTTON_WIDTH = WINDOW_WIDTH*(6f/40f);
+        numberPlacements = new ArrayList<Vector2>();
+        final float BUTTON_WIDTH = WINDOW_WIDTH*(8f/40f);
         int buttonNumber = 1;
 
-        createLevelButtons(buttonNumber, BUTTON_WIDTH);
-        createStars(buttonNumber, BUTTON_WIDTH/3);
+        for (int i = 0; i < lastLevelView; i++) {
+            createLevelButtons(buttonNumber, BUTTON_WIDTH);
+            createStars(buttonNumber, BUTTON_WIDTH/3);
+            buttonNumber += levelsInView;
+        }
 
-        buttonNumber += levelButtons.size();
-
-        createLevelButtons(buttonNumber, BUTTON_WIDTH);
-        createStars(buttonNumber, BUTTON_WIDTH/3);
 
         homeButton = new HomeButton(WINDOW_WIDTH*(4f/40f));
         homeButton.setY(WINDOW_HEIGHT-homeButton.getHeight());
@@ -150,13 +149,13 @@ public class LevelSelect extends ScreenAdapter {
 
     private void createLevelButtons(int buttonNumber, float BUTTON_WIDTH) {
         final float ROW_FIRST_X = WINDOW_WIDTH*(6f/40f);
-        final float ROW_FIRST_Y = WINDOW_HEIGHT*(26f/40f);
-        final float MARGIN_X = WINDOW_WIDTH*(5f/40f);
-        final float MARGIN_Y = WINDOW_HEIGHT*(3f/40f);
+        final float ROW_FIRST_Y = WINDOW_HEIGHT*(22f/40f);
+        final float MARGIN_X = WINDOW_WIDTH*(2f/40f);
+        final float MARGIN_Y = WINDOW_HEIGHT*(5f/40f);
         float currentX = ROW_FIRST_X;
         float currentY = ROW_FIRST_Y;
 
-        final int columns = 3; final int rows = 3;
+        final int columns = 3; final int rows = 2;
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
@@ -164,6 +163,7 @@ public class LevelSelect extends ScreenAdapter {
                         "ui/buttons/level/" + formatLevelNumber(buttonNumber) + ".png"));
                 levelButtons.get(levelButtons.size()-1).setX(currentX);
                 levelButtons.get(levelButtons.size()-1).setY(currentY);
+
                 currentX += BUTTON_WIDTH + MARGIN_X;
                 buttonNumber++;
             }
@@ -174,13 +174,13 @@ public class LevelSelect extends ScreenAdapter {
 
     private void createStars(int buttonNumber, float STAR_WIDTH) {
         final float ROW_FIRST_X = WINDOW_WIDTH*(6f/40f);
-        final float ROW_FIRST_Y = WINDOW_HEIGHT*(26f/40f);
-        final float MARGIN_X = WINDOW_WIDTH*(5f/40f);
-        final float MARGIN_Y = WINDOW_HEIGHT*(3f/40f);
+        final float ROW_FIRST_Y = WINDOW_HEIGHT*(22f/40f);
+        final float MARGIN_X = WINDOW_WIDTH*(2f/40f);
+        final float MARGIN_Y = WINDOW_HEIGHT*(5f/40f);
         float currentX = ROW_FIRST_X;
         float currentY = ROW_FIRST_Y - WINDOW_HEIGHT*(2f/40f);
 
-        final int columns = 3; final int rows = 3;
+        final int columns = 3; final int rows = 2;
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++)  {
@@ -219,21 +219,16 @@ public class LevelSelect extends ScreenAdapter {
                 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
                 camera.unproject(touch);
 
-                for (int i = 0; i < 9 && currentLevelView == 1; i++) {
-                    if (levelButtons.get(i).getRectangle().contains(touch.x, touch.y)) {
-                        SoundController.playClickSound();
-                        LevelSelect.this.dispose();
-                        //Level numbers range from 1 up, hence i+1
-                        host.setScreen(createLevel(formatLevelNumber(i+1)));
-                    }
-                }
-
-                for (int i = 9; i < 18 && currentLevelView == 2; i++) {
-                    if (levelButtons.get(i).getRectangle().contains(touch.x, touch.y)) {
-                        SoundController.playClickSound();
-                        LevelSelect.this.dispose();
-                        //Level numbers range from 1 up, hence i+1
-                        host.setScreen(createLevel(formatLevelNumber(i+1)));
+                for(int i = firstLevelView; i <= lastLevelView; i++) {
+                    if(currentLevelView == i) {
+                        for (int j = levelsInView * (i - 1); j < levelsInView * i; j++) {
+                            if (levelButtons.get(j).getRectangle().contains(touch.x, touch.y)) {
+                                SoundController.playClickSound();
+                                LevelSelect.this.dispose();
+                                //Level numbers range from 1 up, hence j+1 (array index + 1)
+                                host.setScreen(createLevel(formatLevelNumber(j+1)));
+                            }
+                        }
                     }
                 }
 

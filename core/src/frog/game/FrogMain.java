@@ -9,8 +9,8 @@ import com.badlogic.gdx.utils.Array;
 public class FrogMain extends Game {
 	private SpriteBatch batch;
     private OrthographicCamera camera;
-    private final int WINDOW_WIDTH = 1280;
-    private final int WINDOW_HEIGHT = 800;
+    final int WINDOW_WIDTH = 1280;
+    final int WINDOW_HEIGHT = 800;
 
 	@Override
 	public void create () {
