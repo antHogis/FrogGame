@@ -25,7 +25,7 @@ public class LevelSelect extends ScreenAdapter {
 
     private Texture background;
     private TextItem chooseLevel;
-    private HomeButton homeButton;
+    private GenericButton homeButton;
     private GenericButton arrowRight;
     private GenericButton arrowLeft;
     private ArrayList<GenericButton> levelButtons;
@@ -88,6 +88,7 @@ public class LevelSelect extends ScreenAdapter {
         homeButton.dispose();
         background.dispose();
         chooseLevel.dispose();
+        font.dispose();
     }
 
     private void drawUI() {
@@ -114,7 +115,7 @@ public class LevelSelect extends ScreenAdapter {
             arrowRight.draw(batch);
         }
 
-        font.draw(batch, "0", WINDOW_WIDTH/2, WINDOW_HEIGHT/2);
+        //font.draw(batch, "0", WINDOW_WIDTH/2, WINDOW_HEIGHT/2);
     }
 
     private void createUI() {
@@ -131,20 +132,26 @@ public class LevelSelect extends ScreenAdapter {
         }
 
 
-        homeButton = new HomeButton(WINDOW_WIDTH*(4f/40f));
+        homeButton = new GenericButton(WINDOW_WIDTH*(4f/40f),
+                ConstantsManager.homeButtonIdlePath,
+                ConstantsManager.homeButtonPressedPath);
         homeButton.setY(WINDOW_HEIGHT-homeButton.getHeight());
 
-        arrowLeft = new GenericButton(WINDOW_WIDTH*(4f/40f), ConstantsManager.menuArrowLeftPath);
+        arrowLeft = new GenericButton(WINDOW_WIDTH*(4f/40f),
+                ConstantsManager.arrowLeftIdlePath,
+                ConstantsManager.arrowLeftPressedPath);
         arrowLeft.setY(WINDOW_HEIGHT/2 - arrowLeft.getHeight()/2);
 
-        arrowRight = new GenericButton(arrowLeft.getWidth(), ConstantsManager.menuArrowRightPath);
+        arrowRight = new GenericButton(arrowLeft.getWidth(),
+                ConstantsManager.arrowRightIdlePath,
+                ConstantsManager.arrowRightPressedPath);
         arrowRight.setY(arrowLeft.getY());
         arrowRight.setX(WINDOW_WIDTH - arrowRight.getWidth());
 
-        chooseLevel = new TextItem(ConstantsManager.myBundle.format("text_chooseLevel"),
-                WINDOW_HEIGHT*(6f/40f));
+        chooseLevel = new TextItem(host.getMyBundle().format("text_chooseLevel"),
+                WINDOW_HEIGHT*(3f/40f));
         chooseLevel.setX(WINDOW_WIDTH/2 - chooseLevel.getWidth()/2);
-        chooseLevel.setY(WINDOW_HEIGHT - chooseLevel.getHeight());
+        chooseLevel.setY(WINDOW_HEIGHT * (39f/40f) - chooseLevel.getHeight());
     }
 
     private void createLevelButtons(int buttonNumber, float BUTTON_WIDTH) {
@@ -160,7 +167,8 @@ public class LevelSelect extends ScreenAdapter {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 levelButtons.add(new GenericButton(BUTTON_WIDTH,
-                        "ui/buttons/level/" + formatLevelNumber(buttonNumber) + ".png"));
+                        "ui/buttons/levelSelect/" + formatLevelNumber(buttonNumber) + ".png",
+                        "ui/buttons/levelSelect/" + formatLevelNumber(buttonNumber) + ".png"));
                 levelButtons.get(levelButtons.size()-1).setX(currentX);
                 levelButtons.get(levelButtons.size()-1).setY(currentY);
 
@@ -213,6 +221,62 @@ public class LevelSelect extends ScreenAdapter {
     private void setInputProcessor() {
         Gdx.input.setInputProcessor(new InputAdapter() {
             Vector3 touch;
+
+            @Override
+            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+                camera.unproject(touch);
+
+                if (arrowLeft.getRectangle().contains(touch.x, touch.y) && currentLevelView > firstLevelView)
+                    arrowLeft.setPressed(true);
+                else arrowLeft.setPressed(false);
+
+                if (arrowRight.getRectangle().contains(touch.x, touch.y) && currentLevelView < lastLevelView)
+                    arrowRight.setPressed(true);
+                else arrowRight.setPressed(false);
+
+                if (homeButton.getRectangle().contains(touch.x, touch.y)) homeButton.setPressed(true);
+                else homeButton.setPressed(false);
+
+                for(int i = firstLevelView; i <= lastLevelView; i++) {
+                    if(currentLevelView == i) {
+                        for (int j = levelsInView * (i - 1); j < levelsInView * i; j++) {
+                            if (levelButtons.get(j).getRectangle().contains(touch.x, touch.y))
+                                levelButtons.get(j).setPressed(true);
+                            else levelButtons.get(j).setPressed(false);
+                        }
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            public boolean touchDragged(int screenX, int screenY, int pointer) {
+                touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+                camera.unproject(touch);
+
+                if (arrowLeft.getRectangle().contains(touch.x, touch.y) && currentLevelView > firstLevelView)
+                    arrowLeft.setPressed(true);
+                else arrowLeft.setPressed(false);
+
+                if (arrowRight.getRectangle().contains(touch.x, touch.y) && currentLevelView < lastLevelView)
+                    arrowRight.setPressed(true);
+                else arrowRight.setPressed(false);
+
+                if (homeButton.getRectangle().contains(touch.x, touch.y)) homeButton.setPressed(true);
+                else homeButton.setPressed(false);
+
+                for(int i = firstLevelView; i <= lastLevelView; i++) {
+                    if(currentLevelView == i) {
+                        for (int j = levelsInView * (i - 1); j < levelsInView * i; j++) {
+                            if (levelButtons.get(j).getRectangle().contains(touch.x, touch.y))
+                                levelButtons.get(j).setPressed(true);
+                            else levelButtons.get(j).setPressed(false);
+                        }
+                    }
+                }
+                return true;
+            }
 
             @Override
             public boolean touchUp(int screenX, int screenY, int pointer, int button) {

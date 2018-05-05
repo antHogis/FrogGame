@@ -13,10 +13,6 @@ import java.util.Locale;
 public class ConstantsManager {
     public static Preferences settings = Gdx.app.getPreferences("Preferences");
 
-    private static Locale locale = new Locale("fi", "FI");
-    //private static Locale locale = Locale.getDefault();
-    public static I18NBundle myBundle =
-            I18NBundle.createBundle(Gdx.files.internal("MyBundle"), locale);
     public static I18NBundle levels =
             I18NBundle.createBundle(Gdx.files.internal("levels"));
 
@@ -26,22 +22,34 @@ public class ConstantsManager {
     //Ui Items
     public static final String bgGenericPath = "ui/bg.png";
     public static final String bgMainMenuPath = "ui/bg2.png";
+    public static final String bgLevelFinishPath = "ui/bg3.png";
     public static final String bgGamePath = "gfx/bg2.png";
-    public static final String homeButtonPath = "ui/buttons/button-home.png";
-    public static final String starGoldenPath = "ui/star-gold.png";
-    public static final String starGreyPath = "ui/star-grey.png";
-    public static final String musicOnPath = "ui/buttons/music-on.png";
-    public static final String musicOffPath = "ui/buttons/music-off.png";
-    public static final String menuArrowLeftPath = "ui/buttons/arrow-left.png";
-    public static final String menuArrowRightPath = "ui/buttons/arrow-right.png";
+    public static final String homeButtonIdlePath = "ui/buttons/home-idle.png";
+    public static final String homeButtonPressedPath = "ui/buttons/home-pressed.png";
+    public static final String starGoldenPath = "ui/star_golden.png";
+    public static final String starGreyPath = "ui/star_grey.png";
+    public static final String musicOnIdlePath = "ui/buttons/settings/music_on-idle.png";
+    public static final String musicOnPressedPath = "ui/buttons/settings/music_on-pressed.png";
+    public static final String musicOffIdlePath = "ui/buttons/settings/music_off-idle.png";
+    public static final String musicOffPressedPath = "ui/buttons/settings/music_off-pressed.png";
+    public static final String soundsOnIdlePath = "ui/buttons/settings/sound_on-idle.png";
+    public static final String soundsOnPressedPath = "ui/buttons/settings/sound_on-pressed.png";
+    public static final String soundsOffIdlePath = "ui/buttons/settings/sound_off-idle.png";
+    public static final String soundsOffPressedPath = "ui/buttons/settings/sound_off-pressed.png";
+    public static final String arrowLeftIdlePath = "ui/buttons/arrow-left-idle.png";
+    public static final String arrowLeftPressedPath = "ui/buttons/arrow-left-pressed.png";
+    public static final String arrowRightIdlePath = "ui/buttons/arrow-right-idle.png";
+    public static final String arrowRightPressedPath = "ui/buttons/arrow-right-pressed.png";
     public static final String levelButtonEasyIdlePath = "";
     public static final String levelButtonEasyPressedPath = "";
     public static final String levelButtonMediumIdlePath = "";
     public static final String levelButtonMediumPressedPath = "";
     public static final String levelButtonHardIdlePath = "";
     public static final String levelButtonHardPressedPath = "";
-
-
+    public static final String finnishButtonIdlePath = "ui/buttons/main/fin-idle.png";
+    public static final String finnishButtonPressedPath = "ui/buttons/main/fin-pressed.png";
+    public static final String englishButtonIdlePath = "ui/buttons/main/uk-idle.png";
+    public static final String englishButtonPressedPath = "ui/buttons/main/uk-pressed.png";
 
     /*
      * Game-modifying values

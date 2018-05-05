@@ -34,7 +34,7 @@ public class Timer {
         this.WINDOW_WIDTH = WINDOW_WIDTH;
         this.WINDOW_HEIGHT = WINDOW_HEIGHT;
         
-        numberSheet = new Texture("ui/timerSheet.png");
+        numberSheet = new Texture("ui/timerSheet3.png");
         colon = new TextureRegion(new Texture("ui/colon3.png"));
 
         //font = new BitmapFont(Gdx.files.internal("ui/fonts/patHand120.txt"));
@@ -102,7 +102,7 @@ public class Timer {
         for (int i=0; i < timeString.length(); i++) {
             if (timeString.charAt(i) != ':') {
                 String numberAtIndex = "" + timeString.charAt(i);
-                int sheetIndex = Integer.parseInt("" + timeString.charAt(i));
+                int sheetIndex = Integer.parseInt(Character.toString(timeString.charAt(i)));
                 timerTextures[i] = numberSplitSheet1D[sheetIndex];
             }
         }
@@ -111,7 +111,7 @@ public class Timer {
     private void initializeTimerTextures() {
         timerTextures = new TextureRegion[5];
         timerRectangles = new ArrayList<Rectangle>(5);
-        float rectangleHeight = WINDOW_HEIGHT* (3f/40f);
+        float rectangleHeight = WINDOW_HEIGHT* (4f/40f);
         float posY = WINDOW_HEIGHT - rectangleHeight - (WINDOW_HEIGHT * (1f/40f));
         float posX = WINDOW_WIDTH - (WINDOW_WIDTH * (1f/40f));
 

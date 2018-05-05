@@ -72,8 +72,7 @@ class Player extends GameObject {
     }
 
     private void initializeMovement() {
-        NEUTRAL_POINT_X = Gdx.input.getAccelerometerY();
-        NEUTRAL_POINT_Y = Gdx.input.getAccelerometerZ();
+        resetAccelerometerPosition();
         Gdx.app.log("TAG", "neutral x:" + NEUTRAL_POINT_X);
         Gdx.app.log("TAG", "neutral y:" + NEUTRAL_POINT_Y);
 
@@ -251,7 +250,7 @@ class Player extends GameObject {
             this.setY(spawnRectangle.getY());
             moveHitBox();
         } else {
-            this.setX(spawnRectangle.getX()-this.getWidth());
+            this.setX(spawnRectangle.getX() + spawnRectangle.getWidth() - rectangle.width);
             this.setY(spawnRectangle.getY());
             flip(animation, true, false);
             flippedRight = false;
@@ -276,6 +275,11 @@ class Player extends GameObject {
 
     public float getLastCheckpointY() {
         return this.lastCheckpointY;
+    }
+
+    public void resetAccelerometerPosition() {
+        NEUTRAL_POINT_X = Gdx.input.getAccelerometerY();
+        NEUTRAL_POINT_Y = Gdx.input.getAccelerometerZ();
     }
 
     @Override

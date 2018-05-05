@@ -47,7 +47,7 @@ public class HighScore extends ScreenAdapter {
         firstLevelView = currentLevelView;
         lastLevelView = ConstantsManager.LEVELS_AMOUNT;
 
-        font = new BitmapFont(Gdx.files.internal("ui/fonts/lato90.txt"));
+        font = new BitmapFont(Gdx.files.internal("ui/fonts/patHand72.txt"));
         createScoreView(currentLevelView);
         createUI();
         setInputProcessor();
@@ -97,13 +97,19 @@ public class HighScore extends ScreenAdapter {
     private void createUI() {
         background = new Texture(Gdx.files.internal(ConstantsManager.bgGenericPath));
 
-        homeButton = new GenericButton(WINDOW_WIDTH*(4f/40f), ConstantsManager.homeButtonPath);
+        homeButton = new GenericButton(WINDOW_WIDTH*(4f/40f),
+                ConstantsManager.homeButtonIdlePath,
+                ConstantsManager.homeButtonPressedPath);
         homeButton.setY(WINDOW_HEIGHT-homeButton.getHeight());
 
-        arrowLeft = new GenericButton(WINDOW_WIDTH*(4f/40f), ConstantsManager.menuArrowLeftPath);
+        arrowLeft = new GenericButton(WINDOW_WIDTH*(4f/40f),
+                ConstantsManager.arrowLeftIdlePath,
+                ConstantsManager.arrowLeftPressedPath);
         arrowLeft.setY(WINDOW_HEIGHT/2 - arrowLeft.getHeight()/2);
 
-        arrowRight = new GenericButton(arrowLeft.getWidth(), ConstantsManager.menuArrowRightPath);
+        arrowRight = new GenericButton(arrowLeft.getWidth(),
+                ConstantsManager.arrowRightIdlePath,
+                ConstantsManager.arrowRightPressedPath);
         arrowRight.setY(arrowLeft.getY());
         arrowRight.setX(WINDOW_WIDTH - arrowRight.getWidth());
     }
@@ -112,7 +118,7 @@ public class HighScore extends ScreenAdapter {
         texts = new Array<String>();
         textPositions = new Array<Vector2>();
 
-        String title = ConstantsManager.myBundle.get("level") + level;
+        String title = host.getMyBundle().get("level") + level;
         GlyphLayout glyph = new GlyphLayout(font, title);
         float titlePosX = WINDOW_WIDTH/2 - glyph.width/2;
         float titlePosY = WINDOW_HEIGHT * (39f/40f);
@@ -137,11 +143,60 @@ public class HighScore extends ScreenAdapter {
 
             scorePosY -= glyph.height + WINDOW_HEIGHT * (2f/40f);
         }
+        Gdx.app.log("TEXT number x", Float.toString((textPositions.get(1).x)));
+        Gdx.app.log("TEXT number x", Float.toString((textPositions.get(2).x)));
+        Gdx.app.log("TEXT number x", Float.toString((glyph.width)));
+        Gdx.app.log("TEXT WIDTH", Float.toString((textPositions.get(2).x + glyph.width) - textPositions.get(1).x));
+        Gdx.app.log("TEXT HEIGHT", Float.toString(textPositions.get(1).y - (textPositions.get(textPositions.size-1).y)));
     }
 
     private void setInputProcessor() {
         Gdx.input.setInputProcessor(new InputAdapter() {
             Vector3 touch;
+
+            @Override
+            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+                camera.unproject(touch);
+
+                if (arrowLeft.getRectangle().contains(touch.x, touch.y) && currentLevelView > firstLevelView) {
+                    arrowLeft.setPressed(true);
+                } else if(arrowLeft.isPressed()) {
+                    arrowLeft.setPressed(false);
+                }
+
+                if (arrowRight.getRectangle().contains(touch.x, touch.y) && currentLevelView < lastLevelView) {
+                    arrowRight.setPressed(true);
+                } else if (arrowRight.isPressed()) {
+                    arrowRight.setPressed(false);
+                }
+
+                if (homeButton.getRectangle().contains(touch.x, touch.y)) {
+                    homeButton.setPressed(true);
+                } else if (homeButton.isPressed()) {
+                    homeButton.setPressed(false);
+                }
+
+                return true;
+            }
+
+            @Override
+            public boolean touchDragged(int screenX, int screenY, int pointer) {
+                touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+                camera.unproject(touch);
+
+                if (!arrowLeft.getRectangle().contains(touch.x, touch.y)) {
+                    arrowLeft.setPressed(false);
+                }
+                if (!arrowRight.getRectangle().contains(touch.x, touch.y)) {
+                    arrowRight.setPressed(false);
+
+                }
+                if (!homeButton.getRectangle().contains(touch.x, touch.y)) {
+                    homeButton.setPressed(false);
+                }
+                return true;
+            }
 
             @Override
             public boolean touchUp(int screenX, int screenY, int pointer, int button) {
@@ -150,18 +205,21 @@ public class HighScore extends ScreenAdapter {
 
                 if (arrowLeft.getRectangle().contains(touch.x, touch.y) && currentLevelView > firstLevelView) {
                     SoundController.playClickSound();
+                    arrowLeft.setPressed(false);
                     currentLevelView--;
                     createScoreView(currentLevelView);
                 }
 
                 if (arrowRight.getRectangle().contains(touch.x, touch.y) && currentLevelView < lastLevelView) {
                     SoundController.playClickSound();
+                    arrowRight.setPressed(false);
                     currentLevelView++;
                     createScoreView(currentLevelView);
                 }
 
                 if (homeButton.getRectangle().contains(touch.x, touch.y)) {
                     SoundController.playClickSound();
+                    homeButton.setPressed(false);
                     HighScore.this.dispose();
                     host.setScreen(new MainMenu(host));
                 }

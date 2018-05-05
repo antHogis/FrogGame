@@ -30,8 +30,8 @@ public class Slider extends UiObject {
         this.outputMin = outputMin;
         this.outputMax = outputMax;
 
-        barTexture = new Texture("ui/buttons/slider_bar.png");
-        pointTexture = new Texture("ui/buttons/slider_point.png");
+        barTexture = new Texture("ui/buttons/settings/slider_bar.png");
+        pointTexture = new Texture("ui/buttons/settings/slider_point.png");
 
         barRectangle = new Rectangle();
         barRectangle.setHeight(height);

@@ -52,7 +52,7 @@ public class Level extends ScreenAdapter {
      * HUD elements and relevant modifiers
      */
     private Timer timer;
-    private HomeButton homeButton;
+    private GenericButton homeButton;
 
     private final String identifier;
 
@@ -123,6 +123,7 @@ public class Level extends ScreenAdapter {
         if (ConstantsManager.settings.getBoolean("music-on", ConstantsManager.DEFAULT_AUDIO_ON)) {
             SoundController.backgroundMusic.play();
         }
+        frog.resetAccelerometerPosition();
     }
 
     @Override
@@ -505,15 +506,37 @@ public class Level extends ScreenAdapter {
     private void createUI() {
         timer = new Timer(WINDOW_WIDTH_PIXELS, WINDOW_HEIGHT_PIXELS);
 
-        float menuButtonWidth = WINDOW_WIDTH_PIXELS * (1.5f/16);
-        homeButton = new HomeButton(menuButtonWidth);
+        float menuButtonWidth = WINDOW_WIDTH_PIXELS * (4f/40f);
+        homeButton = new GenericButton(menuButtonWidth,
+                ConstantsManager.homeButtonIdlePath,
+                ConstantsManager.homeButtonPressedPath);
         homeButton.setX(0);
         homeButton.setY(WINDOW_HEIGHT_PIXELS-homeButton.getHeight());
 
         Gdx.input.setInputProcessor(new InputAdapter() {
+            Vector3 touch;
+
+            @Override
+            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+                uiCamera.unproject(touch);
+                if (homeButton.getRectangle().contains(touch.x, touch.y)) homeButton.setPressed(true);
+
+                return true;
+            }
+
+            @Override
+            public boolean touchDragged(int screenX, int screenY, int pointer) {
+                touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+                uiCamera.unproject(touch);
+                if (homeButton.getRectangle().contains(touch.x, touch.y)) homeButton.setPressed(true);
+                else homeButton.setPressed(false);
+                return true;
+            }
+
             @Override
             public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-                Vector3 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+                touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
                 uiCamera.unproject(touch);
                 if (homeButton.getRectangle().contains(touch.x, touch.y)) {
                     SoundController.playClickSound();

@@ -5,10 +5,12 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 
@@ -22,12 +24,19 @@ public class LevelFinish extends ScreenAdapter {
     private OrthographicCamera camera;
     private final float WINDOW_WIDTH, WINDOW_HEIGHT;
 
-    private Vector2 textPos;
-    String completed;
+    private Vector2 scoreTextPos;
+    private Vector2 scoreTimerPos;
+    private Vector2 timeTwoStarsPos;
+    private Vector2 timeThreeStarsPos;
+
     private BitmapFont font;
+    private Texture background;
 
     private final String identifier, timeString, TIME_TWO_STARS, TIME_THREE_STARS;
+    private String score, starsEqual;
     private Array<Star> stars;
+    private GenericButton homeButton;
+    private GenericButton nextLevelButton;
 
     private int timerMinutes, timerSeconds;
 
@@ -46,16 +55,17 @@ public class LevelFinish extends ScreenAdapter {
         TIME_THREE_STARS = ConstantsManager.levels.get(identifier + "_TIME_THREE_STARS");
         TIME_TWO_STARS = ConstantsManager.levels.get(identifier + "_TIME_TWO_STARS");
 
-        createStars();
-        updateScoreboard();
+        font = new BitmapFont(Gdx.files.internal("ui/fonts/patHand90.txt"));
+        background = new Texture(ConstantsManager.bgLevelFinishPath);
 
+        createUI();
+        updateScoreboard();
+/*
         for (int i = 1; i <= 5; i++) {
             Gdx.app.log("Level " + identifier + " scoreboard",
                     ConstantsManager.settings.getString(identifier+"_top_"+i, "derp"));
         }
-
-        font = new BitmapFont(Gdx.files.internal("ui/fonts/lato90.txt"));
-        setTextPosition();
+*/
 
         setInputProcessor();
     }
@@ -73,9 +83,7 @@ public class LevelFinish extends ScreenAdapter {
         batch.setProjectionMatrix(camera.combined);
 
         batch.begin();
-        font.draw(batch,completed,textPos.x,textPos.y);
-
-        drawStars();
+            drawUI();
         batch.end();
     }
 
@@ -85,25 +93,139 @@ public class LevelFinish extends ScreenAdapter {
         for (Star star : stars) {
             star.dispose();
         }
+        homeButton.dispose();
+        if (nextLevelButton != null) {
+            nextLevelButton.dispose();
+        }
+    }
+
+    private void drawUI() {
+        batch.draw(background, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+        font.draw(batch, score, scoreTextPos.x, scoreTextPos.y);
+        font.draw(batch, timeString, scoreTimerPos.x, scoreTimerPos.y);
+        font.draw(batch, starsEqual + TIME_THREE_STARS, timeThreeStarsPos.x, timeThreeStarsPos.y);
+        font.draw(batch, starsEqual + TIME_TWO_STARS, timeTwoStarsPos.x, timeTwoStarsPos.y);
+        drawStars();
+        homeButton.draw(batch);
+        if (nextLevelButton != null) {
+            nextLevelButton.draw(batch);
+        }
+    }
+
+    private void createUI() {
+        float starWidth, xPos, yPos;
+        stars = new Array<Star>(9);
+        starsEqual = " = ";
+
+        //First row (text Your score:)
+        score = host.getMyBundle().get("score");
+        GlyphLayout glyph = new GlyphLayout(font, score);
+        xPos = WINDOW_WIDTH/2 - glyph.width/2;
+        yPos =  WINDOW_HEIGHT*(39f/40f);
+        scoreTextPos = new Vector2(xPos, yPos);
+
+        //Second row (the time scored in a level)
+        yPos -= glyph.height + WINDOW_HEIGHT * (1f/40f);
+        glyph = new GlyphLayout(font, timeString);
+        xPos = WINDOW_WIDTH/2 - glyph.width/2;
+        scoreTimerPos = new Vector2(xPos, yPos);
+
+        //Third row (the stars scored from the time)
+        starWidth = WINDOW_WIDTH * (4f/40f);
+        xPos = WINDOW_WIDTH / 2 - starWidth*1.5f;
+        yPos -= glyph.height + (WINDOW_HEIGHT * (1f/40f)) + starWidth;
+        createStars(calculateStars(), starWidth, xPos, yPos);
+
+        //Fourth row (three golden stars, and the time needed to score three stars)
+        starWidth = WINDOW_WIDTH * (2f/40f);
+        yPos -= starWidth + WINDOW_HEIGHT * (2f/40f);
+        glyph = new GlyphLayout(font, starsEqual + TIME_THREE_STARS);
+        xPos = WINDOW_WIDTH/2 - (starWidth*3 + glyph.width)/2;
+        createStars(3, starWidth, xPos, yPos);
+        xPos += starWidth*3;
+        yPos += starWidth/2 + glyph.height/2;
+        timeThreeStarsPos = new Vector2(xPos, yPos);
+
+        //Fifth row (two golden and one grey star, and the time needed to score two stars)
+        yPos -= glyph.height + WINDOW_HEIGHT * (2f/40f) + starWidth;
+        glyph = new GlyphLayout(font, starsEqual + TIME_TWO_STARS);
+        xPos = WINDOW_WIDTH/2 - (starWidth*3 + glyph.width)/2;
+        createStars(2, starWidth, xPos, yPos);
+        xPos += starWidth*3;
+        yPos += starWidth/2 + glyph.height/2;
+        timeTwoStarsPos = new Vector2(xPos, yPos);
+
+        //Bottom middle (Next level button)
+        if (identifier != formatLevelNumber(ConstantsManager.LEVELS_AMOUNT)) {
+            String path = host.getMyBundle().get("button_nextLevel");
+            String idle = "idle.png";
+            String pressed= "pressed.png";
+            nextLevelButton = new GenericButton(WINDOW_WIDTH * (8f/40f), path + idle,path + pressed);
+            nextLevelButton.setX(WINDOW_WIDTH/2 - nextLevelButton.getWidth()/2);
+            nextLevelButton.setY(WINDOW_HEIGHT * (2/40f));
+        }
+
+        //Top left (Home button)
+        homeButton = new GenericButton(WINDOW_WIDTH * (4f/40f),
+                ConstantsManager.homeButtonIdlePath, ConstantsManager.homeButtonPressedPath);
+        homeButton.setY(WINDOW_HEIGHT - homeButton.getHeight());
     }
 
     private void setInputProcessor() {
         Gdx.input.setInputProcessor(new InputAdapter() {
+            Vector3 touch;
+            @Override
+            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+                camera.unproject(touch);
+
+                if (homeButton.getRectangle().contains(touch.x,touch.y)) homeButton.setPressed(true);
+                else homeButton.setPressed(false);
+
+                if (nextLevelButton != null) {
+                    if (nextLevelButton.getRectangle().contains(touch.x,touch.y)) nextLevelButton.setPressed(true);
+                    else nextLevelButton.setPressed(false);
+                }
+                return true;
+            }
+
+            @Override
+            public boolean touchDragged(int screenX, int screenY, int pointer) {
+                touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+                camera.unproject(touch);
+
+                if (homeButton.getRectangle().contains(touch.x,touch.y)) homeButton.setPressed(true);
+                else homeButton.setPressed(false);
+
+                if (nextLevelButton != null) {
+                    if (nextLevelButton.getRectangle().contains(touch.x,touch.y)) nextLevelButton.setPressed(true);
+                    else nextLevelButton.setPressed(false);
+                }
+                return true;
+            }
+
             @Override
             public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-                LevelFinish.this.dispose();
-                host.setScreen(new LevelSelect(host));
+                touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+                camera.unproject(touch);
+                if (homeButton.getRectangle().contains(touch.x,touch.y)) {
+                    SoundController.playClickSound();
+                    homeButton.setPressed(false);
+                    LevelFinish.this.dispose();
+                    host.setScreen(new MainMenu(host));
+                }
+
+                if (nextLevelButton != null) {
+                    if (nextLevelButton.getRectangle().contains(touch.x,touch.y)) {
+                        SoundController.playClickSound();
+                        nextLevelButton.setPressed(false);
+                        LevelFinish.this.dispose();
+                        host.setScreen(createNextLevel());
+                    }
+                }
                 return true;
             }
         });
-    }
-
-    private void setTextPosition() {
-        completed = ConstantsManager.myBundle.format("completed") + timeString;
-        //completed = "Kenttä läpäisty ajassa " + timeString;
-        GlyphLayout glyph = new GlyphLayout(font, completed);
-        textPos = new Vector2();
-        textPos.set(WINDOW_WIDTH/2-glyph.width/2, WINDOW_HEIGHT*(3f/4f));
     }
 
     private void drawStars() {
@@ -112,37 +234,28 @@ public class LevelFinish extends ScreenAdapter {
         }
     }
 
-    private void createStars() {
-        int goldenStars = calculateStars();
+    private void createStars(int goldenStars, float starWidth, float xPos, float yPos) {
         int greyStars = 3 - goldenStars;
 
         Gdx.app.log("Golden:", Integer.toString(goldenStars));
         Gdx.app.log("Grey:", Integer.toString(greyStars));
-        stars = new Array<Star>(3);
 
-        float starWidth = WINDOW_WIDTH * (4f/16f);
-        float xPos = WINDOW_WIDTH * (1f/16f);  
-        float yPos = WINDOW_HEIGHT * (1f/16f);
-        float nextX = xPos + starWidth;
         
         for (int i = 0; i < goldenStars; i++) {
             stars.add(new Star(starWidth, true));
             stars.get(stars.size-1).setX(xPos);
             stars.get(stars.size-1).setY(yPos);
-            xPos += nextX;
+            xPos += starWidth;
         }
 
         for(int i = 0; i < greyStars; i++) {
             stars.add(new Star(starWidth, false));
             stars.get(stars.size-1).setX(xPos);
             stars.get(stars.size-1).setY(yPos);
-            xPos += nextX;
+            xPos += starWidth;
         }
 
-        String key = identifier + "_stars";
-        if (goldenStars > ConstantsManager.settings.getInteger(key, 0)) {
-            ConstantsManager.settings.putInteger(key, goldenStars).flush();
-        }
+
     }
 
     private void updateScoreboard() {
@@ -176,6 +289,13 @@ public class LevelFinish extends ScreenAdapter {
 
                 }
             }
+        }
+
+        //Saving the stars scored in the level to persistent memory
+        String key = identifier + "_stars";
+        int goldenStars = calculateStars();
+        if (goldenStars > ConstantsManager.settings.getInteger(key, 0)) {
+            ConstantsManager.settings.putInteger(key, goldenStars).flush();
         }
     }
 
@@ -219,6 +339,43 @@ public class LevelFinish extends ScreenAdapter {
             return Integer.parseInt(tempString);
         }
         return 0;
+    }
+
+    private Level createNextLevel() {
+        String nextId = formatLevelNumber(Integer.parseInt(identifier) + 1);
+        
+        String mapPath
+                = ConstantsManager.levels.get(nextId + "_mapPath");
+        int AMOUNT_ROUNDFISH
+                = Integer.parseInt(ConstantsManager.levels.get(nextId + "_AMOUNT_ROUNDFISH"));
+        int AMOUNT_LONGFISH
+                = Integer.parseInt(ConstantsManager.levels.get(nextId + "_AMOUNT_LONGFISH"));
+        int AMOUNT_OCTOPUS1
+                = Integer.parseInt(ConstantsManager.levels.get(nextId + "_AMOUNT_OCTOPUS1"));
+        int AMOUNT_OCTOPUS2
+                = Integer.parseInt(ConstantsManager.levels.get(nextId + "_AMOUNT_OCTOPUS2"));
+        int TILE_WIDTH
+                = Integer.parseInt(ConstantsManager.levels.get(nextId + "_TILE_AMOUNT_WIDTH"));
+        int TILE_HEIGHT
+                = Integer.parseInt(ConstantsManager.levels.get(nextId + "_TILE_AMOUNT_HEIGHT"));
+
+        return new Level(host,
+                nextId,
+                mapPath,
+                AMOUNT_ROUNDFISH,
+                AMOUNT_LONGFISH,
+                AMOUNT_OCTOPUS1,
+                AMOUNT_OCTOPUS2,
+                TILE_WIDTH,
+                TILE_HEIGHT);
+    }
+
+    private String formatLevelNumber(int number) {
+        if (number < 10) {
+            return  "0" + number;
+        } else {
+            return Integer.toString(number);
+        }
     }
 
 }

@@ -24,7 +24,7 @@ public class LongFish extends Enemy {
         textureSheet1D = convert2Dto1D(textureSheet2D);
 
         stateTime = 1f;
-        animation = new Animation<TextureRegion>(6/60f, textureSheet1D);
+        animation = new Animation<TextureRegion>(4/60f, textureSheet1D);
         currentFrame = animation.getKeyFrame(stateTime, true);
 
         rectangle = new Rectangle(0, 0,TILE_DIMENSION*2,0);

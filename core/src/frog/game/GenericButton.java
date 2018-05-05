@@ -2,6 +2,7 @@ package frog.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 
 /**
@@ -14,12 +15,22 @@ public class GenericButton extends UiObject {
     private Texture pressedTexture;
     boolean pressed = false;
 
-    public GenericButton(float width, String path) {
-        this.texture = new Texture(Gdx.files.internal(path));
+    public GenericButton(float width, String pathIdle, String pathPressed) {
+        idleTexture = new Texture(Gdx.files.internal(pathIdle));
+        pressedTexture = new Texture(Gdx.files.internal(pathPressed));
         this.rectangle = new Rectangle(0,0,0,0);
         rectangle.width = width;
-        rectangle.height = (rectangle.width*texture.getHeight())/texture.getWidth();
+        rectangle.height = (rectangle.width*idleTexture.getHeight())/idleTexture.getWidth();
 
+    }
+
+    @Override
+    public void draw(SpriteBatch batch) {
+        if (pressed) {
+            batch.draw(pressedTexture, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+        } else {
+            batch.draw(idleTexture, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+        }
     }
 
     public boolean isPressed() {
@@ -28,5 +39,16 @@ public class GenericButton extends UiObject {
 
     public void setPressed(boolean pressed) {
         this.pressed = pressed;
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        if (idleTexture != null) {
+            idleTexture.dispose();
+        }
+        if (idleTexture != null) {
+            pressedTexture.dispose();
+        }
     }
 }
