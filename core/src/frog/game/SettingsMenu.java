@@ -14,7 +14,7 @@ import com.badlogic.gdx.math.Vector3;
  */
 
 public class SettingsMenu extends ScreenAdapter {
-    private FrogMain host;
+    private GameMain host;
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private final float WINDOW_WIDTH, WINDOW_HEIGHT;
@@ -30,8 +30,14 @@ public class SettingsMenu extends ScreenAdapter {
 
     private GenericButton homeButton;
     private SwitchButton musicButton;
+    private SwitchButton soundButton;
 
-    public SettingsMenu(FrogMain host) {
+    private GenericButton infoButton;
+    private TextItem infoPopUp;
+    private GenericButton closePopUp;
+    private boolean showingPopUp;
+
+    public SettingsMenu(GameMain host) {
         this.host = host;
         camera = host.getCamera();
         batch = host.getBatch();
@@ -67,11 +73,16 @@ public class SettingsMenu extends ScreenAdapter {
         invertY_Switch.dispose();
         homeButton.dispose();
         musicButton.dispose();
+        soundButton.dispose();
+
+        infoPopUp.dispose();
+        closePopUp.dispose();
+        infoButton.dispose();
     }
 
     private void createUI() {
         /*
-         * TextItem objects
+         * Texts for button/slider names
          */
         final float TEXT_HEIGHT = WINDOW_HEIGHT * (1.5f/16);
         final float textMargin = WINDOW_HEIGHT*(4f/16f) - (TEXT_HEIGHT/2f);
@@ -95,7 +106,7 @@ public class SettingsMenu extends ScreenAdapter {
         invertY_Text.setY(textPositionY);
 
         /*
-         * Buttons and Sliders
+         * Setting changing buttons and sliders
          */
         final float BUTTON_HEIGHT = TEXT_HEIGHT;
         final float buttonPosition_X_plusWidth = WINDOW_WIDTH - (WINDOW_WIDTH/16f);
@@ -137,11 +148,9 @@ public class SettingsMenu extends ScreenAdapter {
 
         //Placing the button in the middle of right end of the text and the right edge of the screen
         invertY_Switch.setX(invertY_Text.getX() +invertY_Text.getWidth() +
-                (WINDOW_WIDTH - (invertY_Text.getX() +invertY_Text.getWidth())) / 2
-                - invertY_Switch.getWidth()/2);
+                (WINDOW_WIDTH - (invertY_Text.getX() + invertY_Text.getWidth()))/2 - invertY_Switch.getWidth()/2);
 
         invertY_Switch.setY(invertY_Text.getY());
-
 
         //Music button (turns music off/on)
         musicButton = new SwitchButton(ConstantsManager.musicOnIdlePath,
@@ -149,10 +158,42 @@ public class SettingsMenu extends ScreenAdapter {
                 ConstantsManager.musicOffIdlePath,
                 ConstantsManager.musicOffPressedPath,
                 BUTTON_HEIGHT*1.5f,
-                ConstantsManager.settings.getBoolean("music-on",
-                        ConstantsManager.DEFAULT_AUDIO_ON));
-        musicButton.setX((WINDOW_WIDTH/2)-(musicButton.getWidth()/2));
+                ConstantsManager.settings.getBoolean("music-on", ConstantsManager.DEFAULT_MUSIC_ON));
+        musicButton.setX(WINDOW_WIDTH/2 - musicButton.getWidth() - (WINDOW_WIDTH * (1f/40f)));
         musicButton.setY(WINDOW_WIDTH * (1f/40f));
+
+        //Sound button (turns in-game sounds off/on, but not button click sounds)
+        soundButton = new SwitchButton(ConstantsManager.soundsOnIdlePath,
+                ConstantsManager.soundsOnPressedPath,
+                ConstantsManager.soundsOffIdlePath,
+                ConstantsManager.soundsOffPressedPath,
+                musicButton.getHeight(),
+                ConstantsManager.settings.getBoolean("sounds-on", ConstantsManager.DEFAULT_SOUNDS_ON));
+        soundButton.setX(WINDOW_WIDTH/2 + WINDOW_WIDTH * (1f/40f));
+        soundButton.setY(musicButton.getY());
+
+        /*
+         * Info button & popup
+         *
+         * Pop up provides clarifications for how some of the settings work
+         */
+        showingPopUp = false;
+        //Info button
+        infoButton = new GenericButton(homeButton.getWidth(), ConstantsManager.infoIdlePath,
+                ConstantsManager.infoPressedPath);
+        infoButton.setX(WINDOW_WIDTH - infoButton.getWidth());
+        infoButton.setY(WINDOW_HEIGHT - infoButton.getHeight());
+
+        //Info Pop-up
+        infoPopUp = new TextItem(host.getMyBundle().get("text_info"), WINDOW_HEIGHT * (36f/40f));
+        infoPopUp.setX(WINDOW_WIDTH * (2f/40f));
+        infoPopUp.setY(WINDOW_HEIGHT * (2f/40f));
+
+        //Close pop-up button
+        closePopUp = new GenericButton(infoPopUp.getHeight() * (4f/40f),
+                ConstantsManager.closeIdlePath, ConstantsManager.closePressedPath);
+        closePopUp.setX(infoPopUp.getX() + (infoPopUp.getWidth() * (1f/40f)));
+        closePopUp.setY(infoPopUp.getY() + (infoPopUp.getHeight() * (39f/40f) - closePopUp.getHeight()));
     }
 
     private void setInputProcessor() {
@@ -163,15 +204,25 @@ public class SettingsMenu extends ScreenAdapter {
                 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
                 camera.unproject(touch);
 
-                if (homeButton.getRectangle().contains(touch.x, touch.y)) homeButton.setPressed(true);
-                else homeButton.setPressed(false);
+                if(showingPopUp) {
+                    if (closePopUp.getRectangle().contains(touch.x,touch.y)) closePopUp.setPressed(true);
+                    else closePopUp.setPressed(false);
+                } else {
+                    if (homeButton.getRectangle().contains(touch.x, touch.y)) homeButton.setPressed(true);
+                    else homeButton.setPressed(false);
 
-                if (invertY_Switch.getRectangle().contains(touch.x, touch.y)) invertY_Switch.setPressed(true);
-                else invertY_Switch.setPressed(false);
+                    if (invertY_Switch.getRectangle().contains(touch.x, touch.y)) invertY_Switch.setPressed(true);
+                    else invertY_Switch.setPressed(false);
 
-                if (musicButton.getRectangle().contains(touch.x,touch.y)) musicButton.setPressed(true);
-                else musicButton.setPressed(false);
+                    if (musicButton.getRectangle().contains(touch.x,touch.y)) musicButton.setPressed(true);
+                    else musicButton.setPressed(false);
 
+                    if (soundButton.getRectangle().contains(touch.x,touch.y)) soundButton.setPressed(true);
+                    else soundButton.setPressed(false);
+
+                    if (infoButton.getRectangle().contains(touch.x,touch.y)) infoButton.setPressed(true);
+                    else infoButton.setPressed(false);
+                }
                 return true;
             }
 
@@ -179,25 +230,43 @@ public class SettingsMenu extends ScreenAdapter {
             public boolean touchUp(int screenX, int screenY, int pointer, int button) {
                 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
                 camera.unproject(touch);
-
-                if (homeButton.getRectangle().contains(touch.x, touch.y)) {
-                    SoundController.playClickSound();
-                    homeButton.setPressed(false);
-                    ConstantsManager.settings.flush();
-                    SettingsMenu.this.dispose();
-                    host.setScreen(new MainMenu(host));
-                }
-                if (invertY_Switch.getRectangle().contains(touch.x, touch.y)) {
-                    SoundController.playClickSound();
-                    invertY_Switch.setPressed(false);
-                    invertY_Switch.setOn(!invertY_Switch.isOn());
-                    ConstantsManager.settings.putBoolean("y-invert", invertY_Switch.isOn());
-                }
-                if (musicButton.getRectangle().contains(touch.x, touch.y)) {
-                    SoundController.playClickSound();
-                    musicButton.setPressed(false);
-                    musicButton.setOn(!musicButton.isOn());
-                    ConstantsManager.settings.putBoolean("music-on", musicButton.isOn()).flush();
+                if (showingPopUp) {
+                    if (closePopUp.getRectangle().contains(touch.x,touch.y)) {
+                        SoundController.playClickSound();
+                        closePopUp.setPressed(false);
+                        showingPopUp = false;
+                    }
+                } else {
+                    if (homeButton.getRectangle().contains(touch.x, touch.y)) {
+                        SoundController.playClickSound();
+                        homeButton.setPressed(false);
+                        ConstantsManager.settings.flush();
+                        SettingsMenu.this.dispose();
+                        host.setScreen(new MainMenu(host));
+                    }
+                    if (invertY_Switch.getRectangle().contains(touch.x, touch.y)) {
+                        SoundController.playClickSound();
+                        invertY_Switch.setPressed(false);
+                        invertY_Switch.setOn(!invertY_Switch.isOn());
+                        ConstantsManager.settings.putBoolean("y-invert", invertY_Switch.isOn());
+                    }
+                    if (musicButton.getRectangle().contains(touch.x, touch.y)) {
+                        SoundController.playClickSound();
+                        musicButton.setPressed(false);
+                        musicButton.setOn(!musicButton.isOn());
+                        ConstantsManager.settings.putBoolean("music-on", musicButton.isOn()).flush();
+                    }
+                    if (soundButton.getRectangle().contains(touch.x,touch.y)) {
+                        SoundController.playClickSound();
+                        soundButton.setPressed(false);
+                        soundButton.setOn(!soundButton.isOn());
+                        ConstantsManager.settings.putBoolean("sounds-on", soundButton.isOn()).flush();
+                    }
+                    if (infoButton.getRectangle().contains(touch.x,touch.y)) {
+                        SoundController.playClickSound();
+                        infoButton.setPressed(false);
+                        showingPopUp = true;
+                    }
                 }
                 return true;
             }
@@ -217,15 +286,25 @@ public class SettingsMenu extends ScreenAdapter {
                     ConstantsManager.settings.putFloat("threshold", threshold_Slider.getOutput());
                 }
 
-                if (homeButton.getRectangle().contains(touch.x,touch.y)) homeButton.setPressed(true);
-                else homeButton.setPressed(false);
+                if(showingPopUp) {
+                    if (closePopUp.getRectangle().contains(touch.x,touch.y)) closePopUp.setPressed(true);
+                    else closePopUp.setPressed(false);
+                } else {
+                    if (homeButton.getRectangle().contains(touch.x, touch.y)) homeButton.setPressed(true);
+                    else homeButton.setPressed(false);
 
-                if (invertY_Switch.getRectangle().contains(touch.x, touch.y)) invertY_Switch.setPressed(true);
-                else invertY_Switch.setPressed(false);
+                    if (invertY_Switch.getRectangle().contains(touch.x, touch.y)) invertY_Switch.setPressed(true);
+                    else invertY_Switch.setPressed(false);
 
-                if (musicButton.getRectangle().contains(touch.x,touch.y)) musicButton.setPressed(true);
-                else musicButton.setPressed(false);
+                    if (musicButton.getRectangle().contains(touch.x,touch.y)) musicButton.setPressed(true);
+                    else musicButton.setPressed(false);
 
+                    if (soundButton.getRectangle().contains(touch.x,touch.y)) soundButton.setPressed(true);
+                    else soundButton.setPressed(false);
+
+                    if (infoButton.getRectangle().contains(touch.x,touch.y)) infoButton.setPressed(true);
+                    else infoButton.setPressed(false);
+                }
                 return true;
             }
         });
@@ -243,5 +322,12 @@ public class SettingsMenu extends ScreenAdapter {
         invertY_Switch.draw(batch);
         homeButton.draw(batch);
         musicButton.draw(batch);
+        soundButton.draw(batch);
+        infoButton.draw(batch);
+
+        if (showingPopUp) {
+            infoPopUp.draw(batch);
+            closePopUp.draw(batch);
+        }
     }
 }

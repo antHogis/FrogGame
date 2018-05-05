@@ -34,8 +34,8 @@ public class Timer {
         this.WINDOW_WIDTH = WINDOW_WIDTH;
         this.WINDOW_HEIGHT = WINDOW_HEIGHT;
         
-        numberSheet = new Texture("ui/timerSheet3.png");
-        colon = new TextureRegion(new Texture("ui/colon3.png"));
+        numberSheet = new Texture("ui/timerSheet.png");
+        colon = new TextureRegion(new Texture("ui/colon.png"));
 
         //font = new BitmapFont(Gdx.files.internal("ui/fonts/patHand120.txt"));
 

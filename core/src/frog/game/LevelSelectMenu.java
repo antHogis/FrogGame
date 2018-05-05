@@ -7,8 +7,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import java.util.ArrayList;
@@ -17,29 +17,29 @@ import java.util.ArrayList;
  * Created by Anton on 18.4.2018.
  */
 
-public class LevelSelect extends ScreenAdapter {
-    private FrogMain host;
+public class LevelSelectMenu extends ScreenAdapter {
+    private GameMain host;
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private final float WINDOW_WIDTH, WINDOW_HEIGHT;
 
     private Texture background;
-    private TextItem chooseLevel;
+    private String chooseLevel;
     private GenericButton homeButton;
     private GenericButton arrowRight;
     private GenericButton arrowLeft;
     private ArrayList<GenericButton> levelButtons;
     private ArrayList<Star> stars;
     private BitmapFont font;
-    private ArrayList<Vector2> numberPlacements;
 
     private final int levelsInView = 6;
     private final int firstLevelView = 1;
     private final int lastLevelView = 3;
     private int currentLevelView = firstLevelView;
+    private ArrayList<String> difficultyTexts;
 
 
-    public LevelSelect(FrogMain host) {
+    public LevelSelectMenu(GameMain host) {
         this.host = host;
         camera = host.getCamera();
         batch = host.getBatch();
@@ -50,7 +50,7 @@ public class LevelSelect extends ScreenAdapter {
         createUI();
         setInputProcessor();
 
-        font = new BitmapFont(Gdx.files.internal("ui/fonts/patHand120.txt"));
+        font = new BitmapFont(Gdx.files.internal("ui/fonts/patHand90.txt"));
     }
 
     @Override
@@ -87,13 +87,11 @@ public class LevelSelect extends ScreenAdapter {
         arrowRight.dispose();
         homeButton.dispose();
         background.dispose();
-        chooseLevel.dispose();
         font.dispose();
     }
 
     private void drawUI() {
         batch.draw(background, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-        chooseLevel.draw(batch);
         int starsInView = levelsInView * 3;
 
         for(int i = firstLevelView; i <= lastLevelView; i++) {
@@ -114,14 +112,18 @@ public class LevelSelect extends ScreenAdapter {
         if (currentLevelView < lastLevelView) {
             arrowRight.draw(batch);
         }
-
-        //font.draw(batch, "0", WINDOW_WIDTH/2, WINDOW_HEIGHT/2);
+        GlyphLayout glyph = new GlyphLayout(font, chooseLevel);
+        font.draw(batch, chooseLevel, WINDOW_WIDTH/2 - glyph.width/2, WINDOW_HEIGHT * (39f/40f));
+        if (difficultyTexts.get(currentLevelView-1) != null) {
+            glyph = new GlyphLayout(font, difficultyTexts.get(currentLevelView-1));
+            font.draw(batch, difficultyTexts.get(currentLevelView-1),
+                    WINDOW_WIDTH/2-glyph.width/2, WINDOW_HEIGHT * (1f/40f) + glyph.height);
+        }
     }
 
     private void createUI() {
         levelButtons = new ArrayList<GenericButton>();
         stars = new ArrayList<Star>();
-        numberPlacements = new ArrayList<Vector2>();
         final float BUTTON_WIDTH = WINDOW_WIDTH*(8f/40f);
         int buttonNumber = 1;
 
@@ -130,7 +132,6 @@ public class LevelSelect extends ScreenAdapter {
             createStars(buttonNumber, BUTTON_WIDTH/3);
             buttonNumber += levelsInView;
         }
-
 
         homeButton = new GenericButton(WINDOW_WIDTH*(4f/40f),
                 ConstantsManager.homeButtonIdlePath,
@@ -148,10 +149,11 @@ public class LevelSelect extends ScreenAdapter {
         arrowRight.setY(arrowLeft.getY());
         arrowRight.setX(WINDOW_WIDTH - arrowRight.getWidth());
 
-        chooseLevel = new TextItem(host.getMyBundle().format("text_chooseLevel"),
-                WINDOW_HEIGHT*(3f/40f));
-        chooseLevel.setX(WINDOW_WIDTH/2 - chooseLevel.getWidth()/2);
-        chooseLevel.setY(WINDOW_HEIGHT * (39f/40f) - chooseLevel.getHeight());
+        chooseLevel = host.getMyBundle().get("text_chooseLevel");
+        difficultyTexts = new ArrayList<String>(lastLevelView);
+        difficultyTexts.add(host.getMyBundle().get("text_easy"));
+        difficultyTexts.add(host.getMyBundle().get("text_medium"));
+        difficultyTexts.add(host.getMyBundle().get("text_hard"));
     }
 
     private void createLevelButtons(int buttonNumber, float BUTTON_WIDTH) {
@@ -164,11 +166,15 @@ public class LevelSelect extends ScreenAdapter {
 
         final int columns = 3; final int rows = 2;
 
+        String path = "ui/buttons/levelSelect/";
+        String idle = "-idle.png";
+        String pressed = "-pressed.png";
+
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 levelButtons.add(new GenericButton(BUTTON_WIDTH,
-                        "ui/buttons/levelSelect/" + formatLevelNumber(buttonNumber) + ".png",
-                        "ui/buttons/levelSelect/" + formatLevelNumber(buttonNumber) + ".png"));
+                        path+ formatLevelNumber(buttonNumber) + idle,
+                        path + formatLevelNumber(buttonNumber) + pressed));
                 levelButtons.get(levelButtons.size()-1).setX(currentX);
                 levelButtons.get(levelButtons.size()-1).setY(currentY);
 
@@ -288,7 +294,7 @@ public class LevelSelect extends ScreenAdapter {
                         for (int j = levelsInView * (i - 1); j < levelsInView * i; j++) {
                             if (levelButtons.get(j).getRectangle().contains(touch.x, touch.y)) {
                                 SoundController.playClickSound();
-                                LevelSelect.this.dispose();
+                                LevelSelectMenu.this.dispose();
                                 //Level numbers range from 1 up, hence j+1 (array index + 1)
                                 host.setScreen(createLevel(formatLevelNumber(j+1)));
                             }
@@ -308,7 +314,7 @@ public class LevelSelect extends ScreenAdapter {
 
                 if (homeButton.getRectangle().contains(touch.x, touch.y)) {
                     SoundController.playClickSound();
-                    LevelSelect.this.dispose();
+                    LevelSelectMenu.this.dispose();
                     host.setScreen(new MainMenu(host));
                 }
                 return true;

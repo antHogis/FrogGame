@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.I18NBundle;
 
 import java.util.Locale;
 
-public class FrogMain extends Game {
+public class GameMain extends Game {
 	private SpriteBatch batch;
     private OrthographicCamera camera;
     final int WINDOW_WIDTH = 1280;

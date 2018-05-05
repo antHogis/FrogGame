@@ -17,7 +17,7 @@ import java.util.Locale;
  */
 
 public class MainMenu extends ScreenAdapter {
-    private FrogMain host;
+    private GameMain host;
     private Texture background;
     private SpriteBatch batch;
     private OrthographicCamera camera;
@@ -29,7 +29,7 @@ public class MainMenu extends ScreenAdapter {
     private GenericButton finnishButton;
     private GenericButton englishButton;
 
-    public MainMenu(FrogMain host) {
+    public MainMenu(GameMain host) {
         this.host = host;
         background = new Texture(Gdx.files.internal(ConstantsManager.bgMainMenuPath));
         batch = host.getBatch();
@@ -235,7 +235,7 @@ public class MainMenu extends ScreenAdapter {
                 if (playButton.getRectangle().contains(touch.x,touch.y)) {
                     SoundController.playClickSound();
                     MainMenu.this.dispose();
-                    host.setScreen(new LevelSelect(host));
+                    host.setScreen(new LevelSelectMenu(host));
                 }
                 //Settings button
                 if (settingsButton.getRectangle().contains(touch.x,touch.y)) {
@@ -247,7 +247,7 @@ public class MainMenu extends ScreenAdapter {
                 if (highScoreButton.getRectangle().contains(touch.x,touch.y)) {
                     SoundController.playClickSound();
                     MainMenu.this.dispose();
-                    host.setScreen(new HighScore(host));
+                    host.setScreen(new HighScoreMenu(host));
                 }
                 //Exit button
                 if (exitButton.getRectangle().contains(touch.x,touch.y)) {

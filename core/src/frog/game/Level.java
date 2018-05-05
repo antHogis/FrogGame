@@ -23,11 +23,10 @@ public class Level extends ScreenAdapter {
     /*
      * Core elements that enable rendering and gameplay.
      */
-    private FrogMain host;
+    private GameMain host;
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private OrthographicCamera uiCamera;
-    private boolean gameRunning;
 
     /*
      * Characters and objects.
@@ -46,10 +45,10 @@ public class Level extends ScreenAdapter {
      * is imperative in order to identify them and place them in the correct positions and avoid
      * conflicting paths.
      */
-    private final int AMOUNT_ROUNDFISH, AMOUNT_LONGFISH, AMOUNT_OCTOPUS1, AMOUNT_OCTOPUS2;
+    private final int AMOUNT_ROUNDFISH, AMOUNT_LONGFISH, AMOUNT_OCTOPUS;
 
     /*
-     * HUD elements and relevant modifiers
+     * HUD elements
      */
     private Timer timer;
     private GenericButton homeButton;
@@ -68,12 +67,12 @@ public class Level extends ScreenAdapter {
     private final int WINDOW_HEIGHT_PIXELS = 1000;
     private final int WORLD_WIDTH_PIXELS, WORLD_HEIGHT_PIXELS;
 
-    public Level(FrogMain host,
+    public Level(GameMain host,
                  String identifier,
                  String levelPath,
                  int AMOUNT_ROUNDFISH,
                  int AMOUNT_LONGFISH,
-                 int AMOUNT_OCTOPUS1,
+                 int AMOUNT_OCTOPUS,
                  int AMOUNT_OCTOPUS2,
                  int TILE_AMOUNT_WIDTH,
                  int TILE_AMOUNT_HEIGHT) {
@@ -100,8 +99,7 @@ public class Level extends ScreenAdapter {
 
         this.AMOUNT_ROUNDFISH = AMOUNT_ROUNDFISH;
         this.AMOUNT_LONGFISH = AMOUNT_LONGFISH;
-        this.AMOUNT_OCTOPUS1 = AMOUNT_OCTOPUS1;
-        this.AMOUNT_OCTOPUS2 = AMOUNT_OCTOPUS2;
+        this.AMOUNT_OCTOPUS = AMOUNT_OCTOPUS;
 
         frog = new Player(tiledMap, TILE_DIMENSION);
 
@@ -115,12 +113,11 @@ public class Level extends ScreenAdapter {
         createUI();
 
         this.identifier = identifier;
-        gameRunning = true;
     }
 
     @Override
     public void show() {
-        if (ConstantsManager.settings.getBoolean("music-on", ConstantsManager.DEFAULT_AUDIO_ON)) {
+        if (ConstantsManager.settings.getBoolean("music-on", ConstantsManager.DEFAULT_MUSIC_ON)) {
             SoundController.backgroundMusic.play();
         }
         frog.resetAccelerometerPosition();
@@ -134,15 +131,6 @@ public class Level extends ScreenAdapter {
 
         camera.update();
 
-        float x = camera.position.x - camera.viewportWidth * camera.zoom;
-        float y = camera.position.y - camera.viewportHeight * camera.zoom;
-
-        float width = camera.viewportWidth * camera.zoom * 2;
-        float height = camera.viewportHeight * camera.zoom * 2;
-
-        tiledMapRenderer.setView(camera.combined, x, y, width, height);
-        batch.setProjectionMatrix(camera.combined);
-
         checkObjectCollision();
         moveEnemies();
         frog.movementAndroid(Gdx.graphics.getDeltaTime());
@@ -152,7 +140,14 @@ public class Level extends ScreenAdapter {
         moveCamera();
         timer.update(delta);
 
+        float x = camera.position.x - camera.viewportWidth * camera.zoom;
+        float y = camera.position.y - camera.viewportHeight * camera.zoom;
 
+        float width = camera.viewportWidth * camera.zoom * 2;
+        float height = camera.viewportHeight * camera.zoom * 2;
+
+        tiledMapRenderer.setView(camera.combined, x, y, width, height);
+        batch.setProjectionMatrix(camera.combined);
 
         batch.begin();
             drawBackground();
@@ -204,7 +199,7 @@ public class Level extends ScreenAdapter {
     @Override
     public void resume() {
         SoundController.initialize();
-        if (ConstantsManager.settings.getBoolean("music-on", ConstantsManager.DEFAULT_AUDIO_ON)) {
+        if (ConstantsManager.settings.getBoolean("music-on", ConstantsManager.DEFAULT_MUSIC_ON)) {
             SoundController.backgroundMusic.play();
         }
     }
@@ -246,7 +241,7 @@ public class Level extends ScreenAdapter {
         if (overlapsMapObject("endzone-rectangle")) {
             SoundController.backgroundMusic.stop();
             this.dispose();
-            host.setScreen(new LevelFinish(host, identifier, timer.getTimeString()));
+            host.setScreen(new LevelFinishMenu(host, identifier, timer.getTimeString()));
         }
     }
 
@@ -261,7 +256,7 @@ public class Level extends ScreenAdapter {
             enemy.movement();
             if (enemy.collidesWith(frog)) {
                 frog.returnToLastCheckpoint();
-                SoundController.hitEnemy.play();
+                SoundController.playHitSound();
             }
         }
     }
@@ -273,7 +268,7 @@ public class Level extends ScreenAdapter {
         for (TimeCoin timeCoin : timeCoins) {
             timeCoin.checkCollision(frog);
             if (timeCoin.isCleared() && !timeCoin.isSubtracted()) {
-                SoundController.collectCoin.play();
+                SoundController.playCoinSound();
                 timeCoin.setSubtracted(true);
                 timer.subtractTime(-5);
             }
@@ -377,7 +372,7 @@ public class Level extends ScreenAdapter {
 
     private void addOctopi() {
         //Adding enemies of the type Octopus
-        for (int i=1; i<=AMOUNT_OCTOPUS1; i++) {
+        for (int i=1; i<=AMOUNT_OCTOPUS; i++) {
             enemies.add(new Octopus(TILE_DIMENSION));
 
             Array<RectangleMapObject> startPoints =
@@ -395,24 +390,6 @@ public class Level extends ScreenAdapter {
             }
         }
 
-        //Adding enemies of the type Octopus2
-        for (int i=1; i<=AMOUNT_OCTOPUS2; i++) {
-            enemies.add(new Octopus(TILE_DIMENSION));
-
-            Array<RectangleMapObject> startPoints =
-                    tiledMap.getLayers().get("octopus2-"+i+"-start").getObjects().getByType(RectangleMapObject.class);
-            for (RectangleMapObject startPoint : startPoints) {
-                enemies.peek().setMOVEMENT_STARTPOINT_Y(startPoint.getRectangle().getY()+startPoint.getRectangle().getHeight()-enemies.peek().getHeight());
-                enemies.peek().setX(startPoint.getRectangle().getX());
-                enemies.peek().setY(enemies.peek().getMOVEMENT_STARTPOINT_Y());
-            }
-
-            Array<RectangleMapObject> endPoints =
-                    tiledMap.getLayers().get("octopus2-"+i+"-end").getObjects().getByType(RectangleMapObject.class);
-            for (RectangleMapObject endPoint : endPoints) {
-                enemies.peek().setMOVEMENT_ENDPOINT_Y(endPoint.getRectangle().getY());
-            }
-        }
     }
 
     private void addCheckpoints() {

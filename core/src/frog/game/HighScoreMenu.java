@@ -17,9 +17,9 @@ import com.badlogic.gdx.utils.Array;
  * Created by Lauri on 14.4.2018.
  */
 
-public class HighScore extends ScreenAdapter {
+public class HighScoreMenu extends ScreenAdapter {
 
-    private FrogMain host;
+    private GameMain host;
     private BitmapFont font;
     private SpriteBatch batch;
     private OrthographicCamera camera;
@@ -36,7 +36,7 @@ public class HighScore extends ScreenAdapter {
     private Array<String> texts;
     private Array<Vector2> textPositions;
 
-    public HighScore(FrogMain host) {
+    public HighScoreMenu(GameMain host) {
         this.host = host;
         batch = host.getBatch();
         camera = host.getCamera();
@@ -95,7 +95,7 @@ public class HighScore extends ScreenAdapter {
     }
 
     private void createUI() {
-        background = new Texture(Gdx.files.internal(ConstantsManager.bgGenericPath));
+        background = new Texture(Gdx.files.internal(ConstantsManager.bgHighScorePath));
 
         homeButton = new GenericButton(WINDOW_WIDTH*(4f/40f),
                 ConstantsManager.homeButtonIdlePath,
@@ -220,7 +220,7 @@ public class HighScore extends ScreenAdapter {
                 if (homeButton.getRectangle().contains(touch.x, touch.y)) {
                     SoundController.playClickSound();
                     homeButton.setPressed(false);
-                    HighScore.this.dispose();
+                    HighScoreMenu.this.dispose();
                     host.setScreen(new MainMenu(host));
                 }
                 return true;

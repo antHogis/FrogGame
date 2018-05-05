@@ -52,7 +52,7 @@ public class Checkpoint extends GameObject {
 
     public void checkCollision(Player frog) {
         if (this.zone.overlaps(frog.rectangle) && !cleared) {
-            SoundController.collectCoin.play();
+            SoundController.playCheckpointSound();
             frog.setLastCheckpointX(this.zone.x);
             frog.setLastCheckpointY(this.zone.y);
             Gdx.app.log("TAG", "Checkpoint Saved!");

@@ -18,8 +18,8 @@ import com.badlogic.gdx.utils.Array;
  * Created by Anton on 4.4.2018.
  */
 
-public class LevelFinish extends ScreenAdapter {
-    private FrogMain host;
+public class LevelFinishMenu extends ScreenAdapter {
+    private GameMain host;
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private final float WINDOW_WIDTH, WINDOW_HEIGHT;
@@ -41,9 +41,9 @@ public class LevelFinish extends ScreenAdapter {
     private int timerMinutes, timerSeconds;
 
 
-    public LevelFinish(FrogMain host,
-                       String identifier,
-                       String timeString) {
+    public LevelFinishMenu(GameMain host,
+                           String identifier,
+                           String timeString) {
         this.host = host;
         batch = host.getBatch();
         camera = host.getCamera();
@@ -90,6 +90,7 @@ public class LevelFinish extends ScreenAdapter {
     @Override
     public void dispose() {
         font.dispose();
+        background.dispose();
         for (Star star : stars) {
             star.dispose();
         }
@@ -211,7 +212,7 @@ public class LevelFinish extends ScreenAdapter {
                 if (homeButton.getRectangle().contains(touch.x,touch.y)) {
                     SoundController.playClickSound();
                     homeButton.setPressed(false);
-                    LevelFinish.this.dispose();
+                    LevelFinishMenu.this.dispose();
                     host.setScreen(new MainMenu(host));
                 }
 
@@ -219,7 +220,7 @@ public class LevelFinish extends ScreenAdapter {
                     if (nextLevelButton.getRectangle().contains(touch.x,touch.y)) {
                         SoundController.playClickSound();
                         nextLevelButton.setPressed(false);
-                        LevelFinish.this.dispose();
+                        LevelFinishMenu.this.dispose();
                         host.setScreen(createNextLevel());
                     }
                 }

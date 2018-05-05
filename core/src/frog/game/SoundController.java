@@ -13,12 +13,13 @@ public class SoundController {
     private static final float SOUNDS_VOLUME = 0.4f;
     private static final float MUSIC_VOLUME = 0.75f;
 
-    public static Sound hitEnemy;
-    public static Sound click;
-    public static Sound collectCoin;
-    public static Music backgroundMusic;
+    static Sound hitEnemy;
+    static Sound click;
+    static Sound collectCoin;
+    static Sound checkpoint;
+    static Music backgroundMusic;
 
-    public static void initialize() {
+    static void initialize() {
         hitEnemy = Gdx.audio.newSound(Gdx.files.internal("sounds/hitEnemy.mp3"));
         hitEnemy.setVolume(0, SOUNDS_VOLUME);
 
@@ -28,20 +29,38 @@ public class SoundController {
         collectCoin = Gdx.audio.newSound(Gdx.files.internal("sounds/coin.ogg"));
         collectCoin.setVolume(0, SOUNDS_VOLUME);
 
+        checkpoint = Gdx.audio.newSound(Gdx.files.internal("sounds/coin.ogg"));
+        collectCoin.setVolume(0, SOUNDS_VOLUME);
+
         backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/demo1-leikattu.wav"));
         backgroundMusic.setVolume(MUSIC_VOLUME);
         backgroundMusic.setLooping(true);
     }
 
-    public static void playClickSound() {
+    static void playClickSound() {
         if(ConstantsManager.settings.getBoolean("sounds-on",
-                ConstantsManager.DEFAULT_AUDIO_ON)) {
-            SoundController.click.play();
-        }
+                ConstantsManager.DEFAULT_SOUNDS_ON)) SoundController.click.play();
+    }
+    
+    static void playHitSound() {
+        if (ConstantsManager.settings.getBoolean("sounds-on", 
+                ConstantsManager.DEFAULT_SOUNDS_ON)) SoundController.hitEnemy.play();
     }
 
-    public static void dispose() {
+    static void playCoinSound() {
+        if (ConstantsManager.settings.getBoolean("sounds-on",
+                ConstantsManager.DEFAULT_SOUNDS_ON)) SoundController.collectCoin.play();
+    }
+
+    static void playCheckpointSound() {
+        if (ConstantsManager.settings.getBoolean("sounds-on",
+                ConstantsManager.DEFAULT_SOUNDS_ON)) SoundController.checkpoint.play();
+    }
+
+    static void dispose() {
         hitEnemy.dispose();
+        collectCoin.dispose();
+        click.dispose();
         backgroundMusic.dispose();
     }
 }
