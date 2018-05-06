@@ -15,6 +15,21 @@ import com.badlogic.gdx.utils.Array;
 
 
 /**
+ * The menu displayed after a level is completed.
+ *
+ * <p>The menu displayed after a level is completed displays the player's score in the level,
+ * represented in both stars and the actual time the level was completed in. Both are saved into
+ * persistent memory, if they level was completed for the first time, or if the scores were better
+ * than the previous.</p>
+ *
+ * <p>The time the level needs to be completed in order to achieve two and three
+ * stars respectively are also displayed.</p>
+ *
+ * <p>Also allows the player to continue to the next level or return to the main menu.</p>
+ *
+ * @author Tadpole Attack Squad
+ * @version 2018.0506
+ * @since 2018.0404
  * Created by Anton on 4.4.2018.
  */
 
@@ -40,7 +55,17 @@ public class LevelFinishMenu extends ScreenAdapter {
 
     private int timerMinutes, timerSeconds;
 
-
+    /**
+     * The constructor for LevelFinishMenu
+     *
+     * Retrieves the camera and SpriteBatch of the main class, and also calls for methods that initialize the
+     * buttons and font of the menu, and set's the application's InputProcessor.
+     * Also updates the top 5 scoreboard corresponding to the previously completed level.
+     *
+     * @param host The main class, which controls the displayed screen.
+     * @param identifier the identifier of the level that was previously completed.
+     * @param timeString the time the previously completed level was finished in.
+     */
     public LevelFinishMenu(GameMain host,
                            String identifier,
                            String timeString) {
@@ -60,13 +85,6 @@ public class LevelFinishMenu extends ScreenAdapter {
 
         createUI();
         updateScoreboard();
-/*
-        for (int i = 1; i <= 5; i++) {
-            Gdx.app.log("Level " + identifier + " scoreboard",
-                    ConstantsManager.settings.getString(identifier+"_top_"+i, "derp"));
-        }
-*/
-
         setInputProcessor();
     }
 
@@ -100,6 +118,11 @@ public class LevelFinishMenu extends ScreenAdapter {
         }
     }
 
+    /**
+     * Draws the user interface.
+     *
+     * Draws the buttons and score strings in the user interface.
+     */
     private void drawUI() {
         batch.draw(background, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
         font.draw(batch, score, scoreTextPos.x, scoreTextPos.y);
@@ -113,6 +136,11 @@ public class LevelFinishMenu extends ScreenAdapter {
         }
     }
 
+    /**
+     * Creates the user interface.
+     *
+     * Creates the buttons and score strings in the user interface.
+     */
     private void createUI() {
         float starWidth, xPos, yPos;
         stars = new Array<Star>(9);
@@ -172,6 +200,14 @@ public class LevelFinishMenu extends ScreenAdapter {
         homeButton.setY(WINDOW_HEIGHT - homeButton.getHeight());
     }
 
+    /**
+     * Sets the application's InputProcessor.
+     *
+     * Sets the application's InputProcessor, and implements the methods touchDown, touchUp, and touchDragged.
+     * touchDown makes a button appear as pressed.
+     * touchDragged makes a button appear as pressed.
+     * touchUp performs the function of a button.
+     */
     private void setInputProcessor() {
         Gdx.input.setInputProcessor(new InputAdapter() {
             Vector3 touch;
@@ -229,19 +265,28 @@ public class LevelFinishMenu extends ScreenAdapter {
         });
     }
 
+    /**
+     * Draws stars
+     */
     private void drawStars() {
         for (Star star : stars) {
             star.draw(batch);
         }
     }
 
+    /**
+     * Creates stars.
+     *
+     * Creates 1-3 three golden stars, the remainder will be grey.
+     *
+     * @param goldenStars the amount of golden stars to create
+     * @param starWidth the width of a star
+     * @param xPos the x position of the first star
+     * @param yPos the y position of the stars
+     */
     private void createStars(int goldenStars, float starWidth, float xPos, float yPos) {
         int greyStars = 3 - goldenStars;
 
-        Gdx.app.log("Golden:", Integer.toString(goldenStars));
-        Gdx.app.log("Grey:", Integer.toString(greyStars));
-
-        
         for (int i = 0; i < goldenStars; i++) {
             stars.add(new Star(starWidth, true));
             stars.get(stars.size-1).setX(xPos);
@@ -255,10 +300,15 @@ public class LevelFinishMenu extends ScreenAdapter {
             stars.get(stars.size-1).setY(yPos);
             xPos += starWidth;
         }
-
-
     }
 
+    /**
+     * Updates the high scores for the previously completed level.
+     *
+     * Checks if the time the previsouly completed level was completed in is lesser (=better) than
+     * any of the times in the top 5 high scores in persistent memory. If it is, the worse times are
+     * pushed down in the top 5.
+     */
     private void updateScoreboard() {
         boolean scoreSaved = false;
         
@@ -300,6 +350,13 @@ public class LevelFinishMenu extends ScreenAdapter {
         }
     }
 
+    /**
+     * Calculates how many golden stars were achieved with the time.
+     *
+     * Compares the time of the previously completed level to the two and three star tiers of that level.
+     *
+     * @return the amount of golden stars
+     */
     private int calculateStars() {
         int threeStarMinutes = parseTimeString(TIME_THREE_STARS, true);
         int threeStarSeconds = parseTimeString(TIME_THREE_STARS, false);
@@ -322,6 +379,13 @@ public class LevelFinishMenu extends ScreenAdapter {
         }
     }
 
+    /**
+     * Parses minutes or seconds from a time string.
+     *
+     * @param timeString the string with the time
+     * @param minutes if true parse for minutes, if false parse for seconds
+     * @return minutes or seconds in the string
+     */
     private int parseTimeString(String timeString, boolean minutes) {
         if (minutes) {
             String tempString = "";
@@ -342,6 +406,16 @@ public class LevelFinishMenu extends ScreenAdapter {
         return 0;
     }
 
+    /**
+     * Creates a new level.
+     *
+     * Creates a new level by reading the levels.properties file, and finding keys which define the
+     * level's tiledMap file location, the amounts of enemies in the level, and the score tiers of
+     * the level, that is in what maximum time should the level be completed in order to achieve
+     * three stars, and the maximum time the level should be completed in order to achieve two stars
+     *
+     * @return the level that is created
+     */
     private Level createNextLevel() {
         String nextId = formatLevelNumber(Integer.parseInt(identifier) + 1);
         
@@ -351,10 +425,8 @@ public class LevelFinishMenu extends ScreenAdapter {
                 = Integer.parseInt(ConstantsManager.levels.get(nextId + "_AMOUNT_ROUNDFISH"));
         int AMOUNT_LONGFISH
                 = Integer.parseInt(ConstantsManager.levels.get(nextId + "_AMOUNT_LONGFISH"));
-        int AMOUNT_OCTOPUS1
+        int AMOUNT_OCTOPUS
                 = Integer.parseInt(ConstantsManager.levels.get(nextId + "_AMOUNT_OCTOPUS1"));
-        int AMOUNT_OCTOPUS2
-                = Integer.parseInt(ConstantsManager.levels.get(nextId + "_AMOUNT_OCTOPUS2"));
         int TILE_WIDTH
                 = Integer.parseInt(ConstantsManager.levels.get(nextId + "_TILE_AMOUNT_WIDTH"));
         int TILE_HEIGHT
@@ -365,12 +437,20 @@ public class LevelFinishMenu extends ScreenAdapter {
                 mapPath,
                 AMOUNT_ROUNDFISH,
                 AMOUNT_LONGFISH,
-                AMOUNT_OCTOPUS1,
-                AMOUNT_OCTOPUS2,
+                AMOUNT_OCTOPUS,
                 TILE_WIDTH,
                 TILE_HEIGHT);
     }
 
+    /**
+     * Formats Integers into Strings for the levels.properties file.
+     *
+     * Formats Integers into Strings for the levels.properties file, so that values below 10 have
+     * a leading zero.
+     *
+     * @param number the integer to convert
+     * @return the String format of the integer
+     */
     private String formatLevelNumber(int number) {
         if (number < 10) {
             return  "0" + number;

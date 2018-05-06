@@ -13,7 +13,15 @@ import java.util.Locale;
 
 
 /**
- * Created by Anton on 13.3.2018.
+ * The main menu of the game.
+ *
+ * <p>The main menu of the game provides access to different menus, such as the level select, settings,
+ * and high score screens. Also provides the user with the means to minimize the app, and to change
+ * the language of the game.</p>
+ *
+ * @author Tadpole Attack Squad
+ * @version 2018.0506
+ * @since 2018.0313
  */
 
 public class MainMenu extends ScreenAdapter {
@@ -29,6 +37,14 @@ public class MainMenu extends ScreenAdapter {
     private GenericButton finnishButton;
     private GenericButton englishButton;
 
+    /**
+     * The constructor of MainMenu
+     *
+     * Retrieves the camera and SpriteBatch of the main class, and also calls for methods that initialize the
+     * buttons of the menu, and set's the application's InputProcessor.
+     *
+     * @param host the main class, which controls the displayed screen.
+     */
     public MainMenu(GameMain host) {
         this.host = host;
         background = new Texture(Gdx.files.internal(ConstantsManager.bgMainMenuPath));
@@ -38,7 +54,6 @@ public class MainMenu extends ScreenAdapter {
         addMenuButtons();
         addLanguageSwitches();
         setInputProcessor();
-
     }
 
     @Override
@@ -63,6 +78,9 @@ public class MainMenu extends ScreenAdapter {
         disposeLocalizedButtons();
     }
 
+    /**
+     * Releases only the buttons with localized content from memory.
+     */
     private void disposeLocalizedButtons() {
         playButton.dispose();
         settingsButton.dispose();
@@ -70,6 +88,9 @@ public class MainMenu extends ScreenAdapter {
         exitButton.dispose();
     }
 
+    /**
+     * Draws all the buttons
+     */
     private void drawButtons() {
         playButton.draw(batch);
         settingsButton.draw(batch);
@@ -79,6 +100,9 @@ public class MainMenu extends ScreenAdapter {
         englishButton.draw(batch);
     }
 
+    /**
+     * Creates the localized buttons of the menu, and places their positions.
+     */
     private void addMenuButtons() {
         float WINDOW_WIDTH = camera.viewportWidth;
         float WINDOW_HEIGHT = camera.viewportHeight;
@@ -135,6 +159,9 @@ public class MainMenu extends ScreenAdapter {
 
     }
 
+    /**
+     * Adds the language buttons, the only buttons which are not localized. Places their positions.
+     */
     private void addLanguageSwitches() {
         float WINDOW_WIDTH = camera.viewportWidth;
         float WINDOW_HEIGHT = camera.viewportHeight;
@@ -158,6 +185,14 @@ public class MainMenu extends ScreenAdapter {
         englishButton.setY(buttonY);
     }
 
+    /**
+     * Sets the application's InputProcessor.
+     *
+     * Sets the application's InputProcessor, and implements the methods touchDown, touchUp, and touchDragged.
+     * touchDown makes a button appear as pressed.
+     * touchDragged makes a button appear as pressed.
+     * touchUp performs the function of a button.
+     */
     private void setInputProcessor() {
         Gdx.input.setInputProcessor(new InputAdapter() {
             Vector3 touch;

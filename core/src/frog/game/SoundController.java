@@ -5,7 +5,13 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 
 /**
- * Created by Anton on 14.4.2018.
+ * SoundController manages Sounds and Music for the application.
+ *
+ * <p>A centralized tool for loading the sounds to memory, and playing them via static reference.</p>
+ *
+ * @author Tadpole Attack Squad
+ * @version 2018.0506
+ * @since 2018.0414
  */
 
 public class SoundController {
@@ -19,6 +25,9 @@ public class SoundController {
     static Sound checkpoint;
     static Music backgroundMusic;
 
+    /**
+     * Initializes the Sound and Music objects.
+     */
     static void initialize() {
         hitEnemy = Gdx.audio.newSound(Gdx.files.internal("sounds/hitEnemy.ogg"));
         hitEnemy.setVolume(0, SOUNDS_VOLUME);
@@ -38,26 +47,41 @@ public class SoundController {
 
     }
 
+    /**
+     * Plays a click sound used in menus.
+     */
     static void playClickSound() {
         if(ConstantsManager.settings.getBoolean("sounds-on",
                 ConstantsManager.DEFAULT_SOUNDS_ON)) SoundController.click.play();
     }
-    
+
+    /**
+     * Plays a sound of the player getting hit in the gameplay.
+     */
     static void playHitSound() {
         if (ConstantsManager.settings.getBoolean("sounds-on", 
                 ConstantsManager.DEFAULT_SOUNDS_ON)) SoundController.hitEnemy.play();
     }
 
+    /**
+     * Plays a sound of coin chimes for use with TimeCoins in the gameplay.
+     */
     static void playCoinSound() {
         if (ConstantsManager.settings.getBoolean("sounds-on",
                 ConstantsManager.DEFAULT_SOUNDS_ON)) SoundController.collectCoin.play();
     }
 
+    /**
+     * Plays a positive sound for use with Checkpoints in the gameplay.
+     */
     static void playCheckpointSound() {
         if (ConstantsManager.settings.getBoolean("sounds-on",
                 ConstantsManager.DEFAULT_SOUNDS_ON)) SoundController.checkpoint.play();
     }
 
+    /**
+     * Plays the main music of the game.
+     */
     static void playMusic() {
         float randomPosition = (float) Math.random() * 100;
         Gdx.app.log("songPos", Float.toString(randomPosition));
@@ -65,9 +89,11 @@ public class SoundController {
             backgroundMusic.setPosition(randomPosition);
             backgroundMusic.play();
         }
-
     }
 
+    /**
+     * Releases the files from memory.
+     */
     static void dispose() {
         hitEnemy.dispose();
         collectCoin.dispose();

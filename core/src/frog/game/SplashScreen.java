@@ -1,7 +1,8 @@
 package frog.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -19,7 +20,7 @@ import com.badlogic.gdx.utils.TimeUtils;
  * @since 2018.0506
  */
 
-public class SplashScreen implements Screen {
+public class SplashScreen extends ScreenAdapter {
     private GameMain host;
     private Texture splashTexture;
     private SpriteBatch batch;
@@ -33,15 +34,17 @@ public class SplashScreen implements Screen {
      * Creates the SplashScreen, sets the texture, camera and spritebatch. Displays for 2 seconds
      * and the switches screens to main menu.
      *
-     * @param host The main class, for the retrieval of SpriteBatch and Camera
+     * @param host The main class, which controls the displayed screen.
      */
     public SplashScreen(GameMain host) {
         this.host = host;
-        this.splashTexture = new Texture("gfx/splashtexture.png");
+        this.splashTexture = new Texture("ui/splashScreen.png");
         this.batch = host.getBatch();
         this.camera = host.getCamera();
         this.startTime = TimeUtils.millis();
         this.splashTime = 2000;
+
+        setInputProcessor();
     }
 
     @Override
@@ -59,47 +62,42 @@ public class SplashScreen implements Screen {
         batch.begin();
         batch.draw(splashTexture, 0, 0, camera.viewportWidth, camera.viewportHeight);
         batch.end();
-        TimerCountdown();
-
-    }
-
-    @Override
-    public void resize(int width, int height) {
-
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
+        timerCountdown();
 
     }
 
     @Override
     public void dispose() {
         splashTexture.dispose();
-        batch.dispose();
-        host.dispose();
-
     }
 
     /**
      * Timer for the Splash screen.
      *
-     * Counts up to two 2 seconds before changing the screen to main menu.
+     * Changes the screen to main menu when splashTime amount of milliseconds have passed since showing this class
      */
-    public void TimerCountdown() {
+    private void timerCountdown() {
         if(TimeUtils.millis()>(startTime + splashTime)) {
+            dispose();
             host.setScreen(new MainMenu(host));
         }
 
+    }
+
+
+    /**
+     * Creates a means for the class to handle touch input
+     *
+     * Sets the application's InputProcessor, implements method touchUp so that the Screen is changed when the screen of the device is tapped.
+     */
+    private void setInputProcessor() {
+        Gdx.input.setInputProcessor(new InputAdapter() {
+            @Override
+            public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+                dispose();
+                host.setScreen(new MainMenu(host));
+                return true;
+            }
+        });
     }
 }

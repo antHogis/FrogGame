@@ -14,6 +14,19 @@ import com.badlogic.gdx.math.Vector3;
 import java.util.ArrayList;
 
 /**
+ * The level selection menu.
+ *
+ * <p>The level selection menu has a button for each level in the game. The amount of golden stars
+ * the player has achieved from a level is displayed under each corresponding level button.
+ * Six levels are displayed at a time, and they are arranged into two rows and three columns.</p>
+ *
+ * <p>There are currently 18 levels, so the player can find levels from different views of the level
+ * select screen, of which there are 3. The player can navigate between views using arrow buttons.
+ * The difficulty of the levels in a view are displayed on the bottom of the screen.</p>
+ *
+ * @author Tadpole Attack Squad
+ * @version 2018.0506
+ * @since 2018.0418
  * Created by Anton on 18.4.2018.
  */
 
@@ -38,7 +51,14 @@ public class LevelSelectMenu extends ScreenAdapter {
     private int currentLevelView = firstLevelView;
     private ArrayList<String> difficultyTexts;
 
-
+    /**
+     * The constructor of LevelSelectMenu.
+     *
+     * Retrieves the camera and SpriteBatch of the main class, and also calls for methods that initialize the
+     * buttons and font of the menu, and set's the application's InputProcessor.
+     *
+     * @param host the main class, which controls the displayed screen.
+     */
     public LevelSelectMenu(GameMain host) {
         this.host = host;
         camera = host.getCamera();
@@ -90,6 +110,15 @@ public class LevelSelectMenu extends ScreenAdapter {
         font.dispose();
     }
 
+    /**
+     * Draws the buttons of the menu.
+     *
+     * Only draws the level buttons the correspond to the level view, and arrows according to whether
+     * or not there are more views to the left or to the right.
+     * If currentLevelView = 1: levels 1-6 are displayed.
+     * If currentLevelView = 2: levels 7-12 are displayed.
+     * If currentLevelView = 3: levels 13-18 are displayed.
+     */
     private void drawUI() {
         batch.draw(background, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
         int starsInView = levelsInView * 3;
@@ -121,6 +150,9 @@ public class LevelSelectMenu extends ScreenAdapter {
         }
     }
 
+    /**
+     * Creates the buttons and texts, and their respective positions in the user interface.
+     */
     private void createUI() {
         levelButtons = new ArrayList<GenericButton>();
         stars = new ArrayList<Star>();
@@ -157,6 +189,14 @@ public class LevelSelectMenu extends ScreenAdapter {
         difficultyTexts.add(host.getMyBundle().get("text_hard"));
     }
 
+    /**
+     * Creates the buttons for opening levels.
+     *
+     * Creates the buttons for opening levels in a 2 rows by 3 columns array.
+     *
+     * @param buttonNumber the first button number that should be retrieved
+     * @param BUTTON_WIDTH the desired width of a button
+     */
     private void createLevelButtons(int buttonNumber, float BUTTON_WIDTH) {
         final float ROW_FIRST_X = WINDOW_WIDTH*(6f/40f);
         final float ROW_FIRST_Y = WINDOW_HEIGHT*(23f/40f);
@@ -187,6 +227,14 @@ public class LevelSelectMenu extends ScreenAdapter {
         }
     }
 
+    /**
+     * Creates stars to be displayed below the level buttons.
+     *
+     * Creates the amount of stars achieved in a level below the corresponding level-opening button.
+     *
+     * @param buttonNumber the first button number corresponding to the level
+     * @param STAR_WIDTH the width of a star.
+     */
     private void createStars(int buttonNumber, float STAR_WIDTH) {
         final float ROW_FIRST_X = WINDOW_WIDTH*(6f/40f);
         final float ROW_FIRST_Y = WINDOW_HEIGHT*(22f/40f);
@@ -225,6 +273,14 @@ public class LevelSelectMenu extends ScreenAdapter {
         }
     }
 
+    /**
+     * Sets the application's InputProcessor.
+     *
+     * Sets the application's InputProcessor, and implements the methods touchDown, touchUp, and touchDragged.
+     * touchDown makes a button appear as pressed.
+     * touchDragged makes a button appear as pressed.
+     * touchUp performs the function of a button.
+     */
     private void setInputProcessor() {
         Gdx.input.setInputProcessor(new InputAdapter() {
             Vector3 touch;
@@ -325,6 +381,17 @@ public class LevelSelectMenu extends ScreenAdapter {
         });
     }
 
+    /**
+     * Creates a new level.
+     *
+     * Creates a new level by reading the levels.properties file, and finding keys which define the
+     * level's tiledMap file location, the amounts of enemies in the level, and the score tiers of
+     * the level, that is in what maximum time should the level be completed in order to achieve
+     * three stars, and the maximum time the level should be completed in order to achieve two stars
+     *
+     * @param identifier the number of the level to be created
+     * @return the level that is created
+     */
     private Level createLevel(String identifier) {
         String mapPath
                 = ConstantsManager.levels.get(identifier + "_mapPath");
@@ -332,10 +399,8 @@ public class LevelSelectMenu extends ScreenAdapter {
                 = Integer.parseInt(ConstantsManager.levels.get(identifier + "_AMOUNT_ROUNDFISH"));
         int AMOUNT_LONGFISH
                 = Integer.parseInt(ConstantsManager.levels.get(identifier + "_AMOUNT_LONGFISH"));
-        int AMOUNT_OCTOPUS1
+        int AMOUNT_OCTOPUS
                 = Integer.parseInt(ConstantsManager.levels.get(identifier + "_AMOUNT_OCTOPUS1"));
-        int AMOUNT_OCTOPUS2
-                = Integer.parseInt(ConstantsManager.levels.get(identifier + "_AMOUNT_OCTOPUS2"));
         int TILE_WIDTH
                 = Integer.parseInt(ConstantsManager.levels.get(identifier + "_TILE_AMOUNT_WIDTH"));
         int TILE_HEIGHT
@@ -346,12 +411,20 @@ public class LevelSelectMenu extends ScreenAdapter {
                 mapPath,
                 AMOUNT_ROUNDFISH,
                 AMOUNT_LONGFISH,
-                AMOUNT_OCTOPUS1,
-                AMOUNT_OCTOPUS2,
+                AMOUNT_OCTOPUS,
                 TILE_WIDTH,
                 TILE_HEIGHT);
     }
 
+    /**
+     * Formats Integers into Strings for the levels.properties file.
+     *
+     * Formats Integers into Strings for the levels.properties file, so that values below 10 have
+     * a leading zero.
+     *
+     * @param number the integer to convert
+     * @return the String format of the integer
+     */
     private String formatLevelNumber(int number) {
         if (number < 10) {
             return  "0" + number;

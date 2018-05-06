@@ -6,7 +6,13 @@ import com.badlogic.gdx.math.Rectangle;
 
 
 /**
- * Created by anton on 12/04/2018.
+ * An abstract class for user interface elements
+ *
+ * Created to provide all user interface elements with mandatory methods, like a com.badlogic.gdx.graphics.g2d.SpriteBatch.draw() method and relevant getters and setters.
+ *
+ * @author Tadpole Attack Squad
+ * @version 2018.0506
+ * @since 2018.0412
  */
 
 abstract class UiObject {
@@ -14,6 +20,11 @@ abstract class UiObject {
     Texture texture;
     Rectangle rectangle;
 
+    /**
+     * Draws the object's texture at the rectangle's position
+     *
+     * @param batch the SpriteBatch that should draw the object's texture at the set rectangle position
+     */
     public void draw(SpriteBatch batch) {
         batch.draw(texture, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
     }
@@ -54,6 +65,9 @@ abstract class UiObject {
         return rectangle;
     }
 
+    /**
+     * Disposes the Texture texture if it is set
+     */
     public void dispose() {
         if (texture != null) {
             texture.dispose();

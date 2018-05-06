@@ -16,9 +16,16 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 /**
- * Created by Anton on 13.3.2018.
+ * A level of the game
+ *
+ * <p>A general class for a level in the game, contains variables that modify the objects to make
+ * different levels. The tiledMap file contains the spawn points for game objects, they are created
+ * and placed accordingly to specified RectangleMapObjects.</p>
+ *
+ * @author Tadpole Attack Squad
+ * @version 2018.0506
+ * @since 2018.0313
  */
-
 public class Level extends ScreenAdapter {
     /*
      * Core elements that enable rendering and gameplay.
@@ -68,13 +75,26 @@ public class Level extends ScreenAdapter {
     private final int WINDOW_HEIGHT_PIXELS = 1000;
     private final int WORLD_WIDTH_PIXELS, WORLD_HEIGHT_PIXELS;
 
+    /**
+     * The constructor for Level
+     *
+     * Creates a new Level with the specified tiledMap, creates game objects and the user interface.
+     *
+     * @param host The main class, which controls the displayed screen.
+     * @param identifier the level id/number
+     * @param levelPath the path of the level's tiledMap
+     * @param AMOUNT_ROUNDFISH the amount of RoundFish in the level
+     * @param AMOUNT_LONGFISH the amount of LongFish in the level
+     * @param AMOUNT_OCTOPUS the amount of Octopuses in the level
+     * @param TILE_AMOUNT_WIDTH the amount of tiles in width in the level
+     * @param TILE_AMOUNT_HEIGHT the amount of tiles in height in the level
+     */
     public Level(GameMain host,
                  String identifier,
                  String levelPath,
                  int AMOUNT_ROUNDFISH,
                  int AMOUNT_LONGFISH,
                  int AMOUNT_OCTOPUS,
-                 int AMOUNT_OCTOPUS2,
                  int TILE_AMOUNT_WIDTH,
                  int TILE_AMOUNT_HEIGHT) {
 
@@ -119,7 +139,6 @@ public class Level extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
-
         Gdx.gl.glClearColor(0.658f, 0.980f, 0.980f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -127,7 +146,7 @@ public class Level extends ScreenAdapter {
 
         checkObjectCollision();
         moveEnemies();
-        frog.movementAndroid(Gdx.graphics.getDeltaTime());
+        frog.movement(Gdx.graphics.getDeltaTime());
         respawnFromWall();
         endLevel();
         moveCamera();
@@ -199,6 +218,9 @@ public class Level extends ScreenAdapter {
         SoundController.playMusic();
     }
 
+    /**
+     * Moves the camera in relation to the player's position.
+     */
     private void moveCamera () {
         camera.position.set(frog.getX()+frog.getWidth()/2,
                 frog.getY(),
@@ -221,8 +243,16 @@ public class Level extends ScreenAdapter {
         }
     }
 
-    private boolean overlapsMapObject (String path) {
-        Array<RectangleMapObject> mapObjects = tiledMap.getLayers().get(path).getObjects().getByType(RectangleMapObject.class);
+    /**
+     * Collision detection between player and the tiledMap's object layers.
+     *
+     * Checks if the player's rectangle overlaps a RectangleMapObject in the specified object layer.
+     *
+     * @param layerName the name of the tiledMap object layer
+     * @return true if it overlaps, false if not
+     */
+    private boolean overlapsMapObject (String layerName) {
+        Array<RectangleMapObject> mapObjects = tiledMap.getLayers().get(layerName).getObjects().getByType(RectangleMapObject.class);
         for (RectangleMapObject mapObject : mapObjects) {
             Rectangle mapObjectRectangle = mapObject.getRectangle();
             if (frog.rectangle.overlaps(mapObjectRectangle)) {
@@ -232,6 +262,12 @@ public class Level extends ScreenAdapter {
         return false;
     }
 
+    /**
+     * Ends the level if it is completed.
+     *
+     * The level is completed if the player has gotten to the end of the level. Sets the screen to
+     * the level finish screen if Xe has.
+     */
     private void endLevel() {
         if (overlapsMapObject("endzone-rectangle")) {
             SoundController.backgroundMusic.stop();
@@ -240,12 +276,21 @@ public class Level extends ScreenAdapter {
         }
     }
 
+    /**
+     * Respawns the player from within a wall.
+     *
+     * Returns the player to the last checkpoint in case Xe is within a wall of the tiledMap.
+     * This should technically not happen.
+     */
     private void respawnFromWall () {
         if (overlapsMapObject("walls-rectangle")) {
             frog.returnToLastCheckpoint();
         }
     }
 
+    /**
+     * Moves all enemies
+     */
     private void moveEnemies() {
         for(Enemy enemy : enemies) {
             enemy.movement();
@@ -256,6 +301,9 @@ public class Level extends ScreenAdapter {
         }
     }
 
+    /**
+     * Collision detection between player and game objects.
+     */
     private void checkObjectCollision() {
         for (Checkpoint checkpoint : checkpoints) {
             checkpoint.checkCollision(frog);
@@ -270,6 +318,9 @@ public class Level extends ScreenAdapter {
         }
     }
 
+    /**
+     * Draws most game objects.
+     */
     private void drawObjects() {
         for(Enemy enemy : enemies) {
             enemy.drawAnimation(batch);
@@ -288,12 +339,18 @@ public class Level extends ScreenAdapter {
         }
     }
 
+    /**
+     * Draws checkpoints.
+     */
     private void drawCheckpoints() {
         for (Checkpoint checkpoint : checkpoints) {
             checkpoint.drawAnimation(batch);
         }
     }
 
+    /**
+     * Draws arrows.
+     */
     private void drawArrows() {
         for (Arrow arrow : arrows) {
             arrow.draw(batch);
@@ -301,11 +358,17 @@ public class Level extends ScreenAdapter {
         }
     }
 
+    /**
+     * Draws the user interface (timer and home button)
+     */
     private void drawUI() {
         timer.draw(batch);
         homeButton.draw(batch);
     }
 
+    /**
+     * Draws the background texture.
+     */
     private void drawBackground() {
         for (int i = 0; i < backgroundRectangles.size; i++) {
             batch.draw(backgroundTexture,
@@ -322,6 +385,9 @@ public class Level extends ScreenAdapter {
 
     }
 
+    /**
+     * Creates all game objects.
+     */
     private void addLevelObjects() {
         enemies = new Array<Enemy>();
         checkpoints = new Array<Checkpoint>();
@@ -332,7 +398,7 @@ public class Level extends ScreenAdapter {
 
         addRoundFish();
         addLongFish();
-        addOctopi();
+        addOctopuses();
         addCheckpoints();
         addTimeCoins();
         addSeaweed();
@@ -340,6 +406,9 @@ public class Level extends ScreenAdapter {
         addArrows();
     }
 
+    /**
+     * Creates RoundFish
+     */
     private void addRoundFish() {
         for (int i=1; i<=AMOUNT_ROUNDFISH; i++) {
             enemies.add(new RoundFish(TILE_DIMENSION));
@@ -360,6 +429,9 @@ public class Level extends ScreenAdapter {
         }
     }
 
+    /**
+     * Creates LongFish
+     */
     private void addLongFish() {
         for (int i=1; i<=AMOUNT_LONGFISH; i++) {
             enemies.add(new LongFish(TILE_DIMENSION));
@@ -380,7 +452,10 @@ public class Level extends ScreenAdapter {
         }
     }
 
-    private void addOctopi() {
+    /**
+     * Creates Octopuses
+     */
+    private void addOctopuses() {
         //Adding enemies of the type Octopus
         for (int i=1; i<=AMOUNT_OCTOPUS; i++) {
             enemies.add(new Octopus(TILE_DIMENSION));
@@ -402,6 +477,9 @@ public class Level extends ScreenAdapter {
 
     }
 
+    /**
+     * Creates checkpoints.
+     */
     private void addCheckpoints() {
         if (tiledMap.getLayers().get("checkpoint-rectangle") != null) {
             Array<RectangleMapObject> checkpointRectangles =
@@ -417,6 +495,9 @@ public class Level extends ScreenAdapter {
         }
     }
 
+    /**
+     * Creates TimeCoins (reward)
+     */
     private void addTimeCoins() {
         if (tiledMap.getLayers().get("timecoin-rectangle") != null) {
             Array<RectangleMapObject> timeCoinRectangles =
@@ -429,6 +510,9 @@ public class Level extends ScreenAdapter {
         }
     }
 
+    /**
+     * Creates Seaweed (scenery)
+     */
     private void addSeaweed() {
         //Adding seaweed that point up
         if (tiledMap.getLayers().get("grass-up") != null) {
@@ -462,6 +546,9 @@ public class Level extends ScreenAdapter {
 
     }
 
+    /**
+     * Creates Rocks (obstacle)
+     */
     private void addRocks() {
         //Adding rocks that point up
         if (tiledMap.getLayers().get("rock-up") != null) {
@@ -490,6 +577,9 @@ public class Level extends ScreenAdapter {
         }
     }
 
+    /**
+     * Creates directional Arrows
+     */
     private void addArrows() {
         String[] directions = {"up", "down", "left", "right"};
         String arrow = "arrow-";
@@ -505,9 +595,11 @@ public class Level extends ScreenAdapter {
                 }
             }
         }
-
     }
 
+    /**
+     * Creates the user interface
+     */
     private void createUI() {
         timer = new Timer(WINDOW_WIDTH_PIXELS, WINDOW_HEIGHT_PIXELS);
 
@@ -554,6 +646,9 @@ public class Level extends ScreenAdapter {
         });
     }
 
+    /**
+     * Creates the background texture and specifies how it should be positioned.
+     */
     private void createBackground() {
         backgroundTexture = new Texture(ConstantsManager.bgGamePath);
         backgroundRectangles = new Array<Rectangle>();

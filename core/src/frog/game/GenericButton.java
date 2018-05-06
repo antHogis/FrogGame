@@ -35,6 +35,13 @@ public class GenericButton extends UiObject {
 
     }
 
+    /**
+     * Draws the button.
+     *
+     * Draws the button's pressed texture if it is pressed, and idle texture if it is not.
+     *
+     * @param batch the SpriteBatch that should draw the object's texture at the set rectangle position
+     */
     @Override
     public void draw(SpriteBatch batch) {
         if (pressed) {
@@ -44,10 +51,18 @@ public class GenericButton extends UiObject {
         }
     }
 
+    /**
+     * @return true if the button is pressed, false if it is not
+     */
     public boolean isPressed() {
         return pressed;
     }
 
+    /**
+     * Sets the button's pressed state
+     *
+     * @param pressed true if the button is pressed, false it is not
+     */
     public void setPressed(boolean pressed) {
         this.pressed = pressed;
     }

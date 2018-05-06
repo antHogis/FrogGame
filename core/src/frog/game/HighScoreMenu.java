@@ -14,7 +14,14 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 /**
- * Created by Lauri on 14.4.2018.
+ * The high score menu
+ *
+ * <p>Shows the top 5 best scores achieved for each level, one level at a time. The levels are cycled
+ * through by arrow buttons for left and right.</p>
+ *
+ * @author Tadpole Attack Squad
+ * @version 2018.0506
+ * @since 2018.0414
  */
 
 public class HighScoreMenu extends ScreenAdapter {
@@ -36,6 +43,14 @@ public class HighScoreMenu extends ScreenAdapter {
     private Array<String> texts;
     private Array<Vector2> textPositions;
 
+    /**
+     * The constructor of HighScoreMenu.
+     *
+     * Retrieves the camera and SpriteBatch of the main class, and also calls for methods that initialize the
+     * buttons,scores, and font of the menu, and set's the application's InputProcessor.
+     *
+     * @param host the main class, which controls the displayed screen.
+     */
     public HighScoreMenu(GameMain host) {
         this.host = host;
         batch = host.getBatch();
@@ -43,20 +58,14 @@ public class HighScoreMenu extends ScreenAdapter {
         WINDOW_WIDTH = camera.viewportWidth;
         WINDOW_HEIGHT = camera.viewportHeight;
 
-        currentLevelView = 1;
-        firstLevelView = currentLevelView;
+        firstLevelView = 1;
+        currentLevelView = firstLevelView;
         lastLevelView = ConstantsManager.LEVELS_AMOUNT;
 
         font = new BitmapFont(Gdx.files.internal("ui/fonts/patHand72.txt"));
         createScoreView(currentLevelView);
         createUI();
         setInputProcessor();
-
-    }
-
-    @Override
-    public void show() {
-
     }
 
     @Override
@@ -80,12 +89,18 @@ public class HighScoreMenu extends ScreenAdapter {
         homeButton.dispose();
     }
 
+    /**
+     * Draws the top 5 scores of hte current level in view.
+     */
     private void drawScores() {
         for (int i = 0; i < texts.size; i++) {
             font.draw(batch, texts.get(i), textPositions.get(i).x, textPositions.get(i).y);
         }
     }
 
+    /**
+     * Draws the user interface.
+     */
     private void drawUI() {
         batch.draw(background, 0,0, WINDOW_WIDTH, WINDOW_HEIGHT);
         homeButton.draw(batch);
@@ -98,6 +113,9 @@ public class HighScoreMenu extends ScreenAdapter {
         }
     }
 
+    /**
+     * Creates the buttons in the user interface.
+     */
     private void createUI() {
         background = new Texture(Gdx.files.internal(ConstantsManager.bgHighScorePath));
 
@@ -119,6 +137,14 @@ public class HighScoreMenu extends ScreenAdapter {
         arrowRight.setX(WINDOW_WIDTH - arrowRight.getWidth() - (WINDOW_WIDTH * (0.5f/40f)));
     }
 
+    /**
+     * Creates the top 5 scores.
+     *
+     * Retrieves the top 5 scores of a specified level, and sets the positions where they should
+     * be drawn.
+     *
+     * @param level the specified level
+     */
     private void createScoreView(int level) {
         texts = new Array<String>();
         textPositions = new Array<Vector2>();
@@ -148,13 +174,16 @@ public class HighScoreMenu extends ScreenAdapter {
 
             scorePosY -= glyph.height + WINDOW_HEIGHT * (2f/40f);
         }
-        Gdx.app.log("TEXT number x", Float.toString((textPositions.get(1).x)));
-        Gdx.app.log("TEXT number x", Float.toString((textPositions.get(2).x)));
-        Gdx.app.log("TEXT number x", Float.toString((glyph.width)));
-        Gdx.app.log("TEXT WIDTH", Float.toString((textPositions.get(2).x + glyph.width) - textPositions.get(1).x));
-        Gdx.app.log("TEXT HEIGHT", Float.toString(textPositions.get(1).y - (textPositions.get(textPositions.size-1).y)));
     }
 
+    /**
+     * Sets the application's InputProcessor.
+     *
+     * Sets the application's InputProcessor, and implements the methods touchDown, touchUp, and touchDragged.
+     * touchDown makes a button appear as pressed.
+     * touchDragged makes a button appear as pressed.
+     * touchUp performs the function of a button.
+     */
     private void setInputProcessor() {
         Gdx.input.setInputProcessor(new InputAdapter() {
             Vector3 touch;
@@ -233,6 +262,15 @@ public class HighScoreMenu extends ScreenAdapter {
         });
     }
 
+    /**
+     * Formats Integers into Strings for the levels.properties file.
+     *
+     * Formats Integers into Strings for the levels.properties file, so that values below 10 have
+     * a leading zero.
+     *
+     * @param number the integer to convert
+     * @return the String format of the integer
+     */
     private String formatLevelNumber(int number) {
         if (number < 10) {
             return  "0" + number;

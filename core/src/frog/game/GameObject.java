@@ -25,9 +25,7 @@ abstract class GameObject {
     float stateTime;
     TextureRegion currentFrame;
 
-    public Texture getTexture() {
-        return this.texture;
-    }
+
 
     public void draw(SpriteBatch batch) {
         batch.draw(this.texture, this.rectangle.x, this.rectangle.y, this.rectangle.width, this.rectangle.height);
@@ -69,6 +67,9 @@ abstract class GameObject {
         this.rectangle.height = height;
     }
 
+    public Texture getTexture() {
+        return this.texture;
+    }
 
     public TextureRegion[] convert2Dto1D (TextureRegion[][] twoDim) {
         TextureRegion [] oneDim = new TextureRegion[twoDim.length * twoDim[0].length];

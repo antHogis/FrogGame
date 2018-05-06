@@ -10,9 +10,15 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 
 /**
- * Created by Anton on 13.4.2018.
+ * The menu containing the games settings.
+ *
+ * <p>Contains buttons and sliders that adjust the accelerometer controls of the game, and also the audio of the game.
+ * Also includes and info pop-up explaining the actual functions of the settings.</p>
+ *
+ * @author Tadpole Attack Squad
+ * @version 2018.0506
+ * @since 2018.0413
  */
-
 public class SettingsMenu extends ScreenAdapter {
     private GameMain host;
     private OrthographicCamera camera;
@@ -37,6 +43,14 @@ public class SettingsMenu extends ScreenAdapter {
     private GenericButton closePopUp;
     private boolean showingPopUp;
 
+    /**
+     * The constructor of SettingsMenu.
+     *
+     * Retrieves the camera and SpriteBatch of the main class, and also calls for methods that initialize the
+     * buttons of the menu, and set's the application's InputProcessor.
+     *
+     * @param host the main class, which controls the displayed screen.
+     */
     public SettingsMenu(GameMain host) {
         this.host = host;
         camera = host.getCamera();
@@ -80,6 +94,12 @@ public class SettingsMenu extends ScreenAdapter {
         infoButton.dispose();
     }
 
+    /**
+     * Creates the user interface.
+     *
+     * Creates the buttons, sliders, and the pop-up screen of the settings menu, and places them on
+     * the screen. The buttons which alter variables in persistent memory retrieve their saved settings.
+     */
     private void createUI() {
         /*
          * Texts for button/slider names
@@ -196,6 +216,14 @@ public class SettingsMenu extends ScreenAdapter {
         closePopUp.setY(infoPopUp.getY() + (infoPopUp.getHeight() * (39f/40f) - closePopUp.getHeight()));
     }
 
+    /**
+     * Sets the application's InputProcessor.
+     *
+     * Sets the application's InputProcessor, and implements the methods touchDown, touchUp, and touchDragged.
+     * touchDown makes a button appear as pressed.
+     * touchDragged makes a button appear as pressed, and handles input for sliders.
+     * touchUp performs the function of a button.
+     */
     private void setInputProcessor() {
         Gdx.input.setInputProcessor(new InputAdapter() {
             Vector3 touch;
@@ -309,6 +337,12 @@ public class SettingsMenu extends ScreenAdapter {
         });
     }
 
+    /**
+     * Draws the user interface.
+     *
+     * Draws everything from the user interface except the pop-up if the info button has not been pressed.
+     * Draws everything including the pop-up if the info button has been pressed.
+     */
     private void drawUI() {
         batch.draw(background, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 

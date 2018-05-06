@@ -14,7 +14,7 @@ import com.badlogic.gdx.math.Rectangle;
  *
  * @author Tadpole Attack Squad
  * @version 2018.0506
- * @since 2018.0506
+ * @since 2018.0402
  */
 
 public class LongFish extends Enemy {

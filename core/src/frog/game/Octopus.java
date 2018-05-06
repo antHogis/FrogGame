@@ -14,7 +14,7 @@ import com.badlogic.gdx.math.Rectangle;
  *
  * @author Tadpole Attack Squad
  * @version 2018.0506
- * @since 2018.0506
+ * @since 2018.0404
  */
 
 public class Octopus extends Enemy {
@@ -24,7 +24,7 @@ public class Octopus extends Enemy {
     /**
      * The Constructor of Octopus
      *
-     * Creates a Octopus, sets the animation, hit-box, movement speed, and direction of the Octopus.
+     * Creates an Octopus, sets the animation, hit-box, movement speed, and direction of the Octopus.
      *
      * @param TILE_DIMENSION Dimension of a tile in pixels.
      */
@@ -50,7 +50,8 @@ public class Octopus extends Enemy {
     /**
      * Moves the Octopus.
      *
-     * Moves the RoundFish towards the start or the end of it's linear patrol path along the Y-axis.
+     * Moves the Octopus towards the start or the end of it's linear patrol path along the Y-axis.
+     * The start point is higher in the y-axis than the end point.
      * Switches direction upon reaching either point.
      */
     @Override

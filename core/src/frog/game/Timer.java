@@ -1,9 +1,6 @@
 package frog.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
@@ -11,7 +8,14 @@ import com.badlogic.gdx.math.Rectangle;
 import java.util.ArrayList;
 
 /**
- * Created by Anton on 9.4.2018.
+ * Timer is a visually represented timer.
+ *
+ * <p>Timer is meant to be used in the class Level, the class of the application which contains the gameplay.
+ * It's purpose is to show the user how long Xe has been playing the level in real time.</p>
+ *
+ * @author Tadpole Attack Squad
+ * @version 2018.0506
+ * @since 2018.0409
  */
 
 public class Timer {
@@ -30,14 +34,20 @@ public class Timer {
     private float singleSecondCounter;
     private String timeString = "";
 
+    /**
+     * The constructor of Timer
+     *
+     * Initializes the timer's textures and the position in XY-coordinates.
+     *
+     * @param WINDOW_WIDTH the width of the window where the timer is used.
+     * @param WINDOW_HEIGHT the width of the window where the timer is used.
+     */
     public Timer(float WINDOW_WIDTH, float WINDOW_HEIGHT) {
         this.WINDOW_WIDTH = WINDOW_WIDTH;
         this.WINDOW_HEIGHT = WINDOW_HEIGHT;
         
         numberSheet = new Texture("ui/timerSheet.png");
         colon = new TextureRegion(new Texture("ui/colon.png"));
-
-        //font = new BitmapFont(Gdx.files.internal("ui/fonts/patHand120.txt"));
 
         numberSplitSheet2D = TextureRegion.split(numberSheet,
                 numberSheet.getWidth()/10,
@@ -48,8 +58,14 @@ public class Timer {
         singleSecondCounter = 0;
     }
 
+    /**
+     * Draws the timer.
+     *
+     * Iterates through the timer's different textures, e.g. 01:32, and draws them all at their set positions.
+     *
+     * @param batch the Spritebatch that draws the timer's textures
+     */
     public void draw(SpriteBatch batch) {
-
         for (int i = 0; i < timerTextures.length; i++) {
             batch.draw(timerTextures[i],
                     timerRectangles.get(i).x,
@@ -57,60 +73,68 @@ public class Timer {
                     timerRectangles.get(i).width,
                     timerRectangles.get(i).height);
         }
-
-       /* batch.draw(timerTextures[0], timerX, timerY);
-
-        for (int i=1; i < timerTextures.length; i++) {
-            timerX += timerTextures[i].getRegionWidth();
-            batch.draw(timerTextures[i], timerX, timerY);
-        }*/
-        /*font.draw(batch, timeString, timerX, timerY);*/
-
     }
 
+    /**
+     * Updates the time of the timer.
+     *
+     * Counts time based on the delta time of rendering in to singleSecondCounter, which calculates single seconds.
+     * When a single second has passed through the singleSecondCounter, the timer's seconds updated.
+     * If the timer's seconds reaches a minute, the timer's minutes are updated.
+     * The textures of the timer are updated to match the passed time.
+     *
+     * @param delta the render delta time, used to calculate time.
+     */
     public void update (float delta) {
         singleSecondCounter += delta;
+
         if (singleSecondCounter >= 1) {
             timerSeconds += 1;
             singleSecondCounter = 0;
-        }
-        if (timerSeconds >= 60) {
-            timerMinutes +=1;
-            timerSeconds = 0;
-        }
 
-        String secondsString, minutesString;
+            if (timerSeconds >= 60) {
+                timerMinutes +=1;
+                timerSeconds = 0;
+            }
 
-        if (timerSeconds < 10) {
-            secondsString = "0" + timerSeconds;
-        } else {
-            secondsString = Integer.toString(timerSeconds);
-        }
+            String secondsString, minutesString;
 
-        if (timerMinutes < 10) {
-            minutesString = "0" + timerMinutes;
-        } else {
-            minutesString = Integer.toString(timerMinutes);
-        }
+            if (timerSeconds < 10) {
+                secondsString = "0" + timerSeconds;
+            } else {
+                secondsString = Integer.toString(timerSeconds);
+            }
 
-        timeString = minutesString + ":" + secondsString;
+            if (timerMinutes < 10) {
+                minutesString = "0" + timerMinutes;
+            } else {
+                minutesString = Integer.toString(timerMinutes);
+            }
 
-        if (timeString.equals("99:59")) {
-            timeString = "00:00";
-        }
+            timeString = minutesString + ":" + secondsString;
 
-        for (int i=0; i < timeString.length(); i++) {
-            if (timeString.charAt(i) != ':') {
-                String numberAtIndex = "" + timeString.charAt(i);
-                int sheetIndex = Integer.parseInt(Character.toString(timeString.charAt(i)));
-                timerTextures[i] = numberSplitSheet1D[sheetIndex];
+            if (timeString.equals("99:59")) {
+                timeString = "00:00";
+            }
+
+            for (int i=0; i < timeString.length(); i++) {
+                if (timeString.charAt(i) != ':') {
+                    int sheetIndex = Integer.parseInt(Character.toString(timeString.charAt(i)));
+                    timerTextures[i] = numberSplitSheet1D[sheetIndex];
+                }
             }
         }
+
     }
 
+    /**
+     * Initializes the timer's textures.
+     *
+     * Initializes the arrays containing the timer's textures and XY positions. Presents textures representing 00:00.
+     */
     private void initializeTimerTextures() {
         timerTextures = new TextureRegion[5];
-        timerRectangles = new ArrayList<Rectangle>(5);
+        timerRectangles = new ArrayList<Rectangle>(timerTextures.length);
         float rectangleHeight = WINDOW_HEIGHT* (4f/40f);
         float posY = WINDOW_HEIGHT - rectangleHeight - (WINDOW_HEIGHT * (1f/40f));
         float posX = WINDOW_WIDTH - (WINDOW_WIDTH * (1f/40f));
@@ -143,6 +167,13 @@ public class Timer {
        }
     }
 
+
+    /**
+     * Converts a two-dimensional TextureRegion array into a one-dimensional array
+     *
+     * @param twoDim the two-dimensional TextureRegion array
+     * @return the one-dimensional TextureRegion array
+     */
     private TextureRegion[] convert2Dto1D (TextureRegion[][] twoDim) {
         TextureRegion [] oneDim = new TextureRegion[twoDim.length * twoDim[0].length];
         int index = 0;
@@ -156,6 +187,14 @@ public class Timer {
         return oneDim;
     }
 
+    /**
+     * Subtracts time from the timer.
+     *
+     * Is called in the game when the player clears a time coin, in which case time is subtracted from timer.
+     * Warning: time subtracted should not be equal to or greater than a minute.
+     *
+     * @param amount the time that should be subtracted
+     */
     public void subtractTime(int amount) {
         //In any case if seconds greater or equal to five
         if (timerSeconds >= Math.abs(amount)) {
@@ -176,7 +215,11 @@ public class Timer {
         return timeString;
     }
 
+    /**
+     * Disposes the timer's textures from memory.
+     */
     public void dispose() {
         numberSheet.dispose();
+        colon.getTexture().dispose();
     }
 }
