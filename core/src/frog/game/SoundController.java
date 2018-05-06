@@ -20,7 +20,7 @@ public class SoundController {
     static Music backgroundMusic;
 
     static void initialize() {
-        hitEnemy = Gdx.audio.newSound(Gdx.files.internal("sounds/hitEnemy.mp3"));
+        hitEnemy = Gdx.audio.newSound(Gdx.files.internal("sounds/hitEnemy.ogg"));
         hitEnemy.setVolume(0, SOUNDS_VOLUME);
 
         click = Gdx.audio.newSound(Gdx.files.internal("sounds/click.ogg"));
@@ -32,9 +32,10 @@ public class SoundController {
         checkpoint = Gdx.audio.newSound(Gdx.files.internal("sounds/coin.ogg"));
         collectCoin.setVolume(0, SOUNDS_VOLUME);
 
-        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/demo1-leikattu.wav"));
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/musicWithWater.ogg"));
         backgroundMusic.setVolume(MUSIC_VOLUME);
         backgroundMusic.setLooping(true);
+
     }
 
     static void playClickSound() {
@@ -55,6 +56,16 @@ public class SoundController {
     static void playCheckpointSound() {
         if (ConstantsManager.settings.getBoolean("sounds-on",
                 ConstantsManager.DEFAULT_SOUNDS_ON)) SoundController.checkpoint.play();
+    }
+
+    static void playMusic() {
+        float randomPosition = (float) Math.random() * 100;
+        Gdx.app.log("songPos", Float.toString(randomPosition));
+        if (ConstantsManager.settings.getBoolean("music-on", ConstantsManager.DEFAULT_MUSIC_ON)) {
+            backgroundMusic.setPosition(randomPosition);
+            backgroundMusic.play();
+        }
+
     }
 
     static void dispose() {

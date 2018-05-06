@@ -257,9 +257,9 @@ public class SettingsMenu extends ScreenAdapter {
                         ConstantsManager.settings.putBoolean("music-on", musicButton.isOn()).flush();
                     }
                     if (soundButton.getRectangle().contains(touch.x,touch.y)) {
-                        SoundController.playClickSound();
                         soundButton.setPressed(false);
                         soundButton.setOn(!soundButton.isOn());
+                        SoundController.playClickSound();
                         ConstantsManager.settings.putBoolean("sounds-on", soundButton.isOn()).flush();
                     }
                     if (infoButton.getRectangle().contains(touch.x,touch.y)) {
@@ -276,20 +276,19 @@ public class SettingsMenu extends ScreenAdapter {
                 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
                 camera.unproject(touch);
 
-                if (sensitivity_Slider.getRectangle().contains(touch.x, touch.y)) {
-                    sensitivity_Slider.movePoint(touch.x);
-                    ConstantsManager.settings.putFloat("speed", sensitivity_Slider.getOutput());
-                }
-
-                if (threshold_Slider.getRectangle().contains(touch.x, touch.y)) {
-                    threshold_Slider.movePoint(touch.x);
-                    ConstantsManager.settings.putFloat("threshold", threshold_Slider.getOutput());
-                }
 
                 if(showingPopUp) {
                     if (closePopUp.getRectangle().contains(touch.x,touch.y)) closePopUp.setPressed(true);
                     else closePopUp.setPressed(false);
                 } else {
+                    if (sensitivity_Slider.getRectangle().contains(touch.x, touch.y)) {
+                        sensitivity_Slider.movePoint(touch.x);
+                        ConstantsManager.settings.putFloat("speed", sensitivity_Slider.getOutput());
+                    }
+                    if (threshold_Slider.getRectangle().contains(touch.x, touch.y)) {
+                        threshold_Slider.movePoint(touch.x);
+                        ConstantsManager.settings.putFloat("threshold", threshold_Slider.getOutput());
+                    }
                     if (homeButton.getRectangle().contains(touch.x, touch.y)) homeButton.setPressed(true);
                     else homeButton.setPressed(false);
 

@@ -38,6 +38,7 @@ public class MainMenu extends ScreenAdapter {
         addMenuButtons();
         addLanguageSwitches();
         setInputProcessor();
+
     }
 
     @Override

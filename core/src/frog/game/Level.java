@@ -37,6 +37,7 @@ public class Level extends ScreenAdapter {
     private Array<TimeCoin> timeCoins;
     private Array<Rock> rocks;
     private Array<Seaweed> seaweeds;
+    private Array<Arrow> arrows;
 
     /*
      * Amounts of enemies in the Level. Initialized in the constructor.
@@ -103,11 +104,6 @@ public class Level extends ScreenAdapter {
 
         frog = new Player(tiledMap, TILE_DIMENSION);
 
-        enemies = new Array<Enemy>();
-        checkpoints = new Array<Checkpoint>();
-        timeCoins = new Array<TimeCoin>();
-        seaweeds = new Array<Seaweed>();
-        rocks = new Array<Rock>();
         addLevelObjects();
         createBackground();
         createUI();
@@ -117,9 +113,7 @@ public class Level extends ScreenAdapter {
 
     @Override
     public void show() {
-        if (ConstantsManager.settings.getBoolean("music-on", ConstantsManager.DEFAULT_MUSIC_ON)) {
-            SoundController.backgroundMusic.play();
-        }
+        SoundController.playMusic();
         frog.resetAccelerometerPosition();
     }
 
@@ -151,6 +145,7 @@ public class Level extends ScreenAdapter {
 
         batch.begin();
             drawBackground();
+            drawArrows();
             frog.drawAnimation(batch);
             drawObjects();
         batch.end();
@@ -186,6 +181,9 @@ public class Level extends ScreenAdapter {
         for (Rock rock : rocks) {
             rock.dispose();
         }
+        for (Arrow arrow : arrows) {
+            arrow.dispose();
+        }
         backgroundTexture.dispose();
         homeButton.dispose();
         timer.dispose();
@@ -199,9 +197,7 @@ public class Level extends ScreenAdapter {
     @Override
     public void resume() {
         SoundController.initialize();
-        if (ConstantsManager.settings.getBoolean("music-on", ConstantsManager.DEFAULT_MUSIC_ON)) {
-            SoundController.backgroundMusic.play();
-        }
+        SoundController.playMusic();
     }
 
     private void moveCamera () {
@@ -299,6 +295,13 @@ public class Level extends ScreenAdapter {
         }
     }
 
+    private void drawArrows() {
+        for (Arrow arrow : arrows) {
+            arrow.draw(batch);
+            arrow.movement();
+        }
+    }
+
     private void drawUI() {
         timer.draw(batch);
         homeButton.draw(batch);
@@ -321,6 +324,13 @@ public class Level extends ScreenAdapter {
     }
 
     private void addLevelObjects() {
+        enemies = new Array<Enemy>();
+        checkpoints = new Array<Checkpoint>();
+        timeCoins = new Array<TimeCoin>();
+        seaweeds = new Array<Seaweed>();
+        rocks = new Array<Rock>();
+        arrows = new Array<Arrow>();
+
         addRoundFish();
         addLongFish();
         addOctopi();
@@ -328,6 +338,7 @@ public class Level extends ScreenAdapter {
         addTimeCoins();
         addSeaweed();
         addRocks();
+        addArrows();
     }
 
     private void addRoundFish() {
@@ -478,6 +489,24 @@ public class Level extends ScreenAdapter {
                         + rockRectangle.getRectangle().getHeight() - rocks.peek().getHeight() + TILE_DIMENSION/4);
             }
         }
+    }
+
+    private void addArrows() {
+        String[] directions = {"up", "down", "left", "right"};
+        String arrow = "arrow-";
+
+        for (String direction : directions) {
+            if (tiledMap.getLayers().get(arrow + direction) != null) {
+                Array<RectangleMapObject> arrowRectangles =
+                        tiledMap.getLayers().get(arrow + direction).getObjects().getByType(RectangleMapObject.class);
+                for (RectangleMapObject arrowRectangle : arrowRectangles) {
+                    arrows.add(new Arrow(TILE_DIMENSION*1.5f, direction));
+                    arrows.peek().setX(arrowRectangle.getRectangle().getX());
+                    arrows.peek().setY(arrowRectangle.getRectangle().getY());
+                }
+            }
+        }
+
     }
 
     private void createUI() {

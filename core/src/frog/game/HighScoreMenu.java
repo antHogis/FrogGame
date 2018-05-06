@@ -73,7 +73,11 @@ public class HighScoreMenu extends ScreenAdapter {
 
     @Override
     public void dispose() {
-
+        background.dispose();
+        font.dispose();
+        arrowLeft.dispose();
+        arrowRight.dispose();
+        homeButton.dispose();
     }
 
     private void drawScores() {
@@ -106,12 +110,13 @@ public class HighScoreMenu extends ScreenAdapter {
                 ConstantsManager.arrowLeftIdlePath,
                 ConstantsManager.arrowLeftPressedPath);
         arrowLeft.setY(WINDOW_HEIGHT/2 - arrowLeft.getHeight()/2);
+        arrowLeft.setX(WINDOW_WIDTH * (0.5f/40f));
 
         arrowRight = new GenericButton(arrowLeft.getWidth(),
                 ConstantsManager.arrowRightIdlePath,
                 ConstantsManager.arrowRightPressedPath);
         arrowRight.setY(arrowLeft.getY());
-        arrowRight.setX(WINDOW_WIDTH - arrowRight.getWidth());
+        arrowRight.setX(WINDOW_WIDTH - arrowRight.getWidth() - (WINDOW_WIDTH * (0.5f/40f)));
     }
 
     private void createScoreView(int level) {

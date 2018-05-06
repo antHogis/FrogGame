@@ -142,12 +142,13 @@ public class LevelSelectMenu extends ScreenAdapter {
                 ConstantsManager.arrowLeftIdlePath,
                 ConstantsManager.arrowLeftPressedPath);
         arrowLeft.setY(WINDOW_HEIGHT/2 - arrowLeft.getHeight()/2);
+        arrowLeft.setX(WINDOW_WIDTH * (0.5f/40f));
 
         arrowRight = new GenericButton(arrowLeft.getWidth(),
                 ConstantsManager.arrowRightIdlePath,
                 ConstantsManager.arrowRightPressedPath);
         arrowRight.setY(arrowLeft.getY());
-        arrowRight.setX(WINDOW_WIDTH - arrowRight.getWidth());
+        arrowRight.setX(WINDOW_WIDTH - arrowRight.getWidth() - (WINDOW_WIDTH * (0.5f/40f)));
 
         chooseLevel = host.getMyBundle().get("text_chooseLevel");
         difficultyTexts = new ArrayList<String>(lastLevelView);
@@ -158,7 +159,7 @@ public class LevelSelectMenu extends ScreenAdapter {
 
     private void createLevelButtons(int buttonNumber, float BUTTON_WIDTH) {
         final float ROW_FIRST_X = WINDOW_WIDTH*(6f/40f);
-        final float ROW_FIRST_Y = WINDOW_HEIGHT*(22f/40f);
+        final float ROW_FIRST_Y = WINDOW_HEIGHT*(23f/40f);
         final float MARGIN_X = WINDOW_WIDTH*(2f/40f);
         final float MARGIN_Y = WINDOW_HEIGHT*(5f/40f);
         float currentX = ROW_FIRST_X;
@@ -304,11 +305,13 @@ public class LevelSelectMenu extends ScreenAdapter {
 
                 if (arrowLeft.getRectangle().contains(touch.x, touch.y) && currentLevelView > firstLevelView) {
                     SoundController.playClickSound();
+                    arrowLeft.setPressed(false);
                     currentLevelView--;
                 }
 
                 if (arrowRight.getRectangle().contains(touch.x, touch.y) && currentLevelView < lastLevelView) {
                     SoundController.playClickSound();
+                    arrowRight.setPressed(false);
                     currentLevelView++;
                 }
 
