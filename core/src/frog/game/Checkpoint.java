@@ -8,9 +8,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
 /**
- * Created by Lauri on 21.3.2018.
+ *
+ * @author Tadpole Attack Squad
+ * @version 2018.0506
+ * @since 2018.0321
  */
-
 public class Checkpoint extends GameObject {
     private boolean cleared;
     private Rectangle zone;
@@ -59,14 +61,4 @@ public class Checkpoint extends GameObject {
             cleared = true;
         }
     }
-
-    public boolean isCleared() {
-        return this.cleared;
-    }
-
-    public void setCleared(boolean x) {
-        this.cleared = x;
-    }
-
-
 }

@@ -4,12 +4,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.utils.I18NBundle;
 
-import java.util.Locale;
-
 /**
- * Created by Anton on 15.4.2018.
+ * ConstantsManager provides static variables for other classes
+ *
+ * <p>ConstantsManager contains mostly paths for Textures which are used in menus.
+ * The main purpose of the class is to make consistent variables available to other classes.</p>
+ *
+ * @author Tadpole Attack Squad
+ * @version 2018.0506
+ * @since 2018.0415
  */
-
 public class ConstantsManager {
     public static Preferences settings = Gdx.app.getPreferences("Preferences");
 
@@ -19,7 +23,6 @@ public class ConstantsManager {
     /*
      * File locations (non-localized)
      */
-
     //Backgrounds
     static final String bgGenericPath = "ui/bg.png";
     static final String bgMainMenuPath = "ui/bg2.png";
@@ -57,11 +60,9 @@ public class ConstantsManager {
     static final String closeIdlePath = "ui/buttons/settings/close-idle.png";
     static final String closePressedPath = "ui/buttons/settings/close-pressed.png";
 
-
     /*
      * Game-modifying values
      */
-
     //Movement related values
     static final float MIN_SPEED = 200f;
     static final float MAX_SPEED = 300f;

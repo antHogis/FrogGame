@@ -4,11 +4,21 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.I18NBundle;
 
 import java.util.Locale;
-
+/**
+ * GameMain is the core of the application.
+ *
+ * <p>GameMain is delegated to other classes which implement com.badlogic.gdx.Screen.</p>
+ * <p>It contains a SpriteBatch and an OrthographicCamera which are used in Screen-implementing classes,
+ * and also an I18bundle, which contains Strings for localization</p>
+ *
+ * @see com.badlogic.gdx.Game
+ * @author Tadpole Attack Squad
+ * @version 2018.0506
+ * @since 2018.0306
+ */
 public class GameMain extends Game {
 	private SpriteBatch batch;
     private OrthographicCamera camera;

@@ -6,15 +6,26 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 
 /**
- * Created by Lauri on 14.4.2018.
+ * GenericButton is a button for general purposes.
+ *
+ * <p>A button which is only meant to have one function, and display different textures when it's not pressed and when it's pressed</p>
+ *
+ * @author Tadpole Attack Squad
+ * @version 2018.0506
+ * @since 2018.0414
  */
-
 public class GenericButton extends UiObject {
 
     private Texture idleTexture;
     private Texture pressedTexture;
     boolean pressed = false;
 
+    /**
+     *
+     * @param width the desired width of the button
+     * @param pathIdle the path of the button's texture when it is not pressed
+     * @param pathPressed the path of the button's texture when it is pressed
+     */
     public GenericButton(float width, String pathIdle, String pathPressed) {
         idleTexture = new Texture(Gdx.files.internal(pathIdle));
         pressedTexture = new Texture(Gdx.files.internal(pathPressed));
@@ -47,7 +58,7 @@ public class GenericButton extends UiObject {
         if (idleTexture != null) {
             idleTexture.dispose();
         }
-        if (idleTexture != null) {
+        if (pressedTexture != null) {
             pressedTexture.dispose();
         }
     }

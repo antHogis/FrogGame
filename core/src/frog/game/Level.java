@@ -128,7 +128,6 @@ public class Level extends ScreenAdapter {
         checkObjectCollision();
         moveEnemies();
         frog.movementAndroid(Gdx.graphics.getDeltaTime());
-        frog.moveTemporary(Gdx.graphics.getDeltaTime());
         respawnFromWall();
         endLevel();
         moveCamera();
