@@ -27,7 +27,7 @@ public class GameMain extends Game {
         SoundController.initialize();
         locale = Locale.getDefault();
         myBundle = I18NBundle.createBundle(Gdx.files.internal("MyBundle"), locale);
-        setScreen(new MainMenu(this));
+        setScreen(new SplashScreen(this));
 	}
 
 	@Override
