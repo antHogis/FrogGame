@@ -8,31 +8,84 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
 /**
- * Created by Lauri on 10.3.2018.
+ * GameObject is an abstract superclass for in-game objects.
+ *
+ * GameObjects contains common characteristics and methods for in-game objects.
+ *
+ * @author Tadpole Attack Squad
+ * @version 2018.0506
+ * @since 2018.0310
  */
 
 abstract class GameObject {
+    /**
+     * Rectangle of an GameObject for calculation purposes.
+     */
     Rectangle rectangle;
+
+    /**
+     * The texture of an GameObject.
+     */
     Texture texture;
 
+    /**
+     * The texture sheet of the GameObjects animation.
+     */
     Texture textureSheet;
+
+    /**
+     * The texture sheet in a 2D array.
+     */
     TextureRegion [][] textureSheet2D;
+
+    /**
+     * The texture sheet in an array.
+     */
     TextureRegion [] textureSheet1D;
+
+    /**
+     * Number of columns in a texture sheet.
+     */
     int SHEET_COLUMNS;
+
+    /**
+     * Number of rows in a texture sheet.
+     */
     int SHEET_ROWS;
 
+    /**
+     * Animation of based on the texture sheet.
+     */
     Animation<TextureRegion> animation;
+
+    /**
+     * Amount of time spent in a state of animation.
+     */
     float stateTime;
+
+    /**
+     * Current frame of the animation.
+     */
     TextureRegion currentFrame;
 
     public Texture getTexture() {
         return this.texture;
     }
 
+    /**
+     * Draws the texture using the given SpriteBatch.
+     *
+     * @param batch SpriteBatch used to draw the textures.
+     */
     public void draw(SpriteBatch batch) {
         batch.draw(this.texture, this.rectangle.x, this.rectangle.y, this.rectangle.width, this.rectangle.height);
     }
 
+    /**
+     * Draws and loops the animation using the given SpriteBatch
+     *
+     * @param batch SpriteBatch used to draw the animation.
+     */
     public void drawAnimation(SpriteBatch batch) {
         stateTime += Gdx.graphics.getDeltaTime();
         currentFrame = animation.getKeyFrame(stateTime, true);
@@ -70,6 +123,12 @@ abstract class GameObject {
     }
 
 
+    /**
+     * Converts the given two dimensional array into a one dimensional array.
+     *
+     * @param twoDim The texture sheet as a 2D array.
+     * @return The texture sheet as a one dimensional array.
+     */
     public TextureRegion[] convert2Dto1D (TextureRegion[][] twoDim) {
         TextureRegion [] oneDim = new TextureRegion[twoDim.length * twoDim[0].length];
         int index = 0;
@@ -83,6 +142,13 @@ abstract class GameObject {
         return oneDim;
     }
 
+    /**
+     * Flips the animation of a particular GameObject
+     *
+     * @param animation Animation to be flipped.
+     * @param xFlip
+     * @param yFlip
+     */
     public void flip(Animation<TextureRegion> animation, boolean xFlip, boolean yFlip) {
         TextureRegion[] regions = animation.getKeyFrames();
         for(TextureRegion r : regions) {
@@ -90,6 +156,9 @@ abstract class GameObject {
         }
     }
 
+    /**
+     * Disposes textures and texturesheets.
+     */
     public void dispose() {
         if (texture != null) {
             texture.dispose();
