@@ -7,13 +7,27 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
 /**
- * Created by Anton on 2.4.2018.
+ * LongFish is a subclass of Enemy with an eel texture.
+ *
+ * LongFish is used in Level class as an enemy that travels in a straight line along
+ * the X-axis.
+ *
+ * @author Tadpole Attack Squad
+ * @version 2018.0506
+ * @since 2018.0506
  */
 
 public class LongFish extends Enemy {
     private float movementSpeed;
     private boolean isMovingRight;
 
+    /**
+     * The Constructor of LongFish
+     *
+     * Creates a LongFish, sets the animation, hit-box, movement speed, and direction of the LongFish.
+     *
+     * @param TILE_DIMENSION Dimension of a tile in pixels.
+     */
     public LongFish(int TILE_DIMENSION) {
         textureSheet = new Texture("gfx/longFishSheet.png");
         SHEET_COLUMNS = 4;
@@ -33,6 +47,12 @@ public class LongFish extends Enemy {
         isMovingRight = true;
     }
 
+    /**
+     * Moves the LongFish.
+     *
+     * Moves the LongFish towards the start or the end of it's linear patrol path along the X-axis.
+     * Switches direction upon reaching either point.
+     */
     @Override
     public void movement() {
 

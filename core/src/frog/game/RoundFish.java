@@ -7,13 +7,27 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
 /**
- * Created by Lauri on 24.3.2018.
+ * RoundFish is a subclass of Enemy with a fish texture.
+ *
+ * RoundFish is used in Level class as an enemy that travels in a straight line along
+ * the X-axis.
+ *
+ * @author Tadpole Attack Squad
+ * @version 2018.0506
+ * @since 2018.0506
  */
 
 public class RoundFish extends Enemy {
     private float movementSpeed;
     private boolean isMovingRight;
 
+    /**
+     * The Constructor of RoundFish
+     *
+     * Creates a RoundFish, sets the animation, hit-box, movement speed, and direction of the RoundFish.
+     *
+     * @param TILE_DIMENSION Dimension of a tile in pixels.
+     */
     public RoundFish(int TILE_DIMENSION) {
         textureSheet = new Texture("gfx/roundFishSheet.png");
         SHEET_COLUMNS = 4;
@@ -33,6 +47,12 @@ public class RoundFish extends Enemy {
         this.isMovingRight = true;
     }
 
+    /**
+     * Moves the RoundFish.
+     *
+     * Moves the RoundFish towards the start or the end of it's linear patrol path along the X-axis.
+     * Switches direction upon reaching either point.
+     */
     @Override
     public void movement() {
 
