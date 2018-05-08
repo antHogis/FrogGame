@@ -71,8 +71,8 @@ public class Level extends ScreenAdapter {
     private final int TILE_DIMENSION;
     private final int TILE_AMOUNT_WIDTH, TILE_AMOUNT_HEIGHT;
 
-    private final int WINDOW_WIDTH_PIXELS = 1600;
-    private final int WINDOW_HEIGHT_PIXELS = 1000;
+    private final float WINDOW_WIDTH_PIXELS;
+    private final float WINDOW_HEIGHT_PIXELS;
     private final int WORLD_WIDTH_PIXELS, WORLD_HEIGHT_PIXELS;
 
     /**
@@ -107,6 +107,8 @@ public class Level extends ScreenAdapter {
         WORLD_WIDTH_PIXELS = this.TILE_AMOUNT_WIDTH * TILE_DIMENSION;
         WORLD_HEIGHT_PIXELS = this.TILE_AMOUNT_HEIGHT * TILE_DIMENSION;
 
+        WINDOW_WIDTH_PIXELS = host.getCamera().viewportWidth * 1.25f;
+        WINDOW_HEIGHT_PIXELS = host.getCamera().viewportHeight * 1.25f;
         camera = new OrthographicCamera();
         camera.setToOrtho(false,
                 WINDOW_WIDTH_PIXELS,
@@ -272,6 +274,7 @@ public class Level extends ScreenAdapter {
         if (overlapsMapObject("endzone-rectangle")) {
             SoundController.backgroundMusic.stop();
             this.dispose();
+            SoundController.playLevelFinishSound();
             host.setScreen(new LevelFinishMenu(host, identifier, timer.getTimeString()));
         }
     }

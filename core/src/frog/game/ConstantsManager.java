@@ -80,5 +80,6 @@ public class ConstantsManager {
     static final int TILE_DIMENSION = 128;
     static final int LEVELS_AMOUNT = 18;
     static final int TOP_SCORES_AMOUNT = 5;
+    static final String previousLevelPlayedKey = "previousLevelPlayed";
 
 }

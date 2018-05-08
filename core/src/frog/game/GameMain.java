@@ -22,14 +22,17 @@ import java.util.Locale;
 public class GameMain extends Game {
 	private SpriteBatch batch;
     private OrthographicCamera camera;
-    final int WINDOW_WIDTH = 1280;
-    final int WINDOW_HEIGHT = 800;
+    private int WINDOW_WIDTH;
+    private int WINDOW_HEIGHT;
 
     private Locale locale;
     private I18NBundle myBundle;
 
 	@Override
 	public void create () {
+        WINDOW_WIDTH = 1280;
+        WINDOW_HEIGHT = (WINDOW_WIDTH * Gdx.graphics.getHeight()) / Gdx.graphics.getWidth();
+
 		batch = new SpriteBatch();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -37,7 +40,10 @@ public class GameMain extends Game {
         SoundController.initialize();
         locale = Locale.getDefault();
         myBundle = I18NBundle.createBundle(Gdx.files.internal("MyBundle"), locale);
+        ConstantsManager.settings.putInteger(ConstantsManager.previousLevelPlayedKey, 1).flush();
         setScreen(new SplashScreen(this));
+
+
 	}
 
 	@Override
@@ -55,12 +61,10 @@ public class GameMain extends Game {
         SoundController.initialize();
     }
 
-    public void setLocale(Locale newLocale) {
-        locale = newLocale;
-        Gdx.app.log("Locale in locale", locale.toString());
+    public void setLocale(Locale locale) {
+        this.locale = locale;
         myBundle = new I18NBundle();
-        myBundle = I18NBundle.createBundle(Gdx.files.internal("MyBundle"), locale);
-        Gdx.app.log("Locale in bundle", myBundle.getLocale().toString());
+        myBundle = I18NBundle.createBundle(Gdx.files.internal("MyBundle"), this.locale);
 
     }
 

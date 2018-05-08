@@ -23,9 +23,9 @@
 23,23,23,23,23,23,23,23,23,2684354562,0,0,0,0,1610612738,23,
 23,23,23,23,23,23,12,3221225474,3221225474,13,0,0,0,0,1610612738,23,
 23,23,23,23,23,10,0,0,0,0,0,0,0,0,1610612738,23,
-23,23,23,23,10,0,0,0,0,0,0,0,0,4,23,23,
-23,23,23,10,0,0,0,0,0,0,0,0,4,23,23,23,
-23,23,2684354562,0,0,0,0,0,0,0,0,4,23,23,23,23,
+23,23,23,23,10,0,0,0,0,0,0,0,0,0,23,23,
+23,23,23,10,0,0,0,0,0,0,0,0,0,4,23,23,
+23,23,2684354562,0,0,0,0,0,0,0,0,0,4,23,23,23,
 23,23,2684354562,0,0,0,0,0,4,2,2,23,23,23,23,23,
 23,23,2684354562,0,0,0,0,0,1610612738,23,23,23,23,23,23,23,
 23,23,2684354562,0,0,0,0,0,1610612738,23,23,23,23,23,23,23,
@@ -55,7 +55,7 @@
 23,23,23,23,23,8,0,0,0,0,1610612738,23,23,23,23,23
 </data>
  </layer>
- <objectgroup name="walls-rectangle">
+ <objectgroup color="#aa0000" name="walls-rectangle">
   <object id="4" x="2.21096e-12" y="0" width="512" height="2688"/>
   <object id="5" x="512" y="1792" width="768" height="640"/>
   <object id="6" x="512" y="0" width="256" height="256"/>
@@ -70,8 +70,7 @@
   <object id="16" x="256" y="2688" width="128" height="1024"/>
   <object id="17" x="512" y="2432" width="128" height="128"/>
   <object id="18" x="1152" y="2944" width="640" height="640"/>
-  <object id="19" x="1536" y="2816" width="256" height="128"/>
-  <object id="20" x="1664" y="2688" width="128" height="128"/>
+  <object id="20" x="1664" y="2816" width="128" height="128"/>
   <object id="21" x="1024" y="3072" width="128" height="384"/>
   <object id="22" x="1280" y="3584" width="512" height="640"/>
   <object id="23" x="1536" y="4224" width="256" height="256"/>
@@ -98,9 +97,8 @@
   <object id="44" x="384" y="3648" width="64" height="64"/>
   <object id="45" x="512" y="3776" width="64" height="64"/>
   <object id="46" x="640" y="3904" width="64" height="64"/>
-  <object id="47" x="1472" y="2880" width="64" height="64"/>
-  <object id="48" x="1600" y="2752" width="64" height="64"/>
-  <object id="49" x="1728" y="2624" width="64" height="64"/>
+  <object id="47" x="1600" y="2880" width="64" height="64"/>
+  <object id="49" x="1728" y="2752" width="64" height="64"/>
   <object id="50" x="1088" y="3008" width="64" height="64"/>
   <object id="51" x="1088" y="3456" width="64" height="64"/>
   <object id="52" x="1088" y="3456" width="64" height="64"/>
@@ -140,7 +138,7 @@
   <object id="101" x="1024" y="1024" width="256" height="128"/>
   <object id="102" x="1280" y="1024" width="64" height="64"/>
  </objectgroup>
- <objectgroup color="#aa0000" name="frog-spawn-rectangle">
+ <objectgroup name="frog-spawn-rectangle">
   <object id="80" x="1280" y="256" width="128" height="128"/>
  </objectgroup>
  <objectgroup color="#ffff00" name="timecoin-rectangle">
@@ -152,19 +150,19 @@
  <objectgroup name="roundfish-1-end">
   <object id="83" x="1536" y="4608" width="128" height="128"/>
  </objectgroup>
- <objectgroup name="grass-up">
+ <objectgroup color="#00aa00" name="grass-up">
   <object id="84" x="896" y="4736" width="256" height="256"/>
  </objectgroup>
- <objectgroup name="grass-down">
+ <objectgroup color="#00aa00" name="grass-down">
   <object id="92" x="1024" y="1152" width="256" height="256"/>
  </objectgroup>
- <objectgroup name="checkpoint-rectangle">
+ <objectgroup color="#0000ff" name="checkpoint-rectangle">
   <object id="86" x="1152" y="2432" width="128" height="512"/>
  </objectgroup>
  <objectgroup name="arrow-left">
-  <object id="97" x="1152" y="2560" width="128" height="128"/>
+  <object id="97" x="1152" y="2624" width="128" height="128"/>
  </objectgroup>
  <objectgroup name="endzone-rectangle">
-  <object id="87" x="768" y="6144" width="512" height="256"/>
+  <object id="87" x="768" y="6272" width="512" height="128"/>
  </objectgroup>
 </map>

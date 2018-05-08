@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.4" orientation="orthogonal" renderorder="right-down" width="28" height="28" tilewidth="128" tileheight="128" infinite="0" nextobjectid="94">
+<map version="1.0" tiledversion="1.1.4" orientation="orthogonal" renderorder="right-down" width="28" height="28" tilewidth="128" tileheight="128" infinite="0" nextobjectid="97">
  <tileset firstgid="1" source="Tileset1.tsx"/>
  <layer name="Tile Layer 1" width="28" height="28">
   <data encoding="csv">
@@ -74,6 +74,8 @@
   <object id="91" x="2688" y="896" width="61.5" height="64.5"/>
   <object id="92" x="3005.5" y="3264.5" width="66.5" height="63.5"/>
   <object id="93" x="3133.5" y="1472.5" width="66.5" height="63.5"/>
+  <object id="95" x="896" y="3200" width="256" height="128"/>
+  <object id="96" x="1024" y="3136" width="128" height="64"/>
  </objectgroup>
  <objectgroup color="#e6e600" name="timecoin-rectangle">
   <object id="45" x="512" y="2944" width="128" height="128"/>
@@ -98,6 +100,9 @@
  </objectgroup>
  <objectgroup name="roundfish-2-end">
   <object id="68" x="1536" y="1152" width="128" height="128"/>
+ </objectgroup>
+ <objectgroup name="arrow-left">
+  <object id="94" x="1920" y="2944" width="128" height="128"/>
  </objectgroup>
  <objectgroup color="#00c800" name="grass-down">
   <object id="69" x="2816" y="896" width="256" height="256"/>

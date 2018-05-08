@@ -348,6 +348,9 @@ public class LevelFinishMenu extends ScreenAdapter {
         if (goldenStars > ConstantsManager.settings.getInteger(key, 0)) {
             ConstantsManager.settings.putInteger(key, goldenStars).flush();
         }
+
+        ConstantsManager.settings.putInteger(ConstantsManager.previousLevelPlayedKey,
+                Integer.parseInt(identifier)).flush();
     }
 
     /**

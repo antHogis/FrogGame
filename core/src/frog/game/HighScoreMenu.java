@@ -17,7 +17,9 @@ import com.badlogic.gdx.utils.Array;
  * The high score menu
  *
  * <p>Shows the top 5 best scores achieved for each level, one level at a time. The levels are cycled
- * through by arrow buttons for left and right.</p>
+ * through by arrow buttons for left and right. The top scores of the most recently played level
+ * are showed when this Screen is shown, or if none have been played, the first level's top scores
+ * are shown.</p>
  *
  * @author Tadpole Attack Squad
  * @version 2018.0506
@@ -59,7 +61,8 @@ public class HighScoreMenu extends ScreenAdapter {
         WINDOW_HEIGHT = camera.viewportHeight;
 
         firstLevelView = 1;
-        currentLevelView = firstLevelView;
+        currentLevelView = ConstantsManager.settings.getInteger(ConstantsManager.previousLevelPlayedKey,
+                firstLevelView);
         lastLevelView = ConstantsManager.LEVELS_AMOUNT;
 
         font = new BitmapFont(Gdx.files.internal("ui/fonts/patHand72.txt"));

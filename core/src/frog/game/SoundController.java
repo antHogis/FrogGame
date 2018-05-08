@@ -23,6 +23,7 @@ public class SoundController {
     static Sound click;
     static Sound collectCoin;
     static Sound checkpoint;
+    static Sound levelFinish;
     static Music backgroundMusic;
 
     /**
@@ -38,10 +39,13 @@ public class SoundController {
         collectCoin = Gdx.audio.newSound(Gdx.files.internal("sounds/coin.ogg"));
         collectCoin.setVolume(0, SOUNDS_VOLUME);
 
-        checkpoint = Gdx.audio.newSound(Gdx.files.internal("sounds/coin.ogg"));
+        checkpoint = Gdx.audio.newSound(Gdx.files.internal("sounds/checkpoint.ogg"));
         collectCoin.setVolume(0, SOUNDS_VOLUME);
 
-        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/musicWithWater.ogg"));
+        levelFinish = Gdx.audio.newSound(Gdx.files.internal("sounds/levelFinish.ogg"));
+        levelFinish.setVolume(0, SOUNDS_VOLUME);
+
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/backgroundMusic.ogg"));
         backgroundMusic.setVolume(MUSIC_VOLUME);
         backgroundMusic.setLooping(true);
 
@@ -77,6 +81,11 @@ public class SoundController {
     static void playCheckpointSound() {
         if (ConstantsManager.settings.getBoolean("sounds-on",
                 ConstantsManager.DEFAULT_SOUNDS_ON)) SoundController.checkpoint.play();
+    }
+
+    static void playLevelFinishSound() {
+        if (ConstantsManager.settings.getBoolean("sounds-on",
+                ConstantsManager.DEFAULT_SOUNDS_ON)) SoundController.levelFinish.play();
     }
 
     /**
