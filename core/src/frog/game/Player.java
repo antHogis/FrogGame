@@ -17,7 +17,7 @@ import com.badlogic.gdx.utils.Array;
  * The character is controlled using accelerometer input.</p>
  *
  * @author Tadpole Attack Squad
- * @version 2018.0506
+ * @version 2018.0513
  * @since 2018.0310
  */
 class Player extends GameObject {
@@ -79,7 +79,10 @@ class Player extends GameObject {
      * Note: X = accelerometer Y-axis, Y = accelerometer Z-axis.
      */
     private void initializeMovement() {
-        resetAccelerometerPosition();
+        NEUTRAL_POINT_X = ConstantsManager.settings.getFloat(ConstantsManager.neutralX_Key,
+                Gdx.input.getAccelerometerY());
+        NEUTRAL_POINT_Y = ConstantsManager.settings.getFloat(ConstantsManager.neutralY_Key,
+                Gdx.input.getAccelerometerZ());
 
         THRESHOLD_VALUE = ConstantsManager.settings.getFloat("threshold",
                 ConstantsManager.DEFAULT_THRESHOLD);
@@ -254,14 +257,6 @@ class Player extends GameObject {
 
     public void setLastCheckpointY(float y) {
         this.lastCheckpointY = y;
-    }
-
-    /**
-     * Resets the neutral points of movement to the current accelerometer values.
-     */
-    public void resetAccelerometerPosition() {
-        NEUTRAL_POINT_X = Gdx.input.getAccelerometerY();
-        NEUTRAL_POINT_Y = Gdx.input.getAccelerometerZ();
     }
 
     @Override

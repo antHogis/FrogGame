@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.I18NBundle;
  * The main purpose of the class is to make consistent variables available to other classes.</p>
  *
  * @author Tadpole Attack Squad
- * @version 2018.0506
+ * @version 2018.0513
  * @since 2018.0415
  */
 public class ConstantsManager {
@@ -71,6 +71,8 @@ public class ConstantsManager {
     static final float MAX_THRESHOLD = 2f;
     static final float DEFAULT_THRESHOLD = 0.35f;
     static final boolean DEFAULT_INVERT_Y = true;
+    static final String neutralX_Key = "accelerometer_neutral_x";
+    static final String neutralY_Key = "accelerometer_neutral_y";
 
     //Audio related values
     static final boolean DEFAULT_MUSIC_ON = true;

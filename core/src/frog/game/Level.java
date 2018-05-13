@@ -23,7 +23,7 @@ import com.badlogic.gdx.utils.Array;
  * and placed accordingly to specified RectangleMapObjects.</p>
  *
  * @author Tadpole Attack Squad
- * @version 2018.0506
+ * @version 2018.0513
  * @since 2018.0313
  */
 public class Level extends ScreenAdapter {
@@ -136,7 +136,6 @@ public class Level extends ScreenAdapter {
     @Override
     public void show() {
         SoundController.playMusic();
-        frog.resetAccelerometerPosition();
     }
 
     @Override

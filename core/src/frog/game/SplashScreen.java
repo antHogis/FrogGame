@@ -16,7 +16,7 @@ import com.badlogic.gdx.utils.TimeUtils;
  * <p>SplashScreen is used in the GameMain class, to be shown before the main menu.</p>
  *
  * @author Tadpole Attack Squad
- * @version 2018.0506
+ * @version 2018.0513
  * @since 2018.0506
  */
 
@@ -79,7 +79,7 @@ public class SplashScreen extends ScreenAdapter {
     private void timerCountdown() {
         if(TimeUtils.millis()>(startTime + splashTime)) {
             dispose();
-            host.setScreen(new MainMenu(host));
+            host.setScreen(new CalibrationScreen(host));
         }
 
     }
@@ -95,7 +95,7 @@ public class SplashScreen extends ScreenAdapter {
             @Override
             public boolean touchUp(int screenX, int screenY, int pointer, int button) {
                 dispose();
-                host.setScreen(new MainMenu(host));
+                host.setScreen(new CalibrationScreen(host));
                 return true;
             }
         });
